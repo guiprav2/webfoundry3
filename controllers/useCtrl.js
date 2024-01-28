@@ -1,4 +1,5 @@
 import AppCtrl from './AppCtrl.js';
+import DesignerCtrl from './DesignerCtrl.js';
 import d from '../other/dominant.js';
 import debounce from 'https://cdn.skypack.dev/debounce';
 
@@ -6,6 +7,7 @@ let state = {};
 
 let sections = {
   app: new AppCtrl(post),
+  designer: new DesignerCtrl(post),
 };
 
 for (let [k, v] of Object.entries(sections)) { state[k] = v.state }

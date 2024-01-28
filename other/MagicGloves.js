@@ -1,28 +1,32 @@
 import Boo from './boo.js';
 import d from './dominant.js';
-import { useAppCtrl } from '../controllers/AppCtrl.js';
+import useCtrl from '../controllers/useCtrl.js';
 
 class MagicGloves {
   constructor(iframe) {
     Object.assign(this, { iframe });
-    let [state, post] = useAppCtrl();
+    let [state, post] = useCtrl();
     Object.assign(this, { state, post });
     iframe.contentDocument.body.addEventListener('click', this.onClick);
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown);
-    this.sov = new Boo(d.el(MagicOverlay, { s: () => this.state.s }), () => this.state.s, { origin: iframe, transitionClass: 'transition-all' });
+    this.sov = new Boo(
+      d.el(MagicOverlay, { s: () => this.state.designer.s }),
+      () => this.state.designer.s,
+      { origin: iframe, transitionClass: 'transition-all' },
+    );
   }
 
   onClick = ev => {
     if (ev.ctrlKey) { return }
     ev.preventDefault();
-    this.post('changeSelected', ev.target);
+    this.post('designer.select', ev.target);
   };
 
   onKeyDown = ev => {
     if (ev.key !== 'Escape' && this.iframe.contentDocument.activeElement.tagName !== 'BODY') { return }
-    if (!this.state.hasActionHandler(ev.key)) { return }
+    if (!this.state.designer.hasActionHandler(ev.key)) { return }
     ev.preventDefault();
-    this.post('editorAction', ev.key);
+    this.post('designer.command', ev.key);
   };
 
   destroy() { this.sov.disable() }

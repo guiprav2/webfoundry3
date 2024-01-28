@@ -3,13 +3,13 @@ import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
 import InputDialog from '../components/dialogs/InputDialog.js';
 import d from './dominant.js';
 import lf from 'https://cdn.skypack.dev/localforage';
+import useCtrl from '../controllers/useCtrl.js';
 import { showModal } from './util.js';
-import { useAppCtrl } from '../controllers/AppCtrl.js';
 
 class ActionHandler {
   constructor(designer) {
     this.designer = designer;
-    let [state, post] = useAppCtrl();
+    let [state, post] = useCtrl();
     Object.assign(this, { state, post });
   }
 
@@ -17,8 +17,8 @@ class ActionHandler {
   get toolbarNode() { return this.designer.editor.toolbarNode }
   get editorWindow() { return this.designer.editorWindow }
   get editorDocument() { return this.designer.editorDocument }
-  get s() { return this.state.s }
-  set s(x) { this.post('changeSelected', x) }
+  get s() { return this.state.designer.s }
+  set s(x) { this.post('designer.select', x) }
   
   sToggle = () => {
     let pe = this.s && this.s.closest('[contenteditable="true"]');
@@ -191,7 +191,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     this.s.classList.remove('Placeholder');
     this.s.tagName !== 'VIDEO' && this.changeTagName('img');
-    let pagePath = this.state.currentFile.split('/').slice(0, -1);
+    let pagePath = this.state.app.currentFile.split('/').slice(0, -1);
     let imgPath = detail.split('/').slice(0, -1);
     let commonSegments = 0;
     while (commonSegments < pagePath.length && imgPath[commonSegments] === pagePath[commonSegments]) { commonSegments++ }
@@ -203,7 +203,7 @@ class ActionHandler {
     let [btn, detail] = await showModal(d.el(ImageGalleryDialog));
     if (btn !== 'ok') { return }
     this.s.classList.remove('Placeholder');
-    let pagePath = this.state.currentFile.split('/').slice(0, -1);
+    let pagePath = this.state.app.currentFile.split('/').slice(0, -1);
     let imgPath = detail.split('/').slice(0, -1);
     let commonSegments = 0;
     while (commonSegments < pagePath.length && imgPath[commonSegments] === pagePath[commonSegments]) { commonSegments++ }

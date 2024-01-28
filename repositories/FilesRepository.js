@@ -75,9 +75,9 @@ class FilesRepository {
         if (preflightLink) { preflightLink.href = `${location.pathname}other/preflight.css` }
         if (windyScript) { windyScript.src = `${location.pathname}other/windy.js` }
         let serializer = new XMLSerializer();
-        await filesRepo.saveFile(site, path, new Blob([serializer.serializeToString(doc)], { type: 'text/html' }));
+        await this.saveFile(site, path, new Blob([serializer.serializeToString(doc)], { type: 'text/html' }));
       } else {
-        await filesRepo.saveFile(site, path, blob);
+        await this.saveFile(site, path, blob);
       }
     }
   }

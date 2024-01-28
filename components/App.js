@@ -1,7 +1,9 @@
 import CodeEditor from './CodeEditor.js';
+import Designer from './Designer.js';
 import FilesTab from './FilesTab.js';
 import ImageViewer from './ImageViewer.js';
 import SitesTab from './SitesTab.js';
+import StylesTab from './StylesTab.js';
 import d from '../other/dominant.js';
 import useCtrl from '../controllers/useCtrl.js';
 import { isImage } from '../other/util.js';
@@ -16,7 +18,7 @@ class App {
     this.post('app.loadSites');
 
     d.effect(() => this.state.app.currentTab, x => this.tabContent = d.el({
-      sites: SitesTab, files: FilesTab, /*styles: StylesTab,*/
+      sites: SitesTab, files: FilesTab, styles: StylesTab,
     }[x]));
 
     d.effect(() => this.state.app.currentFile, x => {
@@ -25,6 +27,12 @@ class App {
       else if (isImage(x)) { this.content = d.el(ImageViewer, { path: x }) }
       else { this.content = d.el(CodeEditor, { path: x }) }
     });
+
+    let url = new URL(location.href);
+    if (url.searchParams.get('import')) {
+      history.replaceState(null, '', location.href.split('?')[0]);
+      this.post('app.importZipFromUrl', url.searchParams.get('import'));
+    }
   };
 
   render = () => d.html`
@@ -33,15 +41,15 @@ class App {
         <div class="gfont-[Pacifico] text-gray-100">Webfoundry</div>
         <div class="flex gap-3">
           ${d.if(() => this.state.app.currentTab !== 'styles', d.html`
-            <button class="nf nf-fa-plus outline-none" ${{ onClick: this.add }}></button>
+            <button class="nf nf-fa-plus outline-none" ${{ onClick: () => this.post('app.add') }}></button>
           `)}
           ${d.if(() => this.state.app.currentTab === 'files', d.html`
-            <button class="nf nf-seti-zip outline-none" ${{ onClick: this.zipOptions }}></button>
+            <button class="nf nf-seti-zip outline-none" ${{ onClick: () => this.post('app.zipOptions') }}></button>
           `)}
           ${this.renderTabBtn({ key: 'sites', icon: 'nf-fa-sitemap' })}
           ${this.renderTabBtn({ key: 'files', icon: 'nf-fa-folder' })}
           ${this.renderTabBtn({ key: 'styles', icon: 'nf-fa-paint_brush' })}
-          <button class="nf nf-fa-question outline-none" ${{ onClick: this.help }}></button>
+          <button class="nf nf-fa-question outline-none" ${{ onClick: () => this.post('app.help') }}></button>
         </div>
       </div>
       ${d.portal(() => this.tabContent)}
