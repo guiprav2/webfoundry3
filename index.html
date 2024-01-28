@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Webfoundry</title>
+    <link rel="stylesheet" href="other/preflight.css">
+    <script src="https://cdn.jsdelivr.net/combine/npm/ace-builds@1.23.4,npm/ace-builds@1.23.4/src-min-noconflict/theme-monokai.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-html.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-css.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-javascript.min.js,npm/ace-builds@1.23.4/src-min-noconflict/ext-beautify.min.js"></script>
+    <script src="other/windy.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GL13QDJ82K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-GL13QDJ82K');
+    </script>
+  </head>
+  <body class="flex overflow-hidden sans bg-[#121926]">
+    <script type="module">
+      import App from './components/App.js';
+      import d from './other/dominant.js';
+      addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault());
+      navigator.serviceWorker.register('sw.bundle.js');
+      document.body.append(...d.el(App));
+    </script>
+  </body>
+</html>
