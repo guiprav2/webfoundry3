@@ -37,6 +37,7 @@ class DesignerToolbar {
       ['s-btn', 'nf-md-alpha_b', 'B'],
       ['sep'],
       ['btn', 'nf-fa-paint_brush', '', () => this.post('app.changeTab', 'styles')],
+      ['btn', 'nf-fa-print', '', () => this.designer.editorWindow.print()],
     ];
   }
 

@@ -12,6 +12,7 @@ class Designer {
   }
 
   get path() { return this.props.path }
+  get editorWindow() { return this.iframe.contentWindow }
   get editorDocument() { return this.iframe.contentDocument }
   onAttach = () => this.post('designer.setActionHandler', new ActionHandler(this));
   onDetach = () => { this.gloves && this.gloves.destroy(); this.post('designer.reset') };
@@ -38,7 +39,7 @@ class Designer {
 
   render = () => d.html`
     <div class="flex-1 flex">
-      ${d.el(DesignerToolbar)}
+      ${d.el(DesignerToolbar, { designer: this })}
       ${this.iframe = d.html`
         <iframe class="hidden flex-1 bg-white" ${{
           onAttach: this.onAttach, onDetach: this.onDetach,
