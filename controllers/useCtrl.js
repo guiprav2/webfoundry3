@@ -15,8 +15,7 @@ for (let [k, v] of Object.entries(sections)) { state[k] = v.state }
 let printSeparator = debounce(() => console.log('---'), 200);
 
 async function post(action, ...args) {
-  let debug = Number(localStorage.getItem('webfoundry:debug'));
-  debug && console.log(`${action}${args.length ? ':' : ''}`, ...args.map(x => {
+  console.log(`${action}${args.length ? ':' : ''}`, ...args.map(x => {
     if (typeof x === 'string') {
       if (x.includes('\n')) { return x.split('\n')[0].slice(0, 100) + '...' }
       return x.length > 100 ? x.slice(0, 100) + '...' : x;
