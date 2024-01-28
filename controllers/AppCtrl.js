@@ -15,11 +15,12 @@ import { showModal } from '../other/util.js';
 let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
 <body class="min-h-screen">
-  <div class="p-16 text-center font-sm italic">Page intentionally left blank.</div>
+  <div class="p-32 text-center font-sm italic">Page intentionally left blank.</div>
 </body>`;
 
 class AppCtrl {
   state = {
+    sidebarCollapsed: false,
     currentTab: 'sites',
     currentSite: null,
     currentFile: null,
@@ -42,6 +43,7 @@ class AppCtrl {
   constructor(post) { this.post = post }
 
   actions = {
+    toggleSidebar: () => this.state.sidebarCollapsed = !this.state.sidebarCollapsed,
     changeTab: x => this.state.currentTab = x,
     loadSites: () => this.state.sites = rsites.loadSites(),
 

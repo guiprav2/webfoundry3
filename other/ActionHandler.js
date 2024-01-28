@@ -19,6 +19,9 @@ class ActionHandler {
   get editorDocument() { return this.designer.editorDocument }
   get s() { return this.state.designer.s }
   set s(x) { this.post('designer.select', x) }
+
+  toggleSidebar = () => this.post('app.toggleSidebar');
+  toggleToolbar = () => this.post('designer.toggleToolbar');
   
   sToggle = () => {
     let pe = this.s && this.s.closest('[contenteditable="true"]');
@@ -242,6 +245,8 @@ class ActionHandler {
   };
   
   kbds = {
+    ',': this.toggleSidebar,
+    '.': this.toggleToolbar,
     Escape: this.sToggle,
     '{': this.changeMeta,
     ';': this.scrollIntoView,
