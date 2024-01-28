@@ -113,14 +113,18 @@ class AppCtrl {
     renameFile: async x => {
       let [btn, detail] = await showModal(d.el(PromptDialog, { prompt: 'New name', initialValue: x.split('/').pop() }));
       if (btn !== 'ok') { return }
-      await rfiles.renameFile(this.state.currentSite, x, `${[x.split('/').slice(0, -1).join('/'), detail].filter(Boolean).join('/')}`);
+      let newPath = `${[x.split('/').slice(0, -1).join('/'), detail].filter(Boolean).join('/')}`;
+      await rfiles.renameFile(this.state.currentSite, x, newPath);
+      if (this.state.currentFile === x) { this.state.currentFile = newPath }
       this.post('app.loadFiles');
     },
 
     renameFolder: async x => {
       let [btn, detail] = await showModal(d.el(PromptDialog, { prompt: 'New name', initialValue: x.split('/').pop() }));
       if (btn !== 'ok') { return }
-      await rfiles.renameFolder(this.state.currentSite, x, `${[x.split('/').slice(0, -1).join('/'), detail].filter(Boolean).join('/')}`);
+      let  newPath = `${[x.split('/').slice(0, -1).join('/'), detail].filter(Boolean).join('/')}`;
+      await rfiles.renameFolder(this.state.currentSite, x, newPath);
+      if (this.state.currentFile.startsWith(x + '/')) { this.state.currentFile = this.state.currentFile.replace(x, newPath) }
       this.post('app.loadFiles');
     },
 

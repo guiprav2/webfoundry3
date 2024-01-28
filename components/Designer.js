@@ -19,6 +19,7 @@ class Designer {
 
   onLoad = () => {
     this.gloves = new MagicGloves(this.iframe);
+    this.editorDocument.body.classList.add('min-h-screen');
 
     if (!this.editorDocument.querySelector('.wf-preflight')) {
       let stylesheet = d.html`<link rel="stylesheet" class="wf-preflight">`;
