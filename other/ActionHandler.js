@@ -13,9 +13,6 @@ class ActionHandler {
     Object.assign(this, { state, post });
   }
 
-  get sidebarNode() { return this.designer.sidebarNode }
-  get toolbarNode() { return this.designer.editor.toolbarNode }
-  get editorWindow() { return this.designer.editorWindow }
   get editorDocument() { return this.designer.editorDocument }
   get s() { return this.state.designer.s }
   set s(x) { this.post('designer.select', x) }
