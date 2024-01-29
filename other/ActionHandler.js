@@ -35,6 +35,14 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     this.editorDocument.head.outerHTML = x;
   };
+
+  changeTitle = async () => {
+    let title = this.editorDocument.querySelector('title');
+    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change page title', value: title?.textContent || '' }));
+    if (btn !== 'ok') { return }
+    if (!title) { this.editorDocument.head.prepend(title = d.html`<title>`) }
+    title.textContent = x;
+  };
   
   scrollIntoView = () => { this.s && this.s.scrollIntoView() };
   scrollIntoViewBottom = () => { this.s && this.s.scrollIntoView({ block: 'end' }) };
@@ -123,9 +131,7 @@ class ActionHandler {
   changeTag = async () => {
     if (!this.s) { return }
     let tagName = this.s.tagName.toLowerCase();
-    let [btn, x] = await showModal(d.el(InputDialog, {
-    short: true, title: 'Change tag', value: tagName,
-    }));
+    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change tag', value: tagName }));
     if (btn !== 'ok') { return }
     if (this.s.tagName === 'DIALOG' && x !== 'dialog') { this.s.open = false }
     this.changeTagName(x);
@@ -248,6 +254,7 @@ class ActionHandler {
     '.': this.toggleToolbar,
     Escape: this.sToggle,
     '{': this.changeMeta,
+    'y': this.changeTitle,
     ';': this.scrollIntoView,
     ':': this.scrollIntoViewBottom,
     h: this.selectParent,

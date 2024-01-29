@@ -19,6 +19,11 @@ class Designer {
 
   onLoad = () => {
     this.gloves = new MagicGloves(this.iframe);
+
+    if (!this.editorDocument.querySelector('meta[name="viewport"]')) {
+      this.editorDocument.head.prepend(d.html`<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">`);
+    }
+
     this.editorDocument.body.classList.add('min-h-screen');
 
     if (!this.editorDocument.querySelector('.wf-preflight')) {

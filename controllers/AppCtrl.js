@@ -201,6 +201,8 @@ class AppCtrl {
     },
 
     importZipFromUrl: async url => {
+      let [btn] = await showModal(d.el(ConfirmationDialog, { prompt: `You're importing a site from the Internet. Only import sites from sources you trust. Proceed?` }));
+      if (btn !== 'ok') { return }
       try {
         this.state.importing = true;
         showModal(d.el(ImportingDialog, { done: () => !this.state.importing }));

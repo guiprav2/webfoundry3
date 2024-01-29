@@ -12,6 +12,7 @@ class HelpDialog {
     'o': 'Paste inside current element (last).',
     'O': 'Paste inside current element (first).',
     '{': 'Change meta tag.',
+    'y': 'Change page title.',
   };
 
   rightCol = {
