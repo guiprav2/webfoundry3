@@ -21,8 +21,10 @@ let windy = (...args) => {
     if (name) {
       let su = $('#windy');
       su && su.parentNode.insertBefore(s, su.nextSibling);
-    } else {
+    } else if (document.currentScript) {
       document.currentScript.insertAdjacentElement('beforebegin', s);
+    } else {
+      document.head.append(s);
     }
   }
 
