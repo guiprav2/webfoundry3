@@ -83,9 +83,9 @@ function buildRule(mods, semantic, sel, styles) {
 }
 
 function buildSelector(spsts, sts, semantic, sel) {
-  spsts.includes('not-first-child') && console.log(spsts, sts);
+  if (spsts.includes('group-hover')) { sts.splice(sts.indexOf('hover'), 1) }
   return [
-    spsts.includes('group-hover') && '.group',
+    spsts.includes('group-hover') && '.group:hover',
     spsts.includes('popup') && 'button:focus +',
     `.${CSS.escape(sel)}${sts.filter(Boolean).length ? `:${sts.filter(Boolean).join(':')}` : ''}`,
   ].filter(Boolean).join(' ').replace(':> ', '> ');
