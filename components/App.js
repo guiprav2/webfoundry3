@@ -35,29 +35,61 @@ class App {
     }
   };
 
+  resizeStart = ev => {
+    ev.target.setPointerCapture(ev.pointerId);
+    ev.target.addEventListener('pointermove', this.resize);
+  };
+
+  resizeEnd = ev => {
+    ev.target.releasePointerCapture(ev.pointerId);
+    ev.target.removeEventListener('pointermove', this.resize);
+  };
+
+  resize = ev => {
+    let s = this.sidebar.getBoundingClientRect();
+    let r = this.leftPadding.getBoundingClientRect();
+    let l = this.resizeBtn.getBoundingClientRect();
+    let w = Math.max(400, ev.clientX - r.right);
+    if (w >= l.left - s.width) { this.content.style.maxWidth = '' }
+    else { this.content.style.maxWidth = `${w}px` }
+  };
+
   render = () => d.html`
-    <div ${{
-      onAttach: this.onAttach,
-      class: ['w-80 h-screen shrink-0 flex flex-col bg-[#162031] text-[#949ba4] shadow-2xl', () => this.state.app.sidebarCollapsed && 'hidden'],
-    }}>
-      <div class="border-b border-[#1f2631] px-5 py-3 flex items-center justify-between">
-        <div class="gfont-[Pacifico] text-gray-100">Webfoundry</div>
-        <div class="flex gap-3">
-          ${d.if(() => this.state.app.currentTab !== 'styles', d.html`
-            <button class="nf nf-fa-plus outline-none" ${{ onClick: () => this.post('app.add') }}></button>
-          `)}
-          ${d.if(() => this.state.app.currentTab === 'files', d.html`
-            <button class="nf nf-seti-zip outline-none" ${{ onClick: () => this.post('app.zipOptions') }}></button>
-          `)}
-          ${this.renderTabBtn({ key: 'sites', icon: 'nf-fa-sitemap' })}
-          ${this.renderTabBtn({ key: 'files', icon: 'nf-fa-folder' })}
-          ${this.renderTabBtn({ key: 'styles', icon: 'nf-fa-paint_brush' })}
-          <button class="nf nf-fa-question outline-none" ${{ onClick: () => this.post('app.help') }}></button>
+    ${this.sidebar = d.html`
+      <div ${{
+        onAttach: this.onAttach,
+        class: ['w-80 h-screen shrink-0 flex flex-col bg-[#162031] text-[#949ba4] shadow-2xl', () => this.state.app.sidebarCollapsed && 'hidden'],
+      }}>
+        <div class="border-b border-[#1f2631] px-5 py-3 flex items-center justify-between">
+          <div class="gfont-[Pacifico] text-gray-100">Webfoundry</div>
+          <div class="flex gap-3">
+            ${d.if(() => this.state.app.currentTab !== 'styles', d.html`
+              <button class="nf nf-fa-plus outline-none" ${{ onClick: () => this.post('app.add') }}></button>
+            `)}
+            ${d.if(() => this.state.app.currentTab === 'files', d.html`
+              <button class="nf nf-seti-zip outline-none" ${{ onClick: () => this.post('app.zipOptions') }}></button>
+            `)}
+            ${this.renderTabBtn({ key: 'sites', icon: 'nf-fa-sitemap' })}
+            ${this.renderTabBtn({ key: 'files', icon: 'nf-fa-folder' })}
+            ${this.renderTabBtn({ key: 'styles', icon: 'nf-fa-paint_brush' })}
+            <button class="nf nf-fa-question outline-none" ${{ onClick: () => this.post('app.help') }}></button>
+          </div>
         </div>
+        ${d.portal(() => this.tabContent)}
       </div>
-      ${d.portal(() => this.tabContent)}
+    `}
+    <div class="flex-1 flex">
+      ${this.leftPadding = d.html`<div class="flex-1"></div>`}
+      ${d.portal(() => this.content)}
+      ${this.resizeBtn = d.html`
+        <button ${{
+          class: ['block flex-1 px-2', () => !this.content && 'hidden'],
+          onPointerDown: this.resizeStart, onPointerUp: this.resizeEnd,
+        }}>
+          <div class="w-1 h-16 self-center rounded-full bg-neutral-400"></div>
+        </button>
+      `}
     </div>
-    ${d.portal(() => this.content)}
   `;
 
   renderTabBtn = ({ key, icon }) => d.html`

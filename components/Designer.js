@@ -39,7 +39,7 @@ class Designer {
   };
 
   render = () => d.html`
-    <div class="flex-1 flex">
+    <div class="flex-1 basis-[100%] flex">
       ${d.el(DesignerToolbar, { designer: this })}
       ${this.iframe = d.html`
         <iframe class="hidden flex-1 bg-white" ${{
