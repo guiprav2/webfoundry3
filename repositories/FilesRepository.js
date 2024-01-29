@@ -1,5 +1,6 @@
 import JSZip from 'https://cdn.skypack.dev/jszip';
 import lf from 'https://cdn.skypack.dev/localforage';
+import { isImage } from '../../other/util.js';
 
 class FilesRepository {
   async loadFiles(x) {
@@ -80,6 +81,16 @@ class FilesRepository {
         await this.saveFile(site, path, blob);
       }
     }
+  }
+
+  async loadFolders(x) {
+    let files = await this.loadFiles(x);
+    return ['', ...new Set(files.map(x => x.split('/').slice(0, -1).join('/')))];
+  }
+
+  async loadImages(x, path) {
+    let files = await this.loadFiles(x);
+    return files.filter(x => x.split('/').slice(0, -1).join('/') === path && isImage(x)).sort((a, b) => a.localeCompare(b));
   }
 }
 
