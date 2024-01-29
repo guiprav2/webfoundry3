@@ -22,7 +22,7 @@ let windy = (...args) => {
       let su = $('#windy');
       su && su.parentNode.insertBefore(s, su.nextSibling);
     } else {
-      document.head.append(s);
+      document.currentScript.insertAdjacentElement('beforebegin', s);
     }
   }
 
