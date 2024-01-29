@@ -28,7 +28,6 @@ class ActionHandler {
     if (pe) { pe.removeAttribute('contenteditable') }
     if (this.s) { this.sPrev = this.s; this.s = null }
     else { this.s = this.sPrev; this.sPrev = null }
-    d.update();
   };
 
   changeMeta = async () => {
@@ -49,18 +48,18 @@ class ActionHandler {
   select = x => {
     let y = this.s?.[x];
     y && this.editorDocument.contains(y) && this.editorDocument.documentElement !== y && this.editorDocument.head !== y && (this.s = y);
-    d.update();
   };
   
   mvUp = () => { this.mv(-1) };
   mvDown = () => { this.mv(1) };
   
   mv = i => {
+    if (!this.s) { return }
     let p = this.s.parentElement, j = [...p.childNodes].indexOf(this.s), k = 1, pv;
     while (true) {
-    pv = p.childNodes[j + (i * k)];
-    if (!pv || (pv.nodeType !== Node.COMMENT_NODE && pv.nodeType !== Node.TEXT_NODE) || pv.textContent.trim()) { break }
-    k++;
+      pv = p.childNodes[j + (i * k)];
+      if (!pv || (pv.nodeType !== Node.COMMENT_NODE && pv.nodeType !== Node.TEXT_NODE) || pv.textContent.trim()) { break }
+      k++;
     }
     pv && p.insertBefore(this.s, i < 1 ? pv : pv.nextSibling);
   };
@@ -71,14 +70,14 @@ class ActionHandler {
   createInsideLast = () => { this.create('beforeend') };
   
   create = pos => {
+    if (!this.s) { return }
     if (this.s.classList.contains('Placeholder') && (pos === 'afterbegin' || pos === 'beforeend')) { return }
     let x = d.html`<div class="Placeholder">`;
     this.s.insertAdjacentElement(pos, x);
     this.s = x;
-    d.update();
   };
   
-  copy = async () => { await lf.setItem('copy', this.s.outerHTML) };
+  copy = async () => { this.s && await lf.setItem('copy', this.s.outerHTML) };
   
   pasteAfter = () => { this.paste('afterend') };
   pasteBefore = () => { this.paste('beforebegin') };
@@ -86,42 +85,43 @@ class ActionHandler {
   pasteInsideLast = () => { this.paste('beforeend') };
   
   paste = async pos => {
+    if (!this.s) { return }
     if (this.s.classList.contains('Placeholder') && (pos === 'afterbegin' || pos === 'beforeend')) { return }
     let x = d.html`<div>`;
     x.innerHTML = await lf.getItem('copy');
     let y = x.firstElementChild;
     this.s.insertAdjacentElement(pos, y);
     this.s = y;
-    d.update();
   };
   
   rm = () => {
+    if (!this.s) { return }
     let { editorDocument } = this;
     if (this.s === editorDocument.documentElement || this.s === editorDocument.body || this.s === editorDocument.head) { return }
     this.copy();
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.remove();
     this.s = p.children[i] || p.children[i - 1] || p;
-    d.update();
   };
   
   wrap = () => { this.wrapTagName('div') };
   
   wrapTagName = x => {
+    if (!this.s) { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = `<${x}>${this.s.outerHTML}</${x}>`;
     this.s = p.children[i];
-    d.update();
   };
   
   unwrap = () => {
+    if (!this.s) { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = this.s.innerHTML;
     this.s = p.children[i];
-    d.update();
   };
   
   changeTag = async () => {
+    if (!this.s) { return }
     let tagName = this.s.tagName.toLowerCase();
     let [btn, x] = await showModal(d.el(InputDialog, {
     short: true, title: 'Change tag', value: tagName,
@@ -133,24 +133,24 @@ class ActionHandler {
   };
   
   changeTagName = x => {
+    if (!this.s) { return }
     let tagName = this.s.tagName.toLowerCase();
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     if (x === 'img' || x === 'video' || x === 'br' || x === 'hr') { this.s.innerHTML = '' }
     this.s.outerHTML = this.s.outerHTML.replace(tagName, x);
     this.s = p.children[i];
-    d.update();
   };
   
   changeText = async () => {
-    let [btn, x] = await showModal(d.el(InputDialog, {
-    title: 'Change text', value: this.s.textContent,
-    }));
+    if (!this.s) { return }
+    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change text', value: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.classList.remove('Placeholder');
     this.s.textContent = x;
   };
   
   changeMultilineText = async () => {
+    if (!this.s) { return }
     let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change multiline text', multiline: true, value: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.classList.remove('Placeholder');
@@ -158,9 +158,8 @@ class ActionHandler {
   };
   
   changeHref = async () => {
-    let [btn, x] = await showModal(d.el(InputDialog, {
-    short: true, title: 'Change href', value: this.s.getAttribute('href'),
-    }));
+    if (!this.s) { return }
+    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change href', value: this.s.getAttribute('href') }));
     if (btn !== 'ok') { return }
     if (this.s.tagName === 'DIV' || this.s.tagName === 'SPAN') { this.changeTagName('a') }
     else if (this.s.tagName !== 'A') { this.wrapTagName('a') }
@@ -168,9 +167,8 @@ class ActionHandler {
   };
   
   changeSrcUrl = async () => {
-    let [btn, x] = await showModal(d.el(InputDialog, {
-    short: true, title: 'Change src', value: this.s.src,
-    }));
+    if (!this.s) { return }
+    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change src', value: this.s.src }));
     if (btn !== 'ok') { return }
     this.s.classList.toggle('Placeholder', false);
     this.s.tagName !== 'VIDEO' && this.s.tagName !== 'IFRAME' && this.changeTagName('img');
@@ -178,10 +176,11 @@ class ActionHandler {
   };
   
   changeBgUrl = async () => {
+    if (!this.s) { return }
     let current = this.s.style.backgroundImage;
     let [btn, x] = await showModal(d.el(InputDialog, {
-    short: true, title: 'Change background image',
-    value: current.startsWith('url("') ? current.slice(5, -2) : current,
+      short: true, title: 'Change background image',
+      value: current.startsWith('url("') ? current.slice(5, -2) : current,
     }));
     if (btn !== 'ok') { return }
     this.s.classList.toggle('Placeholder', false);
@@ -190,6 +189,7 @@ class ActionHandler {
   };
   
   changeSrcUpload = async () => {
+    if (!this.s) { return }
     let [btn, detail] = await showModal(d.el(ImageGalleryDialog));
     if (btn !== 'ok') { return }
     this.s.classList.remove('Placeholder');
@@ -203,6 +203,7 @@ class ActionHandler {
   };
   
   changeBgUpload = async () => {
+    if (!this.s) { return }
     let [btn, detail] = await showModal(d.el(ImageGalleryDialog));
     if (btn !== 'ok') { return }
     this.s.classList.remove('Placeholder');
@@ -215,25 +216,23 @@ class ActionHandler {
   };
   
   changeHtml = async () => {
-    let [btn, x] = await showModal(d.el(CodeDialog, {
-    title: 'Change HTML', value: this.s.outerHTML,
-    }));
+    if (!this.s) { return }
+    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change HTML', value: this.s.outerHTML }));
     if (btn !== 'ok') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = x;
     this.s = p.children[i];
-    d.update();
   };
   
   changeInnerHtml = async () => {
-    let [btn, x] = await showModal(d.el(CodeDialog, {
-    title: 'Change inner HTML', value: this.s.innerHTML,
-    }));
+    if (!this.s) { return }
+    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change inner HTML', value: this.s.innerHTML }));
     if (btn !== 'ok') { return }
     this.s.innerHTML = x;
   };
   
   toggleEditable = ev => {
+    if (!this.s) { return }
     let pe = this.s.closest('[contenteditable="true"]');
     if (!pe || pe === this.s) {
     let t = pe || this.s;
