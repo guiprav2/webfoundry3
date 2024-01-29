@@ -11,7 +11,7 @@ class DesignerToolbar {
       ['btn', 'nf-md-menu_open', ','],
       ['btn', 'nf-fa-bars', '.'],
       ['sep'],
-      ['sp-btn', 'nf-oct-x', 'Esc'],
+      ['sp-btn', 'nf-oct-x', 'Esc', () => this.post('designer.command', 'Escape')],
       ['s-btn', 'nf-md-arrow_right_bottom', 'l'],
       ['s-btn', 'nf-cod-chevron_left', 'k'],
       ['s-btn', 'nf-cod-chevron_right', 'j'],
@@ -73,14 +73,14 @@ class DesignerToolbar {
       <button class="w-5 h-5 nf nf-md-drag_vertical" ${{ onPointerDown: this.moveStart }}></button>
       ${d.map(() => this.items, x => d.html`
         ${d.if(() => x[0] === 'btn', d.html`
-          <button ${{ class: () => ['shrink-0 w-6 h-6 flex relative top-[2px] nf', x[1]], onClick: () => x[2] ? this.post('designer.command', x[2]) : x[3]() }}>
+          <button ${{ class: () => ['shrink-0 w-6 h-6 flex relative top-[2px] nf', x[1]], onClick: () => x[3] ? x[3]() : this.post('designer.command', x[2]) }}>
             <div class="font-2xs relative top-[14px]">${x[2]}</div>
           </button>
         `)}
         ${d.if(() => x[0] === 's-btn', d.html`
           <button ${{
             class: ['shrink-0 w-6 h-6 flex relative top-[2px] nf', x[1], () => !this.s && 'opacity-50'],
-            disabled: () => !this.s, onClick: () => x[2] ? this.post('designer.command', x[2]) : x[3](),
+            disabled: () => !this.s, onClick: () => x[3] ? x[3]() : this.post('designer.command', x[2]),
           }}>
             <div class="font-2xs relative top-[14px]">${x[2]}</div>
           </button>
@@ -88,7 +88,7 @@ class DesignerToolbar {
         ${d.if(() => x[0] === 'sp-btn', d.html`
           <button ${{
             class: ['shrink-0 w-6 h-6 flex relative top-[2px] nf', x[1], () => !this.s && !this.sPrev && 'opacity-50'],
-            disabled: () => !this.s && !this.sPrev, onClick: () => x[2] ? this.post('designer.command', x[2]) : x[3](),
+            disabled: () => !this.s && !this.sPrev, onClick: () => x[3] ? x[3]() : this.post('designer.command', x[2]),
           }}>
             <div class="font-2xs relative top-[14px]">${x[2]}</div>
           </button>
