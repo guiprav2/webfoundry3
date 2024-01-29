@@ -157,7 +157,7 @@ class AppCtrl {
 
     zipOptions: async () => {
       let [btn] = await showModal(d.el(ZipDialog));
-      if (btn === 'cancel') { return }
+      if (!btn || btn === 'cancel') { return }
       this.post({ export: 'app.exportZip', import: 'app.importZip' }[btn]);
     },
 

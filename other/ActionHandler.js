@@ -47,7 +47,7 @@ class ActionHandler {
   selectLastChild = () => this.select('lastElementChild');
   
   select = x => {
-    let y = this.s[x];
+    let y = this.s?.[x];
     y && this.editorDocument.contains(y) && this.editorDocument.documentElement !== y && this.editorDocument.head !== y && (this.s = y);
     d.update();
   };
