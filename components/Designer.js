@@ -43,14 +43,45 @@ class Designer {
     mutobs.observe(this.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
   };
 
+  resizeStart = ev => {
+    ev.target.setPointerCapture(ev.pointerId);
+    ev.target.addEventListener('pointermove', this.resize);
+  };
+
+  resizeEnd = ev => {
+    ev.target.releasePointerCapture(ev.pointerId);
+    ev.target.removeEventListener('pointermove', this.resize);
+  };
+
+  resize = ev => {
+    let r = this.leftPadding.getBoundingClientRect();
+    let l = this.resizeBtn.getBoundingClientRect();
+    let w = Math.max(400, ev.clientX - r.right);
+    if (w >= l.left - 320) { this.content.style.maxWidth = '' }
+    else { this.content.style.maxWidth = `${w}px` }
+  };
+
   render = () => d.html`
-    <div class="flex-1 basis-[100%] flex">
-      ${d.el(DesignerToolbar, { designer: this })}
-      ${this.iframe = d.html`
-        <iframe class="hidden flex-1 bg-white" ${{
-          onAttach: this.onAttach, onDetach: this.onDetach,
-          src: `files/${this.state.app.currentSite}/${this.path}`, onLoad: this.onLoad,
+    <div class="flex-1 flex">
+      ${this.leftPadding = d.html`<div class="flex-1"></div>`}
+      ${this.content = d.html`
+        <div class="flex-1 basis-[100%] flex">
+          ${d.el(DesignerToolbar, { designer: this })}
+          ${this.iframe = d.html`
+            <iframe class="hidden flex-1 bg-white" ${{
+              onAttach: this.onAttach, onDetach: this.onDetach,
+              src: `files/${this.state.app.currentSite}/${this.path}`, onLoad: this.onLoad,
+            }}>
+          `}
+        </div>
+      `}
+      ${this.resizeBtn = d.html`
+        <button ${{
+          class: ['block flex-1 px-2', () => !this.content && 'hidden'],
+          onPointerDown: this.resizeStart, onPointerUp: this.resizeEnd,
         }}>
+          <div class="w-1 h-16 self-center rounded-full bg-neutral-400"></div>
+        </button>
       `}
     </div>
   `;
