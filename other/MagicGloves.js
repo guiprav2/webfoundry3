@@ -7,7 +7,7 @@ class MagicGloves {
     Object.assign(this, { iframe });
     let [state, post] = useCtrl();
     Object.assign(this, { state, post });
-    iframe.contentDocument.body.addEventListener('click', this.onClick);
+    iframe.contentDocument.body.addEventListener('click', this.onClick, true);
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown);
     this.sov = new Boo(
       d.el(MagicOverlay, { s: () => this.state.designer.s }),
@@ -19,6 +19,7 @@ class MagicGloves {
   onClick = ev => {
     if (ev.ctrlKey) { return }
     ev.preventDefault();
+    ev.stopPropagation();
     this.post('designer.select', ev.target);
   };
 
