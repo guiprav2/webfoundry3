@@ -14,6 +14,7 @@ class CodeEditor {
 
   onAttach = async () => {
     this.editor = ace.edit(this.root);
+    this.editor.session.setTabSize(2);
     this.editor.setFontSize('16px');
     this.editor.setTheme('ace/theme/monokai');
     let mode = { css: 'css', js: 'javascript' }[this.path.split('.').pop()];
