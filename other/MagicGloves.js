@@ -36,12 +36,23 @@ class MagicOverlay {
   constructor(props) { this.props = props }
   get s() { return d.resolve(this.props.s) }
 
+  get color() {
+    if (this.s.getAttribute('wf-if') || this.s.getAttribute('wf-map') || this.s.getAttribute('wf-dataloader')) { return 'yellow-500' }
+    if (this.s.getAttribute('wf-slot')) { return 'red-500' }
+    return 'blue-500';
+  }
+
   render = () => d.html`
-    <div class="rounded border border-blue-400 opacity-1 z-10 pointer-events-none">
-      <span class="absolute right-0 bottom-0 -mr-1 -mb-2 rounded-lg px-2 py-0.5 empty:hidden whitespace-nowrap font-2xs text-white bg-blue-400/90">
+    <div ${{ class: ['rounded border opacity-1 z-10 pointer-events-none', () => `border-${this.color}`] }}>
+      <span ${{ class: ['absolute right-0 bottom-0 -mr-1 -mb-2 rounded-lg px-2 py-0.5 empty:hidden whitespace-nowrap font-2xs text-white', () => `bg-${this.color}/90`] }}>
         <i class="nf nf-md-vector_square"></i>
         ${d.text(() => {
           if (!this.s || this.s.nodeType !== Node.ELEMENT_NODE) { return }
+          if (this.s.getAttribute('wf-if')) { return 'if' }
+          if (this.s.getAttribute('wf-map')) { return 'map' }
+          if (this.s.getAttribute('wf-dataloader')) { return 'DataLoader' }
+          let slotName = this.s.getAttribute('wf-slot');
+          if (slotName) { return `slot: ${slotName}` }
           let txt = this.s.classList[0];
           if (/^[A-Z]/.test(txt)) { return txt }
           return this.s.tagName.toLowerCase();
