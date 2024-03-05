@@ -36,6 +36,24 @@ class MagicOverlay {
   constructor(props) { this.props = props }
   get s() { return d.resolve(this.props.s) }
 
+  get slots() {
+    if (this.s.getAttribute('wf-if')) { return ['then', 'else'] }
+    if (this.s.getAttribute('wf-dataloader')) { return ['loading', 'ready', 'error'] }
+    return [];
+  }
+
+  get activeSlot() { return [...this.s.children].find(x => x.getAttribute('wf-slot') && !x.hidden)?.getAttribute?.('wf-slot') }
+
+  onActiveSlotChange = ev => {
+    let name = ev.target.value;
+    let target = [...this.s.children].find(x => x.getAttribute('wf-slot') === name);
+    for (let x of this.s.children) {
+      if (!x.getAttribute('wf-slot')) { continue }
+      x.hidden = x !== target;
+    }
+    if (!target) { this.s.append(d.html`<div ${{ 'wf-slot': name }}><div class="Placeholder"></div></div>`) }
+  };
+
   get color() {
     if (this.s.getAttribute('wf-if') || this.s.getAttribute('wf-map') || this.s.getAttribute('wf-dataloader')) { return 'yellow-500' }
     if (this.s.getAttribute('wf-slot')) { return 'red-500' }
@@ -58,6 +76,14 @@ class MagicOverlay {
           return this.s.tagName.toLowerCase();
         })}
       </span>
+      ${d.if(() => this.slots.length, d.html`
+        <span ${{ class: ['absolute left-0 top-0 -ml-1 -mt-2 rounded-lg px-2 py-0.5 empty:hidden whitespace-nowrap font-2xs text-white pointer-events-auto', () => `bg-${this.color}/90`] }}>
+          slot:
+          <select class="bg-transparent" ${{ onChange: this.onActiveSlotChange }}>
+            ${d.usePlaceholderTag('option', d.map(() => this.slots, x => d.html`<option ${{ name: x, selected: () => this.activeSlot === x }}>${x}</option>`))}
+          </select>
+        </span>
+      `)}
     </div>
   `;
 }
