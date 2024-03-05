@@ -37,8 +37,10 @@ class MagicOverlay {
   get s() { return d.resolve(this.props.s) }
 
   get slots() {
-    if (this.s.getAttribute('wf-if')) { return ['then', 'else'] }
-    if (this.s.getAttribute('wf-dataloader')) { return ['loading', 'ready', 'error'] }
+    if (this.s) {
+      if (this.s.getAttribute('wf-if')) { return ['then', 'else'] }
+      if (this.s.getAttribute('wf-dataloader')) { return ['loading', 'ready', 'error'] }
+    }
     return [];
   }
 
@@ -55,8 +57,10 @@ class MagicOverlay {
   };
 
   get color() {
-    if (this.s.getAttribute('wf-if') || this.s.getAttribute('wf-map') || this.s.getAttribute('wf-dataloader')) { return 'yellow-500' }
-    if (this.s.getAttribute('wf-slot')) { return 'red-500' }
+    if (this.s) {
+      if (this.s.getAttribute('wf-if') || this.s.getAttribute('wf-map') || this.s.getAttribute('wf-dataloader')) { return 'yellow-500' }
+      if (this.s.getAttribute('wf-slot')) { return 'red-500' }
+    }
     return 'blue-500';
   }
 
@@ -78,7 +82,6 @@ class MagicOverlay {
       </span>
       ${d.if(() => this.slots.length, d.html`
         <span ${{ class: ['absolute left-0 top-0 -ml-1 -mt-2 rounded-lg px-2 py-0.5 empty:hidden whitespace-nowrap font-2xs text-white pointer-events-auto', () => `bg-${this.color}/90`] }}>
-          slot:
           <select class="bg-transparent" ${{ onChange: this.onActiveSlotChange }}>
             ${d.usePlaceholderTag('option', d.map(() => this.slots, x => d.html`<option ${{ name: x, selected: () => this.activeSlot === x }}>${x}</option>`))}
           </select>

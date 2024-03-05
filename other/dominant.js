@@ -5,7 +5,7 @@ var boundNodes = [];
 var ieNodes = navigator.userAgent.indexOf('Trident') ? [] : null;
 
 var classTypeRegExp = /^class\s/;
-var ariaRegExp = /^aria-/;
+var hyphenRegExp = /-/;
 var svgNsRegExp = /\/svg$/;
 var wsRegExp = / |\r|\n/;
 var onAttachRegExp = /^on:?attach$/i
@@ -100,8 +100,8 @@ Binding.prototype.update = function() {
 
   var el = this.target;
 
-  // aria-* and SVG element props need to be managed as attributes.
-  if (ariaRegExp.test(this.key) || svgNsRegExp.test(el.namespaceURI)) {
+  // SVG element and hyphenated props need to be managed as attributes.
+  if (hyphenRegExp.test(this.key) || svgNsRegExp.test(el.namespaceURI)) {
     if (!nullish(newValue)) { el.setAttribute(this.key, newValue) }
     else { el.removeAttribute(this.key) }
   } else {
@@ -396,8 +396,8 @@ function createElement(type) {
       continue;
     }
 
-    // aria-* and SVG element props need to be managed as attributes.
-    if (ariaRegExp.test(k) || svgNsRegExp.test(el.namespaceURI)) {
+    // SVG element and hyphenated props need to be managed as attributes.
+    if (hyphenRegExp.test(k) || svgNsRegExp.test(el.namespaceURI)) {
       if (!nullish(v)) { el.setAttribute(k, v) }
       else { el.removeAttribute(k) }
     }
