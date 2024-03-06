@@ -10,6 +10,7 @@ import { isImage } from '../other/util.js';
 
 class App {
   constructor() {
+    window.app = this;
     let [state, post] = useCtrl();
     Object.assign(this, { state, post });
   }
@@ -53,6 +54,7 @@ class App {
             ${this.renderTabBtn({ key: 'sites', icon: 'nf-fa-sitemap' })}
             ${this.renderTabBtn({ key: 'files', icon: 'nf-fa-folder' })}
             ${this.renderTabBtn({ key: 'styles', icon: 'nf-fa-paint_brush' })}
+            <button ${{ class: ['nf outline-none', () => this.state.app.mode === 'files' ? 'nf-fa-play' : 'nf-fa-pause'], onClick: () => this.post('app.toggleMode') }}></button>
             <button class="nf nf-fa-question outline-none" ${{ onClick: () => this.post('app.help') }}></button>
           </div>
         </div>

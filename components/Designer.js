@@ -18,6 +18,8 @@ class Designer {
   onDetach = () => { this.gloves && this.gloves.destroy(); this.post('designer.reset') };
 
   onLoad = () => {
+    this.gloves?.destroy?.();
+    if (this.state.app.mode === 'preview') { return }
     this.gloves = new MagicGloves(this.iframe);
 
     if (!this.editorDocument.querySelector('meta[name="viewport"]')) {
@@ -70,7 +72,7 @@ class Designer {
           ${this.iframe = d.html`
             <iframe class="hidden flex-1 bg-white" ${{
               onAttach: this.onAttach, onDetach: this.onDetach,
-              src: `files/${this.state.app.currentSite}/${this.path}`, onLoad: this.onLoad,
+              src: () => `${this.state.app.mode}/${this.state.app.currentSite}/${this.path}`, onLoad: this.onLoad,
             }}>
           `}
         </div>

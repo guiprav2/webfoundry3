@@ -2822,15 +2822,34 @@ module.exports = localforage_js;
 let lf = require('localforage');
 
 self.addEventListener('fetch', event => {
-  // Assuming the URL pattern to check is something like '/files/yourfile.jpg'
-  if (event.request.url.includes('/files/')) {
-    const url = new URL(event.request.url);
-    const path = decodeURIComponent(url.pathname);
+  let { url } = event.request;
+  if (url.includes('/files/')) {
+    let url = new URL(event.request.url);
+    let path = decodeURIComponent(url.pathname);
     
     // Extract the file name and prepend with 'file:' to match the localForage key
-    const parts = path.slice(path.indexOf('/files/') + '/files/'.length).split('/');
-    const site = parts.shift();
-    const fileKey = 'webfoundry:file:' + site + ':' + parts.join('/');
+    let parts = path.slice(path.indexOf('/files/') + '/files/'.length).split('/');
+    let site = parts.shift();
+    let fileKey = 'webfoundry:file:' + site + ':' + parts.join('/');
+
+    event.respondWith(lf.getItem(fileKey).then(file => {
+      if (file != null) {
+        return new Response(file);
+      } else {
+        return new Response('File not found', { status: 404 });
+      }
+    }).catch(error => {
+      return new Response('Error fetching file: ' + error, { status: 500 });
+    })
+    );
+  } else if (url.includes('/preview/')) {
+    let url = new URL(event.request.url);
+    let path = decodeURIComponent(url.pathname);
+
+    // Extract the file name and prepend with 'file:' to match the localForage key
+    let parts = path.slice(path.indexOf('/preview/') + '/preview/'.length).split('/');
+    let site = parts.shift();
+    let fileKey = 'webfoundry:file:' + site + ':' + parts.join('/');
 
     event.respondWith(lf.getItem(fileKey).then(file => {
       if (file != null) {

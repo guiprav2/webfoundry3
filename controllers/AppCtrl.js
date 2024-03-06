@@ -24,6 +24,7 @@ class AppCtrl {
     currentTab: 'sites',
     currentSite: null,
     currentFile: null,
+    mode: 'files',
     sites: {},
     files: [],
     expandedPaths: new Set(),
@@ -98,6 +99,11 @@ class AppCtrl {
 
     loadFiles: async () => this.state.files = structuredFiles(await rfiles.loadFiles(this.state.currentSite)),
     openFile: x => this.state.currentFile = x,
+
+    toggleMode: () => {
+      if (this.state.mode === 'files') { this.state.mode = 'preview' }
+      else { this.state.mode = 'files' }
+    },
 
     newFile: async x => {
       let content = new Blob([x.endsWith('.html') ? defaultHtml : ''], { type: mimeLookup(x) });
