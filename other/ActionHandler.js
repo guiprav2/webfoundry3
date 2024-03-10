@@ -13,6 +13,7 @@ class ActionHandler {
     Object.assign(this, { state, post });
 
     d.effect(() => this.s, x => {
+      if (!this.editorDocument) { return } // FIXME: Disable unused effects instead
       this.editorDocument.querySelectorAll('dialog').forEach(x => {
         if (this.s && x.contains(this.s)) { return }
         x.close();
