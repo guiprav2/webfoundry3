@@ -13,9 +13,10 @@ class ActionHandler {
     Object.assign(this, { state, post });
 
     d.effect(() => this.s, x => {
-      document.querySelectorAll('dialog').forEach(x => {
+      this.editorDocument.querySelectorAll('dialog').forEach(x => {
         if (this.s && x.contains(this.s)) { return }
         x.close();
+        x.removeAttribute('open');
       });
 
       let dialog = this.s?.closest?.('dialog');
