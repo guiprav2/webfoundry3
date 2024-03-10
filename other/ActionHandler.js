@@ -13,8 +13,15 @@ class ActionHandler {
     Object.assign(this, { state, post });
 
     d.effect(() => this.s, x => {
-      document.querySelectorAll('dialog').forEach(x => x.close());
-      if (this.s?.tagName === 'DIALOG') { this.s.showModal() }
+      document.querySelectorAll('dialog').forEach(x => {
+        if (this.s && x.contains(this.s)) { return }
+        x.close();
+      });
+
+      let dialog = this.s?.closest?.('dialog');
+      if (!dialog) { return }
+      dialog.removeAttribute('open');
+      dialog.showModal();
     });
   }
 
