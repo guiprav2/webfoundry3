@@ -148,6 +148,14 @@ class ActionHandler {
     if (x === 'dialog') { this.s.open = false; this.s.showModal() }
   };
   
+  changeId = async () => {
+    if (!this.s) { return }
+    let id = this.s.id;
+    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change ID', value: id }));
+    if (btn !== 'ok') { return }
+    this.s.id = x;
+  };
+  
   changeTagName = x => {
     if (!this.s) { return }
     let tagName = this.s.tagName.toLowerCase();
@@ -287,6 +295,7 @@ class ActionHandler {
     w: this.wrap,
     W: this.unwrap,
     e: this.changeTag,
+    '#': this.changeId,
     t: this.changeText,
     T: this.changeMultilineText,
     H: this.changeHref,
