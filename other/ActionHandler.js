@@ -11,6 +11,11 @@ class ActionHandler {
     this.designer = designer;
     let [state, post] = useCtrl();
     Object.assign(this, { state, post });
+
+    d.effect(() => this.s, x => {
+      document.querySelectorAll('dialog').forEach(x => x.close());
+      if (this.s?.tagName === 'DIALOG') { this.s.showModal() }
+    });
   }
 
   get editorDocument() { return this.designer.editorDocument }
@@ -246,13 +251,6 @@ class ActionHandler {
     }
   };
 
-  toggleDialog = ev => {
-    if (!this.s) { return }
-    let dialog = this.s.closest('dialog');
-    if (!dialog.open) { dialog.showModal() }
-    else { dialog.close(); dialog.removeAttribute('open') }
-  };
-  
   kbds = {
     ',': this.toggleSidebar,
     '.': this.toggleToolbar,
@@ -291,7 +289,6 @@ class ActionHandler {
     m: this.changeHtml,
     M: this.changeInnerHtml,
     v: this.toggleEditable,
-    x: this.toggleDialog,
   };
 }
 
