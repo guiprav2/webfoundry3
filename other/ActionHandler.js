@@ -20,7 +20,7 @@ class ActionHandler {
       });
 
       let dialog = this.s?.closest?.('dialog');
-      if (!dialog) { return }
+      if (!dialog || dialog.open) { return }
       dialog.removeAttribute('open');
       dialog.showModal();
     });
