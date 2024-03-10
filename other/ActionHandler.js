@@ -245,6 +245,12 @@ class ActionHandler {
     ev && ev.preventDefault();
     }
   };
+
+  toggleDialog = ev => {
+    if (!this.s) { return }
+    let dialog = this.s.closest('dialog');
+    dialog.open ? dialog.close() : dialog.showModal();
+  };
   
   kbds = {
     ',': this.toggleSidebar,
@@ -284,6 +290,7 @@ class ActionHandler {
     m: this.changeHtml,
     M: this.changeInnerHtml,
     v: this.toggleEditable,
+    x: this.toggleDialog,
   };
 }
 
