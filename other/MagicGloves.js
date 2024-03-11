@@ -24,7 +24,8 @@ class MagicGloves {
   };
 
   onKeyDown = ev => {
-    if (ev.key !== 'Escape' && this.iframe.contentDocument.activeElement.tagName === 'INPUT') { return }
+    let { tagName } = this.iframe.contentDocument.activeElement;
+    if (ev.key !== 'Escape' && (tagName === 'INPUT' || tagName === 'TEXTAREA')) { return }
     if (!this.state.designer.hasActionHandler(ev.key)) { return }
     ev.preventDefault();
     this.post('designer.command', ev.key);
