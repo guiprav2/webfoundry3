@@ -1,5 +1,17 @@
 function joinPaths(...xs) { return xs.filter(Boolean).join('/') }
 
+async function showModal(x) {
+  let { promise: p, resolve: res } = Promise.withResolvers();
+  document.body.append(x);
+  x.returnValue = '';
+  x.addEventListener('close', () => {
+    x.remove();
+    res([x.returnValue, x.returnDetail]);
+  });
+  x.showModal();
+  return p;
+}
+
 class LoadingManager {
   set = new Set();
   add(x) { this.set.add(x) }
@@ -8,4 +20,4 @@ class LoadingManager {
 }
 
 let loadman = new LoadingManager();
-export { joinPaths, loadman };
+export { joinPaths, showModal, LoadingManager, loadman };

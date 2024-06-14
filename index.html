@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Webfoundry</title>
     <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
-    <style>dialog::backdrop { background-color: rgba(0, 0, 0, 0.5) }</style>
+    <style>dialog::backdrop { background-color: rgba(0, 0, 0, 0.8) }</style>
     <script src="https://cdn.jsdelivr.net/combine/npm/ace-builds@1.23.4,npm/ace-builds@1.23.4/src-min-noconflict/theme-monokai.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-html.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-css.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-javascript.min.js,npm/ace-builds@1.23.4/src-min-noconflict/ext-beautify.min.js"></script>
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GL13QDJ82K"></script>
@@ -48,7 +48,7 @@
       import d from './other/dominant.js';
       import { state, post } from './controllers/ctrls.js';
       Object.assign(window, { state, post });
-      addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault());
+      addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault(), true);
       //navigator.serviceWorker.register('sw.bundle.js');
       document.body.append(d.el(Root));
     </script>

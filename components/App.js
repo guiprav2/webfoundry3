@@ -16,7 +16,8 @@ class App {
         sites: d.binding({ get: () => this.props.sites }),
         currentSite: d.binding({ get: () => this.props.currentSite }),
         onCreate: this.props.onCreateSite,
-        onEdit: this.props.onEditSite,
+        onSelect: this.props.onSelectSite,
+        onRename: this.props.onRenameSite,
         onDelete: this.props.onDeleteSite,
       }))}
       ${d.if(() => this.props.currentPanel === 'files', d.el(FilesPanel, {

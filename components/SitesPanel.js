@@ -11,14 +11,17 @@ class SitesPanel {
       <div class="SitesPanel-siteList flex flex-col gap-2 p-4">
         ${d.if(() => !this.props.sites.length, d.html`<div class="italic">You don't have any sites created yet. Click the button above to create your first site.</div>`)}
         ${d.map(() => this.props.sites, x => d.html`
-          <a href="#" class="SitesPanel-site flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{ class: () => this.props.currentSite === x.id && 'bg-black/70' }}>
+          <a href="#" class="SitesPanel-site flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{
+            class: () => this.props.currentSite === x.id && 'bg-black/70',
+            onClick: () => this.props.onSelect(x.id),
+          }}>
             <div class="flex items-center gap-3">
               <div class="nf nf-fa-sitemap p-2"></div>
               <div class="SitesPanel-siteName">${d.text(() => x.name)}</div>
             </div>
             <div class="flex">
-              <button class="SitesPanel-editBtn outline-none nf nf-fa-pencil p-2" ${{ onClick: () => this.props.onEdit(x.id) }}></button>
-              <button class="SitesPanel-deleteBtn outline-none nf nf-fa-trash p-2" ${{ onClick: () => this.props.onDelete(x.id) }}></button>
+              <button class="SitesPanel-renameBtn outline-none nf nf-fa-pencil p-2" ${{ onClick: ev => { ev.stopPropagation(); this.props.onRename(x.id) } }}></button>
+              <button class="SitesPanel-deleteBtn outline-none nf nf-fa-trash p-2" ${{ onClick: ev => { ev.stopPropagation(); this.props.onDelete(x.id) } }}></button>
             </div>
           </a>
         `)}

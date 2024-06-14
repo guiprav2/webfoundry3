@@ -1,5 +1,7 @@
+import PromptDialog from '../components/dialogs/PromptDialog.js';
+import d from '../other/dominant.js';
 import rsites from '../repositories/SitesRepository.js';
-import { loadman } from '../other/util.js';
+import { showModal, loadman } from '../other/util.js';
 
 class AppCtrl {
   state = {
@@ -16,6 +18,7 @@ class AppCtrl {
 
   actions = {
     reset: () => post('app.loadSites'),
+    selectPanel: x => this.state.currentPanel = x,
 
     loadSites: async () => {
       if (loadman.has('app.loadSites')) { return }
@@ -28,7 +31,30 @@ class AppCtrl {
       }
     },
 
-    selectPanel: x => this.state.currentPanel = x,
+    createSite: async () => {
+      let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Create site', placeholder: 'Site name', allowEmpty: false }));
+      if (btn !== 'ok') { return }
+      let id = crypto.randomUUID();
+      await rsites.saveSite(id, { name: x });
+      //await post('app.injectBuiltins', id, true);
+      await post('app.loadSites');
+      await post('app.selectSite', id);
+      return id;
+    },
+
+    selectSite: async x => {
+      this.state.currentSite = x;
+      this.state.currentFile = null;
+      //await post('app.injectBuiltins', x);
+      //await post('app.loadFiles');
+      await post('app.selectPanel', 'files');
+    },
+
+    renameSite: async x => {
+      let [btn, y] = await showModal(d.el(PromptDialog, { title: 'Rename site', placeholder: 'Site name', allowEmpty: false, initialValue: this.state.sites.find(y => y.id === x).name }));
+      if (btn !== 'ok') { return }
+      alert(y);
+    },
   };
 }
 
