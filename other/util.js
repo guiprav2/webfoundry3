@@ -1,4 +1,4 @@
-function joinPaths(...xs) { return xs.filter(Boolean).join('/') }
+function joinPath(path, name) { return [...path.split('/'), name].filter(Boolean).join('/') }
 
 async function showModal(x) {
   let { promise: p, resolve: res } = Promise.withResolvers();
@@ -20,4 +20,4 @@ class LoadingManager {
 }
 
 let loadman = new LoadingManager();
-export { joinPaths, showModal, LoadingManager, loadman };
+export { joinPath, showModal, LoadingManager, loadman };

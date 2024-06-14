@@ -1,5 +1,5 @@
 import d from '../other/dominant.js';
-import { joinPaths } from '../other/util.js';
+import { joinPath } from '../other/util.js';
 
 class FilesPanel {
   constructor(props) { this.props = props }
@@ -10,22 +10,22 @@ class FilesPanel {
         Create
       </button>
       <div class="FilesPanel-fileList flex flex-col gap-2 p-4">
-        ${d.map(() => this.props.files, x => d.html`
+        ${d.map(() => this.props.files, ([name, path, isDir]) => d.html`
           <a href="#" class="FilesPanel-file flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{
-            class: [() => `ml-[${x.lv * 1.25}rem]`, () => this.props.currentFile === joinPaths(x.path, x.name) && 'bg-black/70'],
-            onClick: () => this.props.onSelect(joinPaths(x.path, x.name)),
+            class: [() => `ml-[${(path.split('/').length - 1) * 1.25}rem]`, () => this.props.currentFile === joinPath(path, name) && 'bg-black/70'],
+            onClick: () => this.props.onSelect(joinPath(path, name)),
           }}>
             <div class="flex items-center gap-3">
               <div class="nf p-2 nf-fa-folder"></div>
-              <div class="SitesPanel-fileName">${d.text(() => x.name)}</div>
+              <div class="SitesPanel-fileName">${name}</div>
             </div>
             <div class="flex">
-              ${d.if(() => x.isDir, d.html`
-                <button class="FilesPanel-createInsideBtn outline-none nf p-2 nf-fa-plus" ${{ onClick: ev => { ev.stopPropagation(); this.props.onCreate(joinPaths(x.path, x.name)) } }}></button>`
+              ${d.if(() => isDir, d.html`
+                <button class="FilesPanel-createInsideBtn outline-none nf p-2 nf-fa-plus" ${{ onClick: ev => { ev.stopPropagation(); this.props.onCreate(joinPath(path, name)) } }}></button>`
               )}
-              ${d.if(() => !['components', 'controllers', 'pages'].includes(joinPaths(x.path, x.name)), d.html`
-                <button class="FilesPanel-renameBtn outline-none nf p-2 nf-fa-pencil" ${{ onClick: ev => { ev.stopPropagation(); this.props.onRename(joinPaths(x.path, x.name)) } }}></button>
-                <button class="FilesPanel-deleteBtn outline-none nf p-2 nf-fa-trash" ${{ onClick: ev => { ev.stopPropagation(); this.props.onDelete(joinPaths(x.path, x.name)) } }}></button>
+              ${d.if(() => !['components', 'controllers', 'pages'].includes(joinPath(path, name)), d.html`
+                <button class="FilesPanel-renameBtn outline-none nf p-2 nf-fa-pencil" ${{ onClick: ev => { ev.stopPropagation(); this.props.onRename(joinPath(path, name)) } }}></button>
+                <button class="FilesPanel-deleteBtn outline-none nf p-2 nf-fa-trash" ${{ onClick: ev => { ev.stopPropagation(); this.props.onDelete(joinPath(path, name)) } }}></button>
               `)}
             </div>
           </a>

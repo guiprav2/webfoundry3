@@ -24,6 +24,7 @@ class App {
         files: d.binding({ get: () => this.props.files }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
         onCreate: this.props.onCreateFile,
+        onSelect: this.props.onSelectFile,
         onRename: this.props.onRenameFile,
         onDelete: this.props.onDeleteFile,
       }))}

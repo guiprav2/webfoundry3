@@ -1,15 +1,18 @@
+import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
 import d from '../other/dominant.js';
+import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
+import structuredFiles from '../other/structuredFiles.js';
 import { showModal, loadman } from '../other/util.js';
 
 class AppCtrl {
   state = {
     currentPanel: 'sites',
     sites: [],
-    currentSite: 1,
-    files: [{ lv: 0, name: 'components', isDir: true }, { lv: 0, name: 'controllers', isDir: true }, { lv: 0, name: 'pages', isDir: true }, { lv: 1, name: 'index.html' }],
-    currentFile: 'index.js',
+    currentSite: null,
+    files: [],
+    currentFile: null,
     styles: ['flex', 'justify-center', 'items-center'],
     designerWidth: 'calc(1471px - 1rem)',
     designerHeight: '100vh',
@@ -36,7 +39,7 @@ class AppCtrl {
       if (btn !== 'ok') { return }
       let id = crypto.randomUUID();
       await rsites.saveSite(id, { name: x });
-      //await post('app.injectBuiltins', id, true);
+      await post('app.injectBuiltins', id, true);
       await post('app.loadSites');
       await post('app.selectSite', id);
       return id;
@@ -45,15 +48,48 @@ class AppCtrl {
     selectSite: async x => {
       this.state.currentSite = x;
       this.state.currentFile = null;
-      //await post('app.injectBuiltins', x);
-      //await post('app.loadFiles');
+      await post('app.injectBuiltins', x);
+      await post('app.loadFiles');
       await post('app.selectPanel', 'files');
     },
 
     renameSite: async x => {
-      let [btn, y] = await showModal(d.el(PromptDialog, { title: 'Rename site', placeholder: 'Site name', allowEmpty: false, initialValue: this.state.sites.find(y => y.id === x).name }));
+      let [btn, name] = await showModal(d.el(PromptDialog, { title: 'Rename site', placeholder: 'Site name', allowEmpty: false, initialValue: this.state.sites.find(y => y.id === x).name }));
       if (btn !== 'ok') { return }
-      alert(y);
+      rsites.saveSite(x, { ...rsites.loadSite(x), name });
+      post('app.loadSites');
+    },
+
+    deleteSite: async x => {
+      let [btn] = await showModal(d.el(ConfirmationDialog, { title: 'Delete site?' }));
+      if (btn !== 'yes') { return }
+      await Promise.all((await rfiles.loadFiles(x)).map(y => rfiles.deleteFile(x, y)));
+      rsites.deleteSite(x);
+      if (this.state.currentSite === x) { this.state.currentSite = this.state.currentFile = this.state.replacingClass = null }
+      post('app.loadSites');
+    },
+
+    injectBuiltins: async (id, wf) => {
+      let files = Object.fromEntries(await Promise.all([
+        //'webfoundry/app.js',
+        //'webfoundry/dominant.js',
+        //'index.html',
+      ].map(async x => [x, await fetchFile(`builtin/${x}`)])));
+
+      await rfiles.saveFile(id, 'components/.keep', new Blob([''], { type: 'text/plain' }));
+      await rfiles.saveFile(id, 'controllers/.keep', new Blob([''], { type: 'text/plain' }));
+      await rfiles.saveFile(id, 'pages/.keep', new Blob([''], { type: 'text/plain' }));
+      for (let [k, v] of Object.entries(files)) { await rfiles.saveFile(id, k, v) }
+
+      if (wf) {
+        await rfiles.saveFile(id, 'webfoundry/templates.json', new Blob(['{}'], { type: 'application/json' }));
+        await rfiles.saveFile(id, 'webfoundry/scripts.json', new Blob(['[]'], { type: 'application/json' }));
+      }
+    },
+
+    loadFiles: async () => {
+      let files = await rfiles.loadFiles(this.state.currentSite);
+      this.state.files = structuredFiles(files.filter(x => localStorage.getItem('webfoundry:showInternal') || (!x.startsWith('webfoundry/') && x !== 'index.html')));
     },
   };
 }

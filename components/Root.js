@@ -17,6 +17,7 @@ class Root {
     files: d.binding({ get: () => state.app.files }),
     currentFile: d.binding({ get: () => state.app.currentFile }),
     onCreateFile: () => post('app.createFile'),
+    onSelectFile: x => post('app.selectFile', x),
     onRenameFile: x => post('app.renameFile', x),
     onDeleteFile: x => post('app.deleteFile', x),
     styles: d.binding({ get: () => state.app.styles }),
