@@ -1,10 +1,8 @@
 import d from '../../other/dominant.js';
 import styles from '../../other/styles.js';
 
-class CreateFileDialog {
-  type = 'file';
-  constructor(props) { this.props = props }
-  onChangeType = ev => this.type = ev.target.value;
+class RenameFileDialog {
+  constructor(props) { this.props = props; this.value = this.props.initialValue }
   get valid() { return !!this.value?.trim?.() && !this.value.match(/[:\/]/) && !this.value.endsWith('.jsx') }
 
   onKeyDown = ev => {
@@ -13,18 +11,12 @@ class CreateFileDialog {
     ev.target.closest('form').querySelector('[value="ok"]').click();
   };
 
-  onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = [this.type.trim(), this.value]; this.root.close(ev.submitter.value) };
+  onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = this.value.trim(); this.root.close(ev.submitter.value) };
 
   render = () => this.root = d.html`
     <dialog class="rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-64 p-3 pt-2">
       <form method="dialog" ${{ onKeyDown: this.onKeyDown, onSubmit: this.onSubmit }}>
-        <div class="flex items-center gap-3">
-          <div>New:</div>
-          <select class="outline-none bg-transparent *:bg-[#121212] *:text-neutral-100" ${{ onChange: this.onChangeType }}>
-            <option value="file" selected>File</option>
-            <option value="folder">Folder</option>
-          </select>
-        </div>
+        <div class="flex items-center gap-3">Rename file</div>
         <input class="outline-none mt-2 w-full rounded px-2 py-1 bg-[#2b2d3130] disabled:opacity-50 focus:bg-[#2b2d3150]" ${{
           placeholder: 'Name',
           value: d.binding({ get: () => this.value, set: x => this.value = x }),
@@ -43,4 +35,4 @@ class CreateFileDialog {
   `;
 }
 
-export default CreateFileDialog;
+export default RenameFileDialog;

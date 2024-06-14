@@ -2,6 +2,7 @@ import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.js';
 import CreateFileDialog from '../components/dialogs/CreateFileDialog.js';
 import FileExtensionWarningDialog from '../components/dialogs/FileExtensionWarningDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
+import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
 import d from '../other/dominant.js';
 import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
@@ -294,6 +295,39 @@ class AppCtrl {
         await rfiles.saveFile(this.state.currentSite, `${path}/.keep`, '');
         await post('app.loadFiles')
       }
+
+      // TODO: Toggle path
+    },
+
+    renameFile: async (x, isDir) => {
+      let [btn, name] = await showModal(d.el(RenameFileDialog, { initialValue: x.split('/').at(-1) }));
+      if (btn !== 'ok') { return }
+
+      let newPath = [...x.split('/').slice(0, -1), name].join('/');
+      if (isDir) {
+        await rfiles.renameFolder(this.state.currentSite, x, newPath);
+        if (this.state.currentFile?.startsWith?.(`${x}/`)) { this.state.currentFile = this.state.currentFile.replace(x, newPath) }
+      } else {
+        await rfiles.renameFile(this.state.currentSite, x, newPath);
+        if (this.state.currentFile === x) { this.state.currentFile = newPath }
+      }
+
+      await post('app.loadFiles');
+    },
+
+    deleteFile: async (x, isDir) => {
+      let [btn] = await showModal(d.el(ConfirmationDialog, { title: 'Delete this file or folder?' }));
+      if (btn !== 'yes') { return }
+
+      if (isDir) {
+        await rfiles.deleteFolder(this.state.currentSite, x);
+        if (this.state.currentFile?.startsWith?.(`${x}/`)) { this.state.currentFile = null }
+      } else {
+        await rfiles.deleteFile(this.state.currentSite, x);
+        if (this.state.currentFile === x) { this.state.currentFile = null }
+      }
+
+      await post('app.loadFiles');
     },
   };
 }
