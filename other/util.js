@@ -1,4 +1,4 @@
-function joinPath(path, name) { return [...path.split('/'), name].filter(Boolean).join('/') }
+function joinPath(path, name) { return [...path?.split?.('/') || [], name].filter(Boolean).join('/') }
 
 async function showModal(x) {
   let { promise: p, resolve: res } = Promise.withResolvers();
@@ -6,7 +6,7 @@ async function showModal(x) {
   x.returnValue = '';
   x.addEventListener('close', () => {
     x.remove();
-    res([x.returnValue, x.returnDetail]);
+    res([x.returnValue, ...Array.isArray(x.returnDetail) ? x.returnDetail : [x.returnDetail]]);
   });
   x.showModal();
   return p;

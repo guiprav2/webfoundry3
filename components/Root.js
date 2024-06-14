@@ -16,7 +16,7 @@ class Root {
     onDeleteSite: x => post('app.deleteSite', x),
     files: d.binding({ get: () => state.app.files }),
     currentFile: d.binding({ get: () => state.app.currentFile }),
-    onCreateFile: () => post('app.createFile'),
+    onCreateFile: x => post('app.createFile', x),
     onSelectFile: (x, isDir) => post('app.selectFile', x, isDir),
     onRenameFile: (x, isDir) => post('app.renameFile', x, isDir),
     onDeleteFile: (x, isDir) => post('app.deleteFile', x, isDir),

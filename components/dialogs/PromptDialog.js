@@ -22,8 +22,8 @@ class PromptDialog {
           value: d.binding({ get: () => this.value, set: x => this.value = x }),
         }}>
         <div class="flex gap-1.5 mt-3">
-          <button value="cancel" ${{ class: styles.secondaryBtn }}>Cancel</button>
-          <button value="ok" ${{ class: styles.primaryBtn, disabled: () => !this.valid }}>OK</button>
+          <button value="cancel" ${{ class: styles.fullSecondaryBtn }}>Cancel</button>
+          <button value="ok" ${{ class: styles.fullPrimaryBtn, disabled: () => !this.valid }}>OK</button>
         </div>
       </form>
     </dialog>

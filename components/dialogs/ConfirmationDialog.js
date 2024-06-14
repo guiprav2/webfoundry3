@@ -9,8 +9,8 @@ class ConfirmationDialog {
       <form method="dialog">
         <div>${d.text(() => this.props.title)}</div>
         <div class="flex gap-1.5 mt-3">
-          <button value="no" ${{ class: styles.secondaryBtn }}>No</button>
-          <button value="yes" ${{ class: styles.primaryBtn }}>Yes</button>
+          <button value="no" ${{ class: styles.fullSecondaryBtn }}>No</button>
+          <button value="yes" ${{ class: styles.fullPrimaryBtn }}>Yes</button>
         </div>
       </form>
     </dialog>
