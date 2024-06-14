@@ -12,6 +12,19 @@ class AppCtrl {
     sites: [],
     currentSite: null,
     files: [],
+    expandedPaths: new Set(),
+
+    expandedPath: path => {
+      if (!path) { return true }
+      let paths = [];
+      let currentPath = '';
+      for (let part of path.split('/').slice(0, -1)) {
+        currentPath += `${part}/`;
+        paths.push(currentPath);
+      }
+      return paths.every(x => this.state.expandedPaths.has(x));
+    },
+
     currentFile: null,
     styles: ['flex', 'justify-center', 'items-center'],
     designerWidth: 'calc(1471px - 1rem)',
@@ -90,6 +103,14 @@ class AppCtrl {
     loadFiles: async () => {
       let files = await rfiles.loadFiles(this.state.currentSite);
       this.state.files = structuredFiles(files.filter(x => localStorage.getItem('webfoundry:showInternal') || (!x.startsWith('webfoundry/') && x !== 'index.html')));
+    },
+
+    selectFile: async (x, isDir) => {
+      if (isDir) {
+        let path = x + '/';
+        if (this.state.expandedPaths.has(path)) { this.state.expandedPaths.delete(path) } else { this.state.expandedPaths.add(path) }
+        return;
+      }
     },
   };
 }

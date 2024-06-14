@@ -12,20 +12,23 @@ class FilesPanel {
       <div class="FilesPanel-fileList flex flex-col gap-2 p-4">
         ${d.map(() => this.props.files, ([name, path, isDir]) => d.html`
           <a href="#" class="FilesPanel-file flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{
-            class: [() => `ml-[${(path.split('/').length - 1) * 1.25}rem]`, () => this.props.currentFile === joinPath(path, name) && 'bg-black/70'],
-            onClick: () => this.props.onSelect(joinPath(path, name)),
+            class: [
+              () => !state.app.expandedPath(path) && 'hidden',
+              () => `ml-[${(path.split('/').length - 1) * 1.25}rem]`, () => this.props.currentFile === joinPath(path, name) && 'bg-black/70',
+            ],
+            onClick: () => this.props.onSelect(joinPath(path, name), isDir),
           }}>
             <div class="flex items-center gap-3">
-              <div class="nf p-2 nf-fa-folder"></div>
+              <div class="nf p-2" ${{ class: () => `nf-fa-${isDir ? (state.app.expandedPath(path + name + '/.keep') ? 'folder_open' : 'folder') : 'file'}` }}></div>
               <div class="SitesPanel-fileName">${name}</div>
             </div>
             <div class="flex">
               ${d.if(() => isDir, d.html`
-                <button class="FilesPanel-createInsideBtn outline-none nf p-2 nf-fa-plus" ${{ onClick: ev => { ev.stopPropagation(); this.props.onCreate(joinPath(path, name)) } }}></button>`
+                <button class="FilesPanel-createInsideBtn outline-none nf p-2 nf-fa-plus" ${{ onClick: ev => { ev.stopPropagation(); this.props.onCreate(joinPath(path, name), isDir) } }}></button>`
               )}
               ${d.if(() => !['components', 'controllers', 'pages'].includes(joinPath(path, name)), d.html`
-                <button class="FilesPanel-renameBtn outline-none nf p-2 nf-fa-pencil" ${{ onClick: ev => { ev.stopPropagation(); this.props.onRename(joinPath(path, name)) } }}></button>
-                <button class="FilesPanel-deleteBtn outline-none nf p-2 nf-fa-trash" ${{ onClick: ev => { ev.stopPropagation(); this.props.onDelete(joinPath(path, name)) } }}></button>
+                <button class="FilesPanel-renameBtn outline-none nf p-2 nf-fa-pencil" ${{ onClick: ev => { ev.stopPropagation(); this.props.onRename(joinPath(path, name), isDir) } }}></button>
+                <button class="FilesPanel-deleteBtn outline-none nf p-2 nf-fa-trash" ${{ onClick: ev => { ev.stopPropagation(); this.props.onDelete(joinPath(path, name), isDir) } }}></button>
               `)}
             </div>
           </a>
