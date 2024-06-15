@@ -1,4 +1,4 @@
-//import CodeDialog from '../components/dialogs/CodeDialog.js';
+import CodeDialog from '../components/dialogs/CodeDialog.js';
 //import ComponentsDialog from '../components/dialogs/ComponentsDialog.js';
 //import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
 //import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
@@ -27,7 +27,7 @@ class ActionHandler {
   };
 
   changeMeta = async () => {
-    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change meta tag', value: this.editorDocument.head.outerHTML }));
+    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change meta tag', initialValue: this.editorDocument.head.outerHTML }));
     if (btn !== 'ok') { return }
     this.editorDocument.head.outerHTML = x;
     [...this.editorDocument.head.querySelectorAll('[data-twind]')].forEach(x => x.remove());
@@ -225,12 +225,12 @@ class ActionHandler {
   
   changeHtml = async () => {
     let clone = this.s.cloneNode(true);
-    clearComponents(clone);
-    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change HTML', value: clone.outerHTML }));
+    //clearComponents(clone);
+    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change HTML', initialValue: clone.outerHTML }));
     if (btn !== 'ok') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = x;
-    await setComponents(state.app.currentSite, p.children[i]);
+    //await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
     post('app.pushHistory');
@@ -238,12 +238,12 @@ class ActionHandler {
   
   changeInnerHtml = async () => {
     let clone = this.s.cloneNode(true);
-    clearComponents(clone);
-    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change inner HTML', value: clone.innerHTML }));
+    //clearComponents(clone);
+    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change inner HTML', initialValue: clone.innerHTML }));
     if (btn !== 'ok') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.innerHTML = x;
-    await setComponents(state.app.currentSite, p.children[i]);
+    //await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
     post('app.pushHistory');
