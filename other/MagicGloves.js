@@ -30,7 +30,7 @@ class MagicGloves {
     ev.preventDefault();
     ev.stopPropagation();
     if (!state.app.s) { this.onClick(ev) }
-    parent.postMessage({ type: 'contextmenu', x: ev.clientX, y: ev.clientY }, '*');
+    parent.postMessage({ type: 'action', action: 'app.contextMenu', args: [{ x: ev.clientX, y: ev.clientY }] }, '*');
   };
 
   onKeyDown = ev => {

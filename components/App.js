@@ -56,6 +56,7 @@ class App {
         preview: d.binding({ get: () => this.props.preview }),
         src: d.binding({ get: () => this.props.designerSrc }),
         loading: d.binding({ get: () => this.props.designerLoading }),
+        contextMenu: d.binding({ get: () => this.props.contextMenu }),
         onLoad: this.props.onLoadDesigner,
         onResize: this.props.onResizeDesigner,
       }), d.if(() => isImage(this.props.currentFile) || isVideo(this.props.currentFile) || isAudio(this.props.currentFile), d.el(MediaViewer, {

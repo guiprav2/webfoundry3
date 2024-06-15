@@ -1,6 +1,7 @@
 import ActionHandler from '../other/ActionHandler.js';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.js';
 import CreateFileDialog from '../components/dialogs/CreateFileDialog.js';
+import DesignerContextMenu from '../components/DesignerContextMenu.js';
 import FileExtensionWarningDialog from '../components/dialogs/FileExtensionWarningDialog.js';
 import ImportingDialog from '../components/dialogs/ImportingDialog.js';
 import MagicGloves from '../other/MagicGloves.js';
@@ -478,6 +479,37 @@ class AppCtrl {
       else { this.state.s.classList.remove(x) }
     },
 
+    contextMenu: where => {
+      let iframe = document.querySelector('.Designer iframe');
+      let onNestedContextMenu = ev => ev.preventDefault();
+
+      let closeContextMenu = () => {
+        removeEventListener('click', onClick);
+        removeEventListener('contextmenu', onNestedContextMenu);
+        this.state.contextMenu = null;
+        iframe.classList.remove('pointer-events-none');
+        d.updateSync();
+        iframe.focus();
+      };
+
+      let onClick = ev => !this.state.contextMenu.contains(ev.target) && closeContextMenu();
+      addEventListener('click', onClick);
+
+      iframe.blur();
+      addEventListener('contextmenu', onNestedContextMenu);
+      let { x, y } = where;
+      let iframeRect = iframe.getBoundingClientRect();
+      x += iframeRect.left - 10;
+      y += iframeRect.top - 10;
+      iframe.classList.add('pointer-events-none');
+      this.state.contextMenu = d.html`
+        <div class="fixed z-[1000]" ${{ style: { left: `${x}px`, top: `${y}px` } }}>
+          ${d.el(DesignerContextMenu, { state, post, close: closeContextMenu })}
+        </div>
+      `;
+      d.update();
+    },
+
     pushHistory: () => {
       let iframe = document.querySelector('.Designer iframe');
       let html = iframe.contentDocument.documentElement.outerHTML;
@@ -573,6 +605,8 @@ class AppCtrl {
     ev.target.releasePointerCapture(ev.pointerId);
   };
 }
+
+addEventListener('message', ev => ev.data.type === 'action' && post(ev.data.action, ...ev.data.args));
 
 async function fetchFile(x) {
   let res = await fetch(x);

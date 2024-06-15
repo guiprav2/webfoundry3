@@ -36,6 +36,7 @@ class Root {
     preview: d.binding({ get: () => state.app.preview }),
     designerSrc: d.binding({ get: state.app.buildFrameSrc }),
     designerLoading: d.binding({ get: () => state.app.designerLoading }),
+    contextMenu: d.binding({ get: () => state.app.contextMenu }),
     onLoadDesigner: ev => post('app.loadDesigner', ev),
     onResizeDesigner: ev => post('app.resizeDesigner', ev),
     editorText: d.binding({ get: () => state.app.editorText }),
