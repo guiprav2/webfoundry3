@@ -1,7 +1,8 @@
+import AIImageDialog from './AIImageDialog.js';
 import d from '../../other/dominant.js';
 import rfiles from '../../repositories/FilesRepository.js';
 import styles from '../../other/styles.js';
-import { isImage, selectFile } from '../../other/util.js';
+import { isImage, selectFile, showModal } from '../../other/util.js';
 
 class ImageGalleryDialog {
   folders = [];
@@ -32,6 +33,14 @@ class ImageGalleryDialog {
     await post('app.loadFiles');
   };
 
+  ai = async () => {
+    let [btn, name, file] = await showModal(d.el(AIImageDialog));
+    if (btn !== 'ok') { return }
+    await rfiles.saveFile(state.app.currentSite, [this.selectedFolder, name].filter(Boolean).join('/'), file);
+    await this.loadImages();
+    post('app.loadFiles');
+  };
+
   onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = this.selected; this.root.close(ev.submitter.value) };
 
   render = () => this.root = d.html`
@@ -43,8 +52,10 @@ class ImageGalleryDialog {
             ${d.usePlaceholderTag('option', d.map(() => this.folders, x => d.html`<option ${{ value: x, selected: () => this.selectedFolder === x }}>${x}</option>`))}
           </select>
           <div>
-            ${d.if(() => this.images.length, d.html`<button type="button" class="nf nf-fa-cloud_upload text-2xl hover:bg-black/70 rounded-b px-3 pt-1 pb-2" ${{ onClick: this.upload }}></button>`)}
-            <button type="button" class="nf text-2xl hover:bg-black/70 nf-md-robot_happy rounded-b px-3 pt-1 pb-2"></button>
+            ${d.if(() => this.images.length, d.html`<button type="button" class="nf nf-fa-cloud_upload text-2xl hover:bg-black/70 outline-none rounded-b px-3 pt-1 pb-2" ${{
+              onClick: this.upload,
+            }}>`)}
+            <button type="button" class="nf text-2xl hover:bg-black/70 nf-md-robot_happy outline-none rounded-b px-3 pt-1 pb-2" ${{ onClick: this.ai }}></button>
           </div>
         </div>
         ${d.if(() => !this.images.length, d.html`
