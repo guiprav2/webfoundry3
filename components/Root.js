@@ -6,6 +6,7 @@ window.tap = x => (console.log(x), x);
 class Root {
   render = () => d.el(App, {
     onAttach: () => post('app.reset'),
+    enabledSidebarIcons: d.binding({ get: () => state.app.enabledSidebarIcons }),
     currentPanel: d.binding({ get: () => state.app.currentPanel }),
     onSelectIcon: x => post('app.selectPanel', x),
     sites: d.binding({ get: () => state.app.sites }),

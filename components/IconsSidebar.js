@@ -14,12 +14,12 @@ class IconsSidebar {
     </div>
   `;
 
-  renderButton = (id, icon) => d.html`
+  renderButton = (id, icon) => d.if(() => d.resolve(this.props.enabledIcons[id]), d.html`
     <button class="outline-none nf border-b border-black/50 transition-all text-xl hover:bg-black/70 w-16 h-16" ${{
       class: [`App-${id}Btn`, icon, () => id === this.props.currentPanel && 'bg-black/70'],
       onClick: () => this.props.onSelect(id),
     }}></button>
-  `;
+  `);
 }
 
 export default IconsSidebar;

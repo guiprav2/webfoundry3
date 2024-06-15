@@ -11,7 +11,11 @@ class App {
 
   render = () => d.html`
     <div class="App min-h-screen flex" ${{ onAttach: this.props.onAttach }}>
-      ${d.el(IconsSidebar, { currentPanel: d.binding({ get: () => this.props.currentPanel }), onSelect: this.props.onSelectIcon })}
+      ${d.el(IconsSidebar, {
+        enabledIcons: d.binding({ get: () => this.props.enabledSidebarIcons }),
+        currentPanel: d.binding({ get: () => this.props.currentPanel }),
+        onSelect: this.props.onSelectIcon,
+      })}
       ${d.if(() => this.props.currentPanel === 'sites', d.el(SitesPanel, {
         sites: d.binding({ get: () => this.props.sites }),
         currentSite: d.binding({ get: () => this.props.currentSite }),

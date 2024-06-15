@@ -163,6 +163,14 @@ let defaultComponentHtml = `<!doctype html>
 
 class AppCtrl {
   state = {
+    enabledSidebarIcons: {
+      sites: true,
+      files: () => !!this.state.currentSite,
+      styles: () => this.state.s,
+      play: () => this.state.currentFile && !this.state.preview,
+      pause: () => this.state.currentFile && this.state.preview,
+    },
+
     currentPanel: 'sites',
     sites: [],
     currentSite: null,
