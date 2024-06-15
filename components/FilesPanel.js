@@ -6,9 +6,6 @@ class FilesPanel {
 
   render = () => d.html`
     <div class="FilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50">
-      <button class="FilesPanel-createBtn outline-none border-b border-black/50 transition-all h-12 text-xl bg-[#0071b2] transition-colors hover:bg-[#008ad9]" ${{ onClick: () => this.props.onCreate() }}>
-        Create
-      </button>
       <div class="FilesPanel-fileList flex flex-col gap-2 p-4">
         ${d.map(() => this.props.files, ([name, path, isDir]) => d.html`
           <a href="#" class="FilesPanel-file flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{
