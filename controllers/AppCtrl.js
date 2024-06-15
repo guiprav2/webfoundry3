@@ -208,6 +208,7 @@ class AppCtrl {
       let { s } = this;
       let styles = s ? [...s.classList] : [];
       if (s.tagName === 'BODY' && styles.includes('min-h-screen')) { styles.splice(styles.indexOf('min-h-screen'), 1) }
+      s && styles.push(...getWfClass(s));
       return styles;
     },
 
@@ -412,30 +413,32 @@ class AppCtrl {
     changeSelected: x => { this.state.s = x; this.state.currentPanel = x ? 'styles' : 'files' },
     editorAction: x => this.state.actions.kbds[x](),
 
-    addStyleKeyDown: ev => {
+    addStyleKeyDown: async ev => {
       if (ev.key !== 'Enter') { return }
-      this.state.s.classList.add(ev.target.value.trim());
+      await post('app.addStyle', ev.target.value.trim());
       ev.target.value = '';
     },
 
     editStyle: x => this.state.replacingStyle = x,
+    replaceStyleKeyDown: ev => ev.key === 'Enter' && ev.target.blur(),
 
-    replaceStyleKeyDown: ev => {
-      if (ev.key !== 'Enter') { return }
-      this.state.s.classList.remove(this.state.replacingStyle);
-      this.state.s.classList.add(ev.target.value.trim());
+    replaceStyleBlur: async ev => {
+      await post('app.deleteStyle', this.state.replacingStyle);
+      await post('app.addStyle', ev.target.value.trim());
       this.state.replacingStyle = null;
       ev.target.value = '';
     },
 
-    replaceStyleBlur: ev => {
-      this.state.s.classList.remove(this.state.replacingStyle);
-      this.state.s.classList.add(ev.target.value.trim());
-      this.state.replacingStyle = null;
-      ev.target.value = '';
+    addStyle: x => {
+      if (/^{{.+?}}$/.test(x)) { addWfClass(this.state.s, x) }
+      else { this.state.s.classList.add(x) }
     },
 
-    deleteStyle: x => this.state.s.classList.remove(x),
+    deleteStyle: x => {
+      if (/^{{.+?}}$/.test(x)) { rmWfClass(this.state.s, x) }
+      else { this.state.s.classList.remove(x) }
+    },
+
     pushHistory: () => null,
   };
 
@@ -456,6 +459,23 @@ async function fetchFile(x) {
   let res = await fetch(x);
   if (!res.ok) { throw new Error('Fetch error') }
   return res.blob();
+}
+
+function getWfClass(x) { return (x.getAttribute('wf-class') || '').split(/({{.+?}})/g).filter(x => x.trim()) }
+
+function addWfClass(x, y) {
+  let attr = getWfClass(x);
+  attr.push(y);
+  attr = attr.join(' ');
+  attr ? x.setAttribute('wf-class', attr) : x.removeAttribute('wf-class');
+}
+
+function rmWfClass(x, y) {
+  let attr = getWfClass(x);
+  let i = attr.indexOf(y);
+  i !== -1 && attr.splice(i, 1);
+  attr = attr.join(' ');
+  attr ? x.setAttribute('wf-class', attr) : x.removeAttribute('wf-class');
 }
 
 export default AppCtrl;
