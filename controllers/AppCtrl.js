@@ -3,6 +3,8 @@ import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.js';
 import CreateFileDialog from '../components/dialogs/CreateFileDialog.js';
 import FileExtensionWarningDialog from '../components/dialogs/FileExtensionWarningDialog.js';
 import MagicGloves from '../other/MagicGloves.js';
+import NetlifyDeployDialog from '../components/dialogs/NetlifyDeployDialog.js';
+import NetlifyDeployDoneDialog from '../components/dialogs/NetlifyDeployDoneDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
 import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
 import d from '../other/dominant.js';
@@ -440,6 +442,12 @@ class AppCtrl {
     },
 
     pushHistory: () => null,
+
+    netlifyDeploy: async () => {
+      let [btn, x] = await showModal(d.el(NetlifyDeployDialog));
+      if (btn !== 'ok') { return }
+      await showModal(d.el(NetlifyDeployDoneDialog, { url: x }));
+    },
   };
 
   onResizeDesignerPointerMove = ev => {
