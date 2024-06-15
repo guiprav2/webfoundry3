@@ -14,7 +14,7 @@ class ImageGalleryDialog {
 
   async loadFolders() {
     let files = await rfiles.loadFiles(state.app.currentSite);
-    return [...new Set(files.map(x => x.split('/').slice(0, -1).join('/')))];
+    return [...new Set(files.filter(x => !x.startsWith('webfoundry/')).map(x => x.split('/').slice(0, -1).join('/')).filter(Boolean))];
   }
 
   async getImages(path) {
@@ -43,8 +43,8 @@ class ImageGalleryDialog {
             ${d.usePlaceholderTag('option', d.map(() => this.folders, x => d.html`<option ${{ value: x, selected: () => this.selectedFolder === x }}>${x}</option>`))}
           </select>
           <div>
-            ${d.if(() => this.images.length, d.html`<button class="nf nf-fa-cloud_upload text-2xl hover:bg-black/70 rounded-b px-3 pt-1 pb-2"></button>`)}
-            <button class="nf text-2xl hover:bg-black/70 nf-md-robot_happy rounded-b px-3 pt-1 pb-2"></button>
+            ${d.if(() => this.images.length, d.html`<button type="button" class="nf nf-fa-cloud_upload text-2xl hover:bg-black/70 rounded-b px-3 pt-1 pb-2" ${{ onClick: this.upload }}></button>`)}
+            <button type="button" class="nf text-2xl hover:bg-black/70 nf-md-robot_happy rounded-b px-3 pt-1 pb-2"></button>
           </div>
         </div>
         ${d.if(() => !this.images.length, d.html`
@@ -55,11 +55,11 @@ class ImageGalleryDialog {
         `, d.html`
           <div class="overflow-auto grid grid-cols-4 gap-6 px-4 pt-3 pb-1">
             ${d.map(() => this.images, x => d.html`
-              <a href="#" class="aspect-square flex justify-center items-center outline rounded overflow-hidden" ${{
+              <a href="#" class="aspect-square flex justify-center items-center outline rounded overflow-hidden bg-black/80" ${{
                 class: () => this.selected === x ? 'outline-4 outline-blue-500' : 'outline-2 outline-neutral-500',
                 onClick: () => this.selected = x,
               }}>
-                <img class="border border-transparent max-h-full rounded" ${{ src: `/files/${state.app.currentSite}/${x}` }}>
+                <img class="border border-transparent max-h-full" ${{ src: `/files/${state.app.currentSite}/${x}` }}>
               </a>
             `)}
           </div>
