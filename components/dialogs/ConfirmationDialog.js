@@ -5,7 +5,7 @@ class ConfirmationDialog {
   constructor(props) { this.props = props }
 
   render = () => this.root = d.html`
-    <dialog class="rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-64 p-3 pt-2 min-w-64">
+    <dialog class="outline-none rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-64 p-3 pt-2 min-w-64">
       <form method="dialog">
         <div>${d.text(() => this.props.title)}</div>
         <div class="flex gap-1.5 mt-3">

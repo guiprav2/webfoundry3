@@ -1,6 +1,6 @@
 import CodeDialog from '../components/dialogs/CodeDialog.js';
 //import ComponentsDialog from '../components/dialogs/ComponentsDialog.js';
-//import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
+import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
 //import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
 //import InputDialog from '../components/dialogs/InputDialog.js';
 //import PlaceholderDialog from '../components/dialogs/PlaceholderDialog.js';
@@ -286,10 +286,10 @@ class ActionHandler {
     let handlers = [];
     for (let x of this.s.attributes) {
       if (!x.name.startsWith('wf-on')) { continue }
-      handlers.push({ name: x.name.slice('wf-on'.length), handler: x.value });
+      handlers.push({ name: x.name.slice('wf-on'.length), expr: x.value });
     }
 
-    let [btn, newHandlers] = await showModal(d.el(EventHandlersDialog, { handlers }));
+    let [btn, ...newHandlers] = await showModal(d.el(EventHandlersDialog, { handlers }));
     if (btn !== 'ok') { return }
 
     let toBeRemoved = [];
@@ -300,7 +300,7 @@ class ActionHandler {
 
     toBeRemoved.forEach(x => this.s.removeAttribute(x));
 
-    for (let x of newHandlers) { this.s.setAttribute(`wf-on${x.name}`, x.handler) }
+    for (let x of newHandlers) { this.s.setAttribute(`wf-on${x.name}`, x.expr) }
     post('app.pushHistory');
   };
 

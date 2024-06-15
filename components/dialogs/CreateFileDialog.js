@@ -16,7 +16,7 @@ class CreateFileDialog {
   onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = [this.type.trim(), this.value]; this.root.close(ev.submitter.value) };
 
   render = () => this.root = d.html`
-    <dialog class="rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-64 p-3 pt-2">
+    <dialog class="outline-none rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-64 p-3 pt-2">
       <form method="dialog" ${{ onKeyDown: this.onKeyDown, onSubmit: this.onSubmit }}>
         <div class="flex items-center gap-3">
           <div>New:</div>
