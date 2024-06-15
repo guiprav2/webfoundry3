@@ -190,7 +190,7 @@ class AppCtrl {
 
     currentFile: null,
     styles: ['flex', 'justify-center', 'items-center'],
-    designerWidth: 'calc(1471px - 1rem)',
+    designerWidth: '100%',
     designerHeight: '100vh',
     preview: false,
 
@@ -367,6 +367,12 @@ class AppCtrl {
       //mutobs.observe(this.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
     },
 
+    resizeDesigner: ev => {
+      ev.target.setPointerCapture(ev.pointerId);
+      ev.target.addEventListener('pointermove', this.onResizeDesignerPointerMove);
+      ev.target.addEventListener('pointerup', this.onResizeDesignerPointerUp, { once: true });
+    },
+
     changeSelected: x => this.state.s = x,
     editorAction: x => this.state.actions.kbds[x](),
 
@@ -395,6 +401,18 @@ class AppCtrl {
 
     deleteStyle: x => this.state.s.classList.remove(x),
     pushHistory: () => null,
+  };
+
+  onResizeDesignerPointerMove = ev => {
+    let w = Math.max(320, ev.clientX - document.querySelector('.Designer-padder').getBoundingClientRect().right);
+    this.state.designerWidth = `min(100%, ${w}px)`;
+    this.state.designerHeight = w >= 640 ? '100vh' : `${w * 1.777}px`;
+    d.update();
+  };
+
+  onResizeDesignerPointerUp = ev => {
+    ev.target.removeEventListener('pointermove', this.onResizeDesignerPointerMove);
+    ev.target.releasePointerCapture(ev.pointerId);
   };
 }
 
