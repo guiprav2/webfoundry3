@@ -13,7 +13,7 @@ import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
 import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
-import { isImage, joinPath, showModal, loadman } from '../other/util.js';
+import { isImage, joinPath, showModal, loadman, clearComponents, setComponents } from '../other/util.js';
 
 let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
@@ -414,7 +414,7 @@ class AppCtrl {
     saveFile: async (x, content) => {
       if (x.endsWith('.html')) {
         let doc = new DOMParser().parseFromString(content, 'text/html');
-        //clearComponents(doc);
+        clearComponents(doc);
         content = new Blob([`<!doctype html>\n<html>${doc.head.outerHTML}\n${doc.body.outerHTML}\n</html>`], { type: 'text/html' });
       } else {
         content = new Blob([content], { type: mimeLookup(x) });
@@ -424,19 +424,19 @@ class AppCtrl {
       await post('app.loadFiles');
     },
 
-    loadDesigner: ev => {
+    loadDesigner: async ev => {
       let iframe = ev.target;
       let contents = iframe.closest('.Designer-contents');
       this.state.gloves?.destroy?.();
       this.state.actions = null;
       if (this.state.preview) { this.state.designerLoading = false; return }
       this.state.gloves = new MagicGloves(iframe);
-      //await setComponents(this.state.currentSite, this.iframe.contentDocument.documentElement);
+      await setComponents(this.state.currentSite, iframe.contentDocument.documentElement);
       this.state.editorWindow = iframe.contentWindow;
       this.state.editorDocument = iframe.contentDocument;
       this.state.actions = new ActionHandler();
       this.state.designerLoading = false;
-      //post('app.pushHistory');
+      post('app.pushHistory');
       let mutobs = new MutationObserver(() => post('app.saveFile', this.state.currentFile, `<!doctype html>\n${this.state.editorDocument.documentElement.outerHTML}`));
       mutobs.observe(this.state.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
     },

@@ -14,7 +14,7 @@ class PromptDialog {
   onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = this.value; this.root.close(ev.submitter.value) };
 
   render = () => this.root = d.html`
-    <dialog class="outline-none rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-64 p-3 pt-2" ${{ class: this.props.short ? 'w-64' : 'w-[30vw]' }}>
+    <dialog class="outline-none rounded-lg shadow-xl text-neutral-100 bg-[#091017] p-3 pt-2" ${{ class: this.props.short ? 'w-64' : 'w-[30vw]' }}>
       <form method="dialog" ${{ onKeyDown: this.onKeyDown, onSubmit: this.onSubmit }}>
         <div>${d.text(() => this.props.title)}</div>
         ${d.if(() => !this.props.multiline, d.html`

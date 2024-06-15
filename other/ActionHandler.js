@@ -1,13 +1,12 @@
 import CodeDialog from '../components/dialogs/CodeDialog.js';
-//import ComponentsDialog from '../components/dialogs/ComponentsDialog.js';
+import ComponentsDialog from '../components/dialogs/ComponentsDialog.js';
 import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
 import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
-//import PlaceholderDialog from '../components/dialogs/PlaceholderDialog.js';
 import ChangeSrcDialog from '../components/dialogs/ChangeSrcDialog.js';
 import d from './dominant.js';
 import lf from 'https://cdn.skypack.dev/localforage';
-import { /*clearComponents, setComponents,*/ showModal } from './util.js';
+import { clearComponents, setComponents, showModal } from './util.js';
 
 class ActionHandler {
   get isComponent() { return this.editorWindow.location.pathname.split('/')[3] === 'components' }
@@ -224,12 +223,12 @@ class ActionHandler {
   
   changeHtml = async () => {
     let clone = this.s.cloneNode(true);
-    //clearComponents(clone);
+    clearComponents(clone);
     let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change HTML', initialValue: clone.outerHTML }));
     if (btn !== 'ok') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = x;
-    //await setComponents(state.app.currentSite, p.children[i]);
+    await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
     post('app.pushHistory');
@@ -237,12 +236,12 @@ class ActionHandler {
   
   changeInnerHtml = async () => {
     let clone = this.s.cloneNode(true);
-    //clearComponents(clone);
+    clearComponents(clone);
     let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Change inner HTML', initialValue: clone.innerHTML }));
     if (btn !== 'ok') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.innerHTML = x;
-    //await setComponents(state.app.currentSite, p.children[i]);
+    await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
     post('app.pushHistory');
@@ -365,10 +364,9 @@ class ActionHandler {
 
   setComponent = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(ComponentsDialog, {}));
+    let [btn, component, props] = await showModal(d.el(ComponentsDialog, { component: this.s.getAttribute('wf-component'), props: this.s.getAttribute('wf-props') }));
     if (btn !== 'ok') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
-    let [component, props] = x;
     let templRoot = d.el('div');
     templRoot.setAttribute('wf-component', component);
     props && templRoot.setAttribute('wf-props', props);
