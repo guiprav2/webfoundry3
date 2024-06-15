@@ -457,6 +457,9 @@ function ifAnchorBindingUpdate() {
     return;
   }
 
+  // Fixes a weird issue on Chrome.
+  this.lastValue = newValue;
+
   // Since the value has changed, remove currently anchored nodes (if any).
   if (nAnchor.anchoredNodes && nAnchor.anchoredNodes.length) {
     for (i = 0; i < nAnchor.anchoredNodes.length; i++) {

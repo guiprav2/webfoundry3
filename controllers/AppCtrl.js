@@ -261,12 +261,10 @@ class AppCtrl {
     selectFile: async (x, isDir) => {
       if (isDir) {
         let path = x + '/';
-        if (this.state.expandedPaths.has(path)) { this.state.expandedPaths.delete(path) }
-        else { this.state.expandedPaths.add(path) }
-        return;
+        if (this.state.expandedPaths.has(path)) { this.state.expandedPaths.delete(path) } else { this.state.expandedPaths.add(path) }
+      } else {
+        this.state.currentFile = x;
       }
-
-      // TODO
     },
 
     createFile: async x => {
