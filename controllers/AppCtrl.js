@@ -9,6 +9,7 @@ import NetlifyDeployDoneDialog from '../components/dialogs/NetlifyDeployDoneDial
 import PromptDialog from '../components/dialogs/PromptDialog.js';
 import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
 import d from '../other/dominant.js';
+import morphdom from 'https://cdn.skypack.dev/morphdom/dist/morphdom-esm.js';
 import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
@@ -329,6 +330,7 @@ class AppCtrl {
         this.state.currentFile = x;
         this.state.preview = false;
         this.state.designerLoading = true;
+        this.state.history = { entries: [], i: -1 };
         await post('app.changeSelected', null);
       }
     },
@@ -476,7 +478,32 @@ class AppCtrl {
       else { this.state.s.classList.remove(x) }
     },
 
-    pushHistory: () => null,
+    pushHistory: () => {
+      let iframe = document.querySelector('.Designer iframe');
+      let html = iframe.contentDocument.documentElement.outerHTML;
+      let { history } = this.state;
+      history.entries.splice(history.i + 1, 99999);
+      history.entries.push(html);
+      history.i++;
+    },
+
+    undo: () => {
+      let iframe = document.querySelector('.Designer iframe');
+      let { history } = this.state;
+      if (!history.i) { return }
+      this.state.s && post('app.changeSelected', null);
+      history.i--;
+      morphdom(iframe.contentDocument.documentElement, history.entries[history.i]);
+    },
+
+    redo: () => {
+      let iframe = document.querySelector('.Designer iframe');
+      let { history } = this.state;
+      if (history.i >= history.entries.length - 1) { return }
+      this.state.s && post('app.changeSelected', null);
+      history.i++;
+      morphdom(iframe.contentDocument.documentElement, history.entries[history.i]);
+    },
 
     importZip: async () => {
       let input = d.html`<input class="hidden" type="file" accept=".zip">`;
