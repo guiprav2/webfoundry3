@@ -2,7 +2,7 @@ import CodeDialog from '../components/dialogs/CodeDialog.js';
 //import ComponentsDialog from '../components/dialogs/ComponentsDialog.js';
 import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
 //import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
-//import InputDialog from '../components/dialogs/InputDialog.js';
+import PromptDialog from '../components/dialogs/PromptDialog.js';
 //import PlaceholderDialog from '../components/dialogs/PlaceholderDialog.js';
 import ChangeSrcDialog from '../components/dialogs/ChangeSrcDialog.js';
 import d from './dominant.js';
@@ -133,7 +133,7 @@ class ActionHandler {
   changeTag = async () => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     let tagName = this.s.tagName.toLowerCase();
-    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change tag', value: tagName }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change tag', initialValue: tagName }));
     if (btn !== 'ok') { return }
     if (this.s.tagName === 'DIALOG' && x !== 'dialog') { this.s.open = false }
     this.changeTagName(x);
@@ -153,21 +153,21 @@ class ActionHandler {
   };
   
   changeText = async () => {
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change text', value: this.s.textContent }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change text', initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
     post('app.pushHistory');
   };
   
   changeMultilineText = async () => {
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change multiline text', multiline: true, value: this.s.textContent }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change multiline text', multiline: true, initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
     post('app.pushHistory');
   };
   
   changeHref = async () => {
-    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change href', value: this.s.getAttribute('href') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change href', initialValue: this.s.getAttribute('href') }));
     if (btn !== 'ok') { return }
     if (this.s.tagName === 'DIV' || this.s.tagName === 'SPAN') { this.changeTagName('a') }
     else if (this.s.tagName !== 'A') { this.wrapTagName('a') }
@@ -188,7 +188,7 @@ class ActionHandler {
   changeBgUrl = async () => {
     if (!this.s) { return }
     let current = this.s.style.backgroundImage;
-    let [btn, x] = await showModal(d.el(InputDialog, { short: true, title: 'Change background image', value: current.startsWith('url("') ? current.slice(5, -2) : current }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change background image', initialValue: current.startsWith('url("') ? current.slice(5, -2) : current }));
     if (btn !== 'ok') { return }
     if (x) { this.s.style.backgroundImage = `url(${JSON.stringify(x)})` }
     else { this.s.style.backgroundImage = '' }
@@ -305,7 +305,7 @@ class ActionHandler {
 
   setIfExpression = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Set if expression', value: this.s.getAttribute('wf-if') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set if expression', initialValue: this.s.getAttribute('wf-if') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-if', x.trim()) : this.s.removeAttribute('wf-if');
     post('app.pushHistory');
@@ -313,7 +313,7 @@ class ActionHandler {
 
   setMapExpression = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Set map expression', value: this.s.getAttribute('wf-map') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set map expression', initialValue: this.s.getAttribute('wf-map') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-map', x.trim()) : this.s.removeAttribute('wf-map');
     post('app.pushHistory');
@@ -333,7 +333,7 @@ class ActionHandler {
 
   changeDisabledExpression = async () => {
     if (!this.s || (this.s.tagName !== 'INPUT' && this.s.tagName !== 'TEXTAREA' && this.s.tagName !== 'BUTTON')) { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change disabled expression', value: this.s.getAttribute('wf-disabled') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change disabled expression', initialValue: this.s.getAttribute('wf-disabled') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-disabled', x.trim()) : this.s.removeAttribute('wf-disabled');
     post('app.pushHistory');
@@ -341,7 +341,7 @@ class ActionHandler {
 
   changeType = async () => {
     if (!this.s || (this.s.tagName !== 'INPUT' && this.s.tagName !== 'BUTTON')) { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change input type', value: this.s.getAttribute('type') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change input type', initialValue: this.s.getAttribute('type') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('type', x.trim()) : this.s.removeAttribute('type');
     post('app.pushHistory');
@@ -349,7 +349,7 @@ class ActionHandler {
 
   changeFormMethod = async () => {
     if (!this.s || this.s.tagName !== 'FORM') { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change form method', value: this.s.getAttribute('method') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change form method', initialValue: this.s.getAttribute('method') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('method', x.trim()) : this.s.removeAttribute('method');
     post('app.pushHistory');
@@ -357,7 +357,7 @@ class ActionHandler {
 
   changeId = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Change ID', value: this.s.getAttribute('id') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change ID', initialValue: this.s.getAttribute('id') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('id', x.trim()) : this.s.removeAttribute('id');
     post('app.pushHistory');
@@ -380,7 +380,7 @@ class ActionHandler {
 
   setValue = async () => {
     if (!this.s || (this.s.tagName !== 'INPUT' && this.s.tagName !== 'BUTTON')) { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Set value', value: this.s.value }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set value', initialValue: this.s.value }));
     if (btn !== 'ok') { return }
     this.s.value = x;
     post('app.pushHistory');
@@ -388,7 +388,7 @@ class ActionHandler {
 
   setInnerHtmlExpression = async () => {
     if (!this.s || this.s.tagName === 'INPUT' || this.s.tagName === 'TEXTAREA') { return }
-    let [btn, x] = await showModal(d.el(InputDialog, { title: 'Set inner HTML expression', value: this.s.getAttribute('wf-innerhtml') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set inner HTML expression', initialValue: this.s.getAttribute('wf-innerhtml') }));
     if (btn !== 'ok') { return }
     x = x.trim();
     x ? this.s.setAttribute('wf-innerhtml', x) : this.s.removeAttribute('wf-innerhtml');
