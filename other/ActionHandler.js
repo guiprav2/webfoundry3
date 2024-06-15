@@ -132,7 +132,7 @@ class ActionHandler {
   changeTag = async () => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     let tagName = this.s.tagName.toLowerCase();
-    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change tag', initialValue: tagName }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change tag', placeholder: 'Tag name', initialValue: tagName }));
     if (btn !== 'ok') { return }
     if (this.s.tagName === 'DIALOG' && x !== 'dialog') { this.s.open = false }
     this.changeTagName(x);
@@ -152,21 +152,21 @@ class ActionHandler {
   };
   
   changeText = async () => {
-    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change text', initialValue: this.s.textContent }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change text', placeholder: 'Text', initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
     post('app.pushHistory');
   };
   
   changeMultilineText = async () => {
-    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change multiline text', multiline: true, initialValue: this.s.textContent }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change multiline text', placeholder: 'Text', multiline: true, initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
     post('app.pushHistory');
   };
   
   changeHref = async () => {
-    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change href', initialValue: this.s.getAttribute('href') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change href', placeholder: 'URL', initialValue: this.s.getAttribute('href') }));
     if (btn !== 'ok') { return }
     if (this.s.tagName === 'DIV' || this.s.tagName === 'SPAN') { this.changeTagName('a') }
     else if (this.s.tagName !== 'A') { this.wrapTagName('a') }
@@ -187,7 +187,12 @@ class ActionHandler {
   changeBgUrl = async () => {
     if (!this.s) { return }
     let current = this.s.style.backgroundImage;
-    let [btn, x] = await showModal(d.el(PromptDialog, { short: true, title: 'Change background image', initialValue: current.startsWith('url("') ? current.slice(5, -2) : current }));
+    let [btn, x] = await showModal(d.el(PromptDialog, {
+      short: true,
+      title: 'Change background image',
+      placeholder: 'URL',
+      initialValue: current.startsWith('url("') ? current.slice(5, -2) : current,
+    }));
     if (btn !== 'ok') { return }
     if (x) { this.s.style.backgroundImage = `url(${JSON.stringify(x)})` }
     else { this.s.style.backgroundImage = '' }
@@ -304,7 +309,7 @@ class ActionHandler {
 
   setIfExpression = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set if expression', initialValue: this.s.getAttribute('wf-if') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set if expression', placeholder: 'Expression', initialValue: this.s.getAttribute('wf-if') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-if', x.trim()) : this.s.removeAttribute('wf-if');
     post('app.pushHistory');
@@ -312,7 +317,7 @@ class ActionHandler {
 
   setMapExpression = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set map expression', initialValue: this.s.getAttribute('wf-map') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set map expression', placeholder: 'Expression', initialValue: this.s.getAttribute('wf-map') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-map', x.trim()) : this.s.removeAttribute('wf-map');
     post('app.pushHistory');

@@ -14,8 +14,8 @@ import morphdom from 'https://cdn.skypack.dev/morphdom/dist/morphdom-esm.js';
 import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
-import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
 import { isImage, joinPath, showModal, loadman, clearComponents, setComponents } from '../other/util.js';
+import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
 
 let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
