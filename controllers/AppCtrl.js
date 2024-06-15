@@ -180,7 +180,7 @@ class AppCtrl {
     sites: [],
     currentSite: null,
     files: [],
-    expandedPaths: new Set(),
+    expandedPaths: new Set(['pages/']),
 
     expandedPath: path => {
       if (!path) { return true }
@@ -250,7 +250,9 @@ class AppCtrl {
     createSite: async () => {
       let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Create site', placeholder: 'Site name', allowEmpty: false }));
       if (btn !== 'ok') { return }
-      return await post('app.doCreateSite', x);
+      let id = await post('app.doCreateSite', x);
+      await post('app.selectFile', 'pages/index.html');
+      return id;
     },
 
     doCreateSite: async x => {
@@ -303,6 +305,10 @@ class AppCtrl {
       if (wf) {
         await rfiles.saveFile(id, 'webfoundry/templates.json', new Blob(['{}'], { type: 'application/json' }));
         await rfiles.saveFile(id, 'webfoundry/scripts.json', new Blob(['[]'], { type: 'application/json' }));
+      }
+
+      if (!await rfiles.loadFile(id, 'pages/index.html')) {
+        await rfiles.saveFile(id, 'pages/index.html', new Blob([defaultHtml], { type: 'text/html' }));
       }
     },
 
