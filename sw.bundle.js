@@ -2822,8 +2822,6 @@ module.exports = localforage_js;
 let lf = require('localforage');
 
 self.addEventListener('fetch', event => {
-  console.log(event.request.url);
-
   if (new URL(event.request.url).pathname === '/placeholder') {
     const url = new URL(event.request.url);
     event.respondWith(handlePlaceholderRequest(url.searchParams.get('query')));

@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link class="wf-nf-link" rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+    <script class="wf-tw-script" src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script class="wf-tw-setup">
+      tailwind.config = {
+        darkMode: location.href.includes('/preview/') ? 'media' : 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: 'hsl(222.2, 47.4%, 11.2%)',
+                foreground: 'hsl(210, 40%, 98%)',
+              },
+              secondary: {
+                DEFAULT: 'hsl(210, 40%, 96.1%)',
+                foreground: 'hsl(222.2, 47.4%, 11.2%)',
+              },
+              muted: {
+                DEFAULT: 'hsl(210, 40%, 96.1%)',
+                foreground: 'hsl(215.4, 16.3%, 46.9%)',
+              },
+            },
+          },
+        },
+      };
+    </script>
+</head><body></body><body class="min-h-screen">
+  <script type="module">
+    (async () => {
+        if (location.pathname.includes('/files/')) {
+            return;
+        }
+        let prefix = location.pathname.startsWith('/preview/')
+        ? '/' + location.pathname.slice(1).split('/').slice(0, 2).join('/'): '.';
+        let {
+            default: App
+            } = await import(prefix + '/webfoundry/app.js');
+            let {
+            default: d
+            } = await import(prefix + '/webfoundry/dominant.js');
+            document.body.append(d.el(App));
+        })();
+    </script>
+</body></html>

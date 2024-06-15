@@ -10,7 +10,7 @@ import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
 import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
-import { joinPath, showModal, loadman } from '../other/util.js';
+import { isImage, joinPath, showModal, loadman } from '../other/util.js';
 
 let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
@@ -203,13 +203,24 @@ class AppCtrl {
 
     hasActionHandler: key => this.state.actions && Boolean(this.state.actions.kbds[key]),
     s: null,
-    get styles() { let { s } = this; return s ? [...s.classList] : [] },
+
+    get styles() {
+      let { s } = this;
+      let styles = s ? [...s.classList] : [];
+      if (s.tagName === 'BODY' && styles.includes('min-h-screen')) { styles.splice(styles.indexOf('min-h-screen'), 1) }
+      return styles;
+    },
+
     tourDisable: new Set(),
   };
 
   actions = {
     reset: () => post('app.loadSites'),
-    selectPanel: x => this.state.currentPanel = x,
+
+    selectIcon: x => {
+      if (x !== 'play' && x !== 'pause') { this.state.currentPanel = x }
+      else { this.state.preview = !this.state.preview }
+    },
 
     loadSites: async () => {
       if (loadman.has('app.loadSites')) { return }
@@ -238,7 +249,7 @@ class AppCtrl {
       this.state.currentFile = null;
       await post('app.injectBuiltins', x);
       await post('app.loadFiles');
-      await post('app.selectPanel', 'files');
+      await post('app.selectIcon', 'files');
     },
 
     renameSite: async x => {
@@ -259,9 +270,9 @@ class AppCtrl {
 
     injectBuiltins: async (id, wf) => {
       let files = Object.fromEntries(await Promise.all([
-        //'webfoundry/app.js',
-        //'webfoundry/dominant.js',
-        //'index.html',
+        'webfoundry/app.js',
+        'webfoundry/dominant.js',
+        'index.html',
       ].map(async x => [x, await fetchFile(`builtin/${x}`)])));
 
       await rfiles.saveFile(id, 'components/.keep', new Blob([''], { type: 'text/plain' }));
@@ -275,16 +286,29 @@ class AppCtrl {
       }
     },
 
+    generateReflections: async () => {
+      let templ = {};
+      let files = await rfiles.loadFiles(this.state.currentSite);
+      for (let x of files.filter(x => x.endsWith('.html'))) { templ[x] = await (await rfiles.loadFile(this.state.currentSite, x)).text() }
+      await rfiles.saveFile(this.state.currentSite, 'webfoundry/templates.json', new Blob([JSON.stringify(templ)], { type: 'application/json' }));
+      let scripts = files.filter(x => x.endsWith('.js'));
+      await rfiles.saveFile(this.state.currentSite, 'webfoundry/scripts.json', new Blob([JSON.stringify(scripts)], { type: 'application/json' }));
+    },
+
     loadFiles: async () => {
       let files = await rfiles.loadFiles(this.state.currentSite);
       this.state.files = structuredFiles(files.filter(x => localStorage.getItem('webfoundry:showInternal') || (!x.startsWith('webfoundry/') && x !== 'index.html')));
     },
 
     selectFile: async (x, isDir) => {
+      this.state.currentFile = null;
+      await d.update();
+
       if (isDir) {
         let path = x + '/';
         if (this.state.expandedPaths.has(path)) { this.state.expandedPaths.delete(path) } else { this.state.expandedPaths.add(path) }
       } else {
+        if (!isImage(x) && !x.endsWith('.html')) { let blob = await rfiles.loadFile(this.state.currentSite, x); this.state.editorText = await blob.text() }
         this.state.currentFile = x;
       }
     },
@@ -308,7 +332,7 @@ class AppCtrl {
       if (type === 'file') {
         let content = new Blob([path.endsWith('.html') ? (path.startsWith('components/') ? defaultComponentHtml : defaultHtml) : ''], { type: mimeLookup(path) });
         await rfiles.saveFile(this.state.currentSite, path, content);
-        //(path.startsWith('controllers/') || path.endsWith('.html')) && await post('app.generateReflections');
+        (path.startsWith('controllers/') || path.endsWith('.html')) && await post('app.generateReflections');
         await post('app.loadFiles');
         await post('app.selectFile', path);
       } else {
@@ -350,6 +374,19 @@ class AppCtrl {
       await post('app.loadFiles');
     },
 
+    saveFile: async (x, content) => {
+      if (x.endsWith('.html')) {
+        let doc = new DOMParser().parseFromString(content, 'text/html');
+        //clearComponents(doc);
+        content = new Blob([`<!doctype html>\n<html>${doc.head.outerHTML}\n${doc.body.outerHTML}\n</html>`], { type: 'text/html' });
+      } else {
+        content = new Blob([content], { type: mimeLookup(x) });
+      }
+      await rfiles.saveFile(this.state.currentSite, x, content);
+      (x.startsWith('controllers/') || x.endsWith('.html')) && await post('app.generateReflections');
+      await post('app.loadFiles');
+    },
+
     loadDesigner: ev => {
       let iframe = ev.target;
       let contents = iframe.closest('.Designer-contents');
@@ -359,12 +396,12 @@ class AppCtrl {
       this.state.gloves = new MagicGloves(iframe);
       //await setComponents(this.state.currentSite, this.iframe.contentDocument.documentElement);
       this.state.editorWindow = iframe.contentWindow;
-      this.state.editorDocument = iframe.contentDocument.documentElement;
+      this.state.editorDocument = iframe.contentDocument;
       this.state.actions = new ActionHandler();
       contents.classList.remove('hidden');
       //post('app.pushHistory');
-      //let mutobs = new MutationObserver(() => this.post('saveFile', this.path, `<!doctype html>\n${this.editorDocument.documentElement.outerHTML}`));
-      //mutobs.observe(this.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
+      let mutobs = new MutationObserver(() => post('app.saveFile', this.state.currentFile, `<!doctype html>\n${this.state.editorDocument.documentElement.outerHTML}`));
+      mutobs.observe(this.state.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
     },
 
     resizeDesigner: ev => {
@@ -373,7 +410,7 @@ class AppCtrl {
       ev.target.addEventListener('pointerup', this.onResizeDesignerPointerUp, { once: true });
     },
 
-    changeSelected: x => this.state.s = x,
+    changeSelected: x => { this.state.s = x; this.state.currentPanel = x ? 'styles' : 'files' },
     editorAction: x => this.state.actions.kbds[x](),
 
     addStyleKeyDown: ev => {
@@ -414,6 +451,12 @@ class AppCtrl {
     ev.target.removeEventListener('pointermove', this.onResizeDesignerPointerMove);
     ev.target.releasePointerCapture(ev.pointerId);
   };
+}
+
+async function fetchFile(x) {
+  let res = await fetch(x);
+  if (!res.ok) { throw new Error('Fetch error') }
+  return res.blob();
 }
 
 export default AppCtrl;

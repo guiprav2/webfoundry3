@@ -1,4 +1,15 @@
+function isImage(path) { return path.toLowerCase().endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif') || path.endsWith('.webp') || path.endsWith('.svg') }
 function joinPath(path, name) { return [...path?.split?.('/') || [], name].filter(Boolean).join('/') }
+
+async function selectFile(accept) {
+  let { promise: p, resolve: res } = Promise.withResolvers();
+  let input = d.el('input', { type: 'file', accept, class: 'hidden' });
+  input.addEventListener('change', ev => res(input.files[0]));
+  top.document.body.append(input);
+  input.click();
+  input.remove();
+  return p;
+};
 
 async function showModal(x) {
   let { promise: p, resolve: res } = Promise.withResolvers();
@@ -20,4 +31,4 @@ class LoadingManager {
 }
 
 let loadman = new LoadingManager();
-export { joinPath, showModal, LoadingManager, loadman };
+export { isImage, joinPath, selectFile, showModal, LoadingManager, loadman };

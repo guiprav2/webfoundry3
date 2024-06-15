@@ -8,7 +8,7 @@ class Root {
     onAttach: () => post('app.reset'),
     enabledSidebarIcons: d.binding({ get: () => state.app.enabledSidebarIcons }),
     currentPanel: d.binding({ get: () => state.app.currentPanel }),
-    onSelectIcon: x => post('app.selectPanel', x),
+    onSelectIcon: x => post('app.selectIcon', x),
     sites: d.binding({ get: () => state.app.sites }),
     currentSite: d.binding({ get: () => state.app.currentSite }),
     onCreateSite: () => post('app.createSite'),
