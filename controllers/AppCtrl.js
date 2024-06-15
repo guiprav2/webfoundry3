@@ -301,13 +301,12 @@ class AppCtrl {
     },
 
     selectFile: async (x, isDir) => {
-      this.state.currentFile = null;
-      await d.update();
-
       if (isDir) {
         let path = x + '/';
         if (this.state.expandedPaths.has(path)) { this.state.expandedPaths.delete(path) } else { this.state.expandedPaths.add(path) }
       } else {
+        this.state.currentFile = null;
+        await d.update();
         if (!isImage(x) && !x.endsWith('.html')) { let blob = await rfiles.loadFile(this.state.currentSite, x); this.state.editorText = await blob.text() }
         this.state.currentFile = x;
       }
