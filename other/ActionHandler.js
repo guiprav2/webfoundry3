@@ -4,7 +4,7 @@ import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
 //import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
 //import InputDialog from '../components/dialogs/InputDialog.js';
 //import PlaceholderDialog from '../components/dialogs/PlaceholderDialog.js';
-//import SrcDialog from '../components/dialogs/SrcDialog.js';
+import ChangeSrcDialog from '../components/dialogs/ChangeSrcDialog.js';
 import d from './dominant.js';
 import lf from 'https://cdn.skypack.dev/localforage';
 import { /*clearComponents, setComponents,*/ showModal } from './util.js';
@@ -177,12 +177,11 @@ class ActionHandler {
   
   changeSrcUrl = async () => {
     if (!this.s) { return }
-    let [btn, x] = await showModal(d.el(SrcDialog, { src: this.s.getAttribute('src'), wfSrc: this.s.getAttribute('wf-src') }));
+    let [btn, src, expr] = await showModal(d.el(ChangeSrcDialog, { initialSrcValue: this.s.getAttribute('src'), initialExprValue: this.s.getAttribute('wf-src') }));
     if (btn !== 'ok') { return }
     this.s.tagName !== 'VIDEO' && this.s.tagName !== 'AUDIO' && this.s.tagName !== 'IFRAME' && this.changeTagName('img');
-    let [src, wfSrc] = x;
     if (src) { this.s.src = src } else { this.s.removeAttribute('src') }
-    if (wfSrc) { this.s.setAttribute('wf-src', wfSrc) } else { this.s.removeAttribute('wf-src') }
+    if (expr) { this.s.setAttribute('wf-src', expr) } else { this.s.removeAttribute('wf-src') }
     post('app.pushHistory');
   };
   
