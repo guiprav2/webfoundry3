@@ -2,9 +2,11 @@ import CodeEditor from './CodeEditor.js';
 import Designer from './Designer.js';
 import FilesPanel from './FilesPanel.js';
 import IconsSidebar from './IconsSidebar.js';
+import MediaViewer from './MediaViewer.js';
 import SitesPanel from './SitesPanel.js';
 import StylesPanel from './StylesPanel.js';
 import d from '../other/dominant.js';
+import { isImage, isVideo, isAudio } from '../other/util.js';
 
 class App {
   constructor(props) { this.props = props }
@@ -52,11 +54,14 @@ class App {
         src: d.binding({ get: () => this.props.designerSrc }),
         onLoad: this.props.onLoadDesigner,
         onResize: this.props.onResizeDesigner,
+      }), d.if(() => isImage(this.props.currentFile) || isVideo(this.props.currentFile) || isAudio(this.props.currentFile), d.el(MediaViewer, {
+        currentSite: d.binding({ get: () => this.props.currentSite }),
+        currentFile: d.binding({ get: () => this.props.currentFile }),
       }), d.el(CodeEditor, {
         currentFile: d.binding({ get: () => this.props.currentFile }),
         text: d.binding({ get: () => this.props.editorText }),
         onChange: this.props.onEditorChange,
-      })))}
+      }))))}
     </div>
   `;
 }

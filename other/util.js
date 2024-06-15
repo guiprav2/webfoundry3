@@ -1,4 +1,6 @@
-function isImage(path) { return path.toLowerCase().endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif') || path.endsWith('.webp') || path.endsWith('.svg') }
+function isImage(path) { return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'].some(x => path?.endsWith?.(x)) }
+function isVideo(path) { return ['.mp4', '.webm', '.ogv', '.mov', '.avi'].some(x => path?.endsWith?.(x)) }
+function isAudio(path) { return ['.mp3', '.wav', '.ogg', '.flac', '.m4a'].some(x => path?.endsWith?.(x)) }
 function joinPath(path, name) { return [...path?.split?.('/') || [], name].filter(Boolean).join('/') }
 
 async function selectFile(accept) {
@@ -31,4 +33,4 @@ class LoadingManager {
 }
 
 let loadman = new LoadingManager();
-export { isImage, joinPath, selectFile, showModal, LoadingManager, loadman };
+export { isImage, isVideo, isAudio, joinPath, selectFile, showModal, LoadingManager, loadman };
