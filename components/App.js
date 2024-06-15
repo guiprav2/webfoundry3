@@ -52,6 +52,7 @@ class App {
         height: d.binding({ get: () => this.props.designerHeight }),
         preview: d.binding({ get: () => this.props.preview }),
         src: d.binding({ get: () => this.props.designerSrc }),
+        loading: d.binding({ get: () => this.props.designerLoading }),
         onLoad: this.props.onLoadDesigner,
         onResize: this.props.onResizeDesigner,
       }), d.if(() => isImage(this.props.currentFile) || isVideo(this.props.currentFile) || isAudio(this.props.currentFile), d.el(MediaViewer, {

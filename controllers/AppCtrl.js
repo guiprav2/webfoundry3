@@ -312,6 +312,7 @@ class AppCtrl {
         await d.update();
         if (!isImage(x) && !x.endsWith('.html')) { let blob = await rfiles.loadFile(this.state.currentSite, x); this.state.editorText = await blob.text() }
         this.state.currentFile = x;
+        this.state.designerLoading = true;
       }
     },
 
@@ -394,13 +395,13 @@ class AppCtrl {
       let contents = iframe.closest('.Designer-contents');
       this.state.gloves?.destroy?.();
       this.state.actions = null;
-      if (this.state.preview) { contents.classList.remove('hidden'); return }
+      if (this.state.preview) { this.state.designerLoading = false; return }
       this.state.gloves = new MagicGloves(iframe);
       //await setComponents(this.state.currentSite, this.iframe.contentDocument.documentElement);
       this.state.editorWindow = iframe.contentWindow;
       this.state.editorDocument = iframe.contentDocument;
       this.state.actions = new ActionHandler();
-      contents.classList.remove('hidden');
+      this.state.designerLoading = false;
       //post('app.pushHistory');
       let mutobs = new MutationObserver(() => post('app.saveFile', this.state.currentFile, `<!doctype html>\n${this.state.editorDocument.documentElement.outerHTML}`));
       mutobs.observe(this.state.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
