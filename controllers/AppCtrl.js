@@ -267,6 +267,7 @@ class AppCtrl {
     selectSite: async x => {
       this.state.currentSite = x;
       this.state.currentFile = null;
+      this.state.replacingStyle = null;
       this.state.preview = false;
       await post('app.changeSelected', null);
       await post('app.injectBuiltins', x);
@@ -286,8 +287,8 @@ class AppCtrl {
       if (btn !== 'yes') { return }
       await Promise.all((await rfiles.loadFiles(x)).map(y => rfiles.deleteFile(x, y)));
       rsites.deleteSite(x);
-      if (this.state.currentSite === x) { this.state.currentSite = this.state.currentFile = this.state.replacingClass = null }
-      post('app.loadSites');
+      if (this.state.currentSite === x) { this.state.currentSite = this.state.currentFile = this.state.replacingClass = null; await post('app.changeSelected', null) }
+      await post('app.loadSites');
     },
 
     injectBuiltins: async (id, wf) => {
@@ -331,14 +332,14 @@ class AppCtrl {
         let path = x + '/';
         if (this.state.expandedPaths.has(path)) { this.state.expandedPaths.delete(path) } else { this.state.expandedPaths.add(path) }
       } else {
-        this.state.currentFile = null;
+        this.state.currentFile = this.state.replacingStyle = null;
         await d.update();
+        await post('app.changeSelected', null);
         if (!isImage(x) && !x.endsWith('.html')) { let blob = await rfiles.loadFile(this.state.currentSite, x); this.state.editorText = await blob.text() }
         this.state.currentFile = x;
         this.state.preview = false;
         this.state.designerLoading = true;
         this.state.history = { entries: [], i: -1 };
-        await post('app.changeSelected', null);
       }
     },
 
@@ -398,10 +399,10 @@ class AppCtrl {
 
       if (isDir) {
         await rfiles.deleteFolder(this.state.currentSite, x);
-        if (this.state.currentFile?.startsWith?.(`${x}/`)) { this.state.currentFile = null }
+        if (this.state.currentFile?.startsWith?.(`${x}/`)) { this.state.currentFile = this.state.replacingStyle = null; await post('app.changeSelected', null) }
       } else {
         await rfiles.deleteFile(this.state.currentSite, x);
-        if (this.state.currentFile === x) { this.state.currentFile = null }
+        if (this.state.currentFile === x) { this.state.currentFile = this.state.replacingStyle = null; await post('app.changeSelected', null) }
       }
 
       await post('app.loadFiles');
