@@ -30,6 +30,9 @@ class App {
       }))}
       ${d.if(() => this.props.currentPanel === 'styles', d.el(StylesPanel, {
         styles: d.binding({ get: () => this.props.styles }),
+        replacingStyle: d.binding({ get: () => this.props.replacingStyle }),
+        onReplaceStyleKeyDown: this.props.onReplaceStyleKeyDown,
+        onReplaceStyleBlur: this.props.onReplaceStyleBlur,
         onEdit: this.props.onEditStyle,
         onDelete: this.props.onDeleteStyle,
         onAddStyleKeyDown: this.props.onAddStyleKeyDown,
@@ -42,6 +45,8 @@ class App {
         width: d.binding({ get: () => this.props.designerWidth }),
         height: d.binding({ get: () => this.props.designerHeight }),
         preview: d.binding({ get: () => this.props.preview }),
+        src: d.binding({ get: () => this.props.designerSrc }),
+        onLoad: this.props.onLoadDesigner,
         onResize: this.props.onResizeDesigner,
       }), d.el(CodeEditor, {
         currentFile: d.binding({ get: () => this.props.currentFile }),

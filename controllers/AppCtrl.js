@@ -1,6 +1,8 @@
+import ActionHandler from '../other/ActionHandler.js';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.js';
 import CreateFileDialog from '../components/dialogs/CreateFileDialog.js';
 import FileExtensionWarningDialog from '../components/dialogs/FileExtensionWarningDialog.js';
+import MagicGloves from '../other/MagicGloves.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
 import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
 import d from '../other/dominant.js';
@@ -183,6 +185,18 @@ class AppCtrl {
     designerWidth: 'calc(1471px - 1rem)',
     designerHeight: '100vh',
     preview: false,
+
+    buildFrameSrc: () => {
+      if (!this.state.currentSite || !this.state.currentFile) { return '' }
+      let src = `${this.state.preview ? 'preview' : 'files'}/${this.state.currentSite}/${!this.state.preview ? this.state.currentFile : this.state.currentFile.replace('pages/', '')}`
+      if (this.state.qsPreview) { src += `?${this.state.qsPreview}` }
+      return src;
+    },
+
+    hasActionHandler: key => this.state.actions && Boolean(this.state.actions.kbds[key]),
+    s: null,
+    get styles() { let { s } = this; return s ? [...s.classList] : [] },
+    tourDisable: new Set(),
   };
 
   actions = {
@@ -327,6 +341,52 @@ class AppCtrl {
 
       await post('app.loadFiles');
     },
+
+    loadDesigner: ev => {
+      let iframe = ev.target;
+      let contents = iframe.closest('.Designer-contents');
+      this.state.gloves?.destroy?.();
+      this.state.actions = null;
+      if (this.state.preview) { contents.classList.remove('hidden'); return }
+      this.state.gloves = new MagicGloves(iframe);
+      //await setComponents(this.state.currentSite, this.iframe.contentDocument.documentElement);
+      this.state.editorWindow = iframe.contentWindow;
+      this.state.editorDocument = iframe.contentDocument.documentElement;
+      this.state.actions = new ActionHandler();
+      contents.classList.remove('hidden');
+      //post('app.pushHistory');
+      //let mutobs = new MutationObserver(() => this.post('saveFile', this.path, `<!doctype html>\n${this.editorDocument.documentElement.outerHTML}`));
+      //mutobs.observe(this.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
+    },
+
+    changeSelected: x => this.state.s = x,
+    editorAction: x => this.state.actions.kbds[x](),
+
+    addStyleKeyDown: ev => {
+      if (ev.key !== 'Enter') { return }
+      this.state.s.classList.add(ev.target.value.trim());
+      ev.target.value = '';
+    },
+
+    editStyle: x => this.state.replacingStyle = x,
+
+    replaceStyleKeyDown: ev => {
+      if (ev.key !== 'Enter') { return }
+      this.state.s.classList.remove(this.state.replacingStyle);
+      this.state.s.classList.add(ev.target.value.trim());
+      this.state.replacingStyle = null;
+      ev.target.value = '';
+    },
+
+    replaceStyleBlur: ev => {
+      this.state.s.classList.remove(this.state.replacingStyle);
+      this.state.s.classList.add(ev.target.value.trim());
+      this.state.replacingStyle = null;
+      ev.target.value = '';
+    },
+
+    deleteStyle: x => this.state.s.classList.remove(x),
+    pushHistory: () => null,
   };
 }
 

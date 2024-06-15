@@ -49,7 +49,7 @@
       import { state, post } from './controllers/ctrls.js';
       Object.assign(window, { state, post });
       addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault(), true);
-      //navigator.serviceWorker.register('sw.bundle.js');
+      navigator.serviceWorker.register('sw.bundle.js');
       document.body.append(d.el(Root));
     </script>
   </body>
