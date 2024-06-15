@@ -250,6 +250,7 @@ class AppCtrl {
     selectSite: async x => {
       this.state.currentSite = x;
       this.state.currentFile = null;
+      await post('app.changeSelected', null);
       await post('app.injectBuiltins', x);
       await post('app.loadFiles');
       await post('app.selectIcon', 'files');
@@ -313,6 +314,7 @@ class AppCtrl {
         if (!isImage(x) && !x.endsWith('.html')) { let blob = await rfiles.loadFile(this.state.currentSite, x); this.state.editorText = await blob.text() }
         this.state.currentFile = x;
         this.state.designerLoading = true;
+        await post('app.changeSelected', null);
       }
     },
 
@@ -349,16 +351,20 @@ class AppCtrl {
     renameFile: async (x, isDir) => {
       let [btn, name] = await showModal(d.el(RenameFileDialog, { initialValue: x.split('/').at(-1) }));
       if (btn !== 'ok') { return }
-
       let newPath = [...x.split('/').slice(0, -1), name].join('/');
-      if (isDir) {
-        await rfiles.renameFolder(this.state.currentSite, x, newPath);
-        if (this.state.currentFile?.startsWith?.(`${x}/`)) { this.state.currentFile = this.state.currentFile.replace(x, newPath) }
-      } else {
-        await rfiles.renameFile(this.state.currentSite, x, newPath);
-        if (this.state.currentFile === x) { this.state.currentFile = newPath }
-      }
+      if (isDir) { await post('app.doRenameFolder', x, newPath) }
+      else { await post('app.doRenameFile', x, newPath) }
+    },
 
+    doRenameFile: async (x, newPath) => {
+      await rfiles.renameFile(this.state.currentSite, x, newPath);
+      if (this.state.currentFile === x) { await post('app.selectFile', newPath) }
+      await post('app.loadFiles');
+    },
+
+    doRenameFolder: async (x, newPath) => {
+      await rfiles.renameFolder(this.state.currentSite, x, newPath);
+      if (this.state.currentFile?.startsWith?.(`${x}/`)) { await post('app.selectFile', this.state.currentFile.replace(x, newPath)) }
       await post('app.loadFiles');
     },
 
@@ -375,6 +381,19 @@ class AppCtrl {
       }
 
       await post('app.loadFiles');
+    },
+
+    dragStartFile: (ev, path) => { ev.dataTransfer.effectAllowed = 'move'; this.state.draggedFile = path },
+    dragOverFile: ev => { ev.preventDefault(); ev.dataTransfer.dropEffect = 'move' },
+    dropFile: (ev, path) => { ev.preventDefault(); ev.stopPropagation(); post('app.mvFile', this.state.draggedFile, path) },
+
+    mvFile: async (path, newPath) => {
+      let isDir = await rfiles.loadFile(this.state.currentSite, `${path}/.keep`) != null;
+      let isNewPathDir = await rfiles.loadFile(this.state.currentSite, `${newPath}/.keep`) != null;
+      if (!isNewPathDir) { newPath = newPath.split('/').slice(0, -1).join('/') }
+      let leaf = path.split('/').at(-1);
+      if (isDir) { await post('app.doRenameFolder', path, [newPath, leaf].filter(Boolean).join('/')) }
+      else { await post('app.doRenameFile', path, [newPath, leaf].filter(Boolean).join('/')) }
     },
 
     saveFile: async (x, content) => {

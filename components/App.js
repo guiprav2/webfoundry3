@@ -33,6 +33,9 @@ class App {
         onSelect: this.props.onSelectFile,
         onRename: this.props.onRenameFile,
         onDelete: this.props.onDeleteFile,
+        onDragStart: this.props.onDragStartFile,
+        onDragOver: this.props.onDragOverFile,
+        onDrop: this.props.onDropFile,
       }))}
       ${d.if(() => this.props.currentPanel === 'styles', d.el(StylesPanel, {
         styles: d.binding({ get: () => this.props.styles }),

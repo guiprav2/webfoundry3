@@ -5,7 +5,7 @@ class FilesPanel {
   constructor(props) { this.props = props }
 
   render = () => d.html`
-    <div class="FilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50">
+    <div class="FilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50" ${{ onDragOver: this.props.onDragOver, onDrop: this.props.onDrop }}>
       <div class="FilesPanel-fileList flex flex-col gap-2 p-4">
         ${d.map(() => this.props.files, ([name, path, isDir]) => d.html`
           <a href="#" class="FilesPanel-file flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{
@@ -14,6 +14,10 @@ class FilesPanel {
               () => `ml-[${(path.split('/').length - 1) * 1.25}rem]`, () => this.props.currentFile === joinPath(path, name) && 'bg-black/70',
             ],
             onClick: () => this.props.onSelect(joinPath(path, name), isDir),
+            draggable: true,
+            onDragStart: ev => this.props.onDragStart(ev, joinPath(path, name)),
+            onDragOver: this.props.onDragOver,
+            onDrop: ev => this.props.onDrop(ev, joinPath(path, name)),
           }}>
             <div class="flex items-center gap-3">
               <div class="nf p-2" ${{ class: () => `nf-fa-${isDir ? (state.app.expandedPath(path + name + '/.keep') ? 'folder_open' : 'folder') : 'file'}` }}></div>
