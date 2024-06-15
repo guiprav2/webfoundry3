@@ -1,5 +1,6 @@
 import JSZip from 'https://cdn.skypack.dev/jszip';
 import lf from 'https://cdn.skypack.dev/localforage';
+import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
 
 class FilesRepository {
   async loadFiles(x) {
@@ -51,7 +52,8 @@ class FilesRepository {
     let zip = await JSZip.loadAsync(blob);
     for (let [path, entry] of Object.entries(zip.files)) {
       if (path.endsWith('/')) { continue }
-      await this.saveFile(site, path, await entry.async('blob'));
+      let blob = await entry.async('blob');
+      await this.saveFile(site, path, new Blob([await blob.arrayBuffer()], { type: mimeLookup(path) }));
     }
   }
 }

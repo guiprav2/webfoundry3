@@ -2,6 +2,7 @@ import ActionHandler from '../other/ActionHandler.js';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.js';
 import CreateFileDialog from '../components/dialogs/CreateFileDialog.js';
 import FileExtensionWarningDialog from '../components/dialogs/FileExtensionWarningDialog.js';
+import ImportingDialog from '../components/dialogs/ImportingDialog.js';
 import MagicGloves from '../other/MagicGloves.js';
 import NetlifyDeployDialog from '../components/dialogs/NetlifyDeployDialog.js';
 import NetlifyDeployDoneDialog from '../components/dialogs/NetlifyDeployDoneDialog.js';
@@ -218,7 +219,15 @@ class AppCtrl {
   };
 
   actions = {
-    reset: () => post('app.loadSites'),
+    reset: async () => {
+      let url = new URL(location.href);
+      if (url.searchParams.get('import')) {
+        history.replaceState(null, '', location.href.split('?')[0]);
+        await post('app.importZipFromUrl', url.searchParams.get('import'));
+      }
+
+      await post('app.loadSites');
+    },
 
     selectIcon: x => {
       if (x !== 'play' && x !== 'pause') { this.state.currentPanel = x }
@@ -239,6 +248,10 @@ class AppCtrl {
     createSite: async () => {
       let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Create site', placeholder: 'Site name', allowEmpty: false }));
       if (btn !== 'ok') { return }
+      return await post('app.doCreateSite', x);
+    },
+
+    doCreateSite: async x => {
       let id = crypto.randomUUID();
       await rsites.saveSite(id, { name: x });
       await post('app.injectBuiltins', id, true);
@@ -250,6 +263,7 @@ class AppCtrl {
     selectSite: async x => {
       this.state.currentSite = x;
       this.state.currentFile = null;
+      this.state.preview = false;
       await post('app.changeSelected', null);
       await post('app.injectBuiltins', x);
       await post('app.loadFiles');
@@ -313,6 +327,7 @@ class AppCtrl {
         await d.update();
         if (!isImage(x) && !x.endsWith('.html')) { let blob = await rfiles.loadFile(this.state.currentSite, x); this.state.editorText = await blob.text() }
         this.state.currentFile = x;
+        this.state.preview = false;
         this.state.designerLoading = true;
         await post('app.changeSelected', null);
       }
@@ -462,6 +477,53 @@ class AppCtrl {
     },
 
     pushHistory: () => null,
+
+    importZip: async () => {
+      let input = d.html`<input class="hidden" type="file" accept=".zip">`;
+
+      input.onchange = async () => {
+        try {
+          let [file] = input.files;
+          if (!file) { return }
+          this.state.importing = true;
+          showModal(d.el(ImportingDialog, { done: () => !this.state.importing }));
+          await rfiles.importZip(this.state.currentSite, file);
+          await post('app.injectBuiltins', this.state.currentSite, true);
+          await post('app.generateReflections');
+          await post('app.loadFiles');
+        } finally {
+          this.state.importing = false;
+        }
+      }
+
+      document.body.append(input);
+      input.click();
+      input.remove();
+    },
+
+    importZipFromUrl: async url => {
+      try {
+        this.state.importing = true;
+        showModal(d.el(ImportingDialog, { done: () => !this.state.importing }));
+        let res = await fetch(url);
+        if (!res.ok) { throw new Error(`Error fetching ZIP file: ${res.statusText}`) }
+        let name = atob(url.split('/').pop().split('.').slice(0, -1).join('.'));
+        let id = await post('app.doCreateSite', name);
+        await rfiles.importZip(id, await res.blob());
+        this.state.currentSite = id;
+        this.state.currentTab = 'files';
+        await post('app.loadSites');
+        await post('app.loadFiles');
+      } finally {
+        this.state.importing = false;
+      }
+    },
+
+    exportZip: async () => {
+      let blob = await rfiles.exportZip(this.state.currentSite);
+      let a = d.html`<a class="hidden" ${{ download: `${this.state.sites[this.state.currentSite].name}.zip`, href: URL.createObjectURL(blob) }}>`;
+      document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    },
 
     netlifyDeploy: async () => {
       let [btn, x] = await showModal(d.el(NetlifyDeployDialog));
