@@ -171,7 +171,7 @@ class AppCtrl {
     enabledSidebarIcons: {
       sites: true,
       files: () => !!this.state.currentSite,
-      styles: () => this.state.s,
+      styles: () => !this.state.preview && this.state.s,
       play: () => this.state.currentFile && !this.state.preview,
       pause: () => this.state.currentFile && this.state.preview,
     },
@@ -233,7 +233,12 @@ class AppCtrl {
 
     selectIcon: x => {
       if (x !== 'play' && x !== 'pause') { this.state.currentPanel = x }
-      else { this.state.preview = !this.state.preview }
+      else { post('app.togglePreview') }
+    },
+
+    togglePreview: () => {
+      this.state.preview = !this.state.preview;
+      if (this.state.preview && this.state.currentPanel === 'styles') { this.state.currentPanel = 'files' }
     },
 
     loadSites: async () => {
