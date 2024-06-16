@@ -40,7 +40,7 @@ class Root {
     onLoadDesigner: ev => post('app.loadDesigner', ev),
     onResizeDesigner: ev => post('app.resizeDesigner', ev),
     editorText: d.binding({ get: () => state.app.editorText }),
-    onEditorChange: x => post('app.editorChange', x),
+    onEditorChange: (site, path, x) => post('app.editorChange', site, path, x),
   });
 }
 

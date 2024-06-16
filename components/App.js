@@ -63,6 +63,7 @@ class App {
         currentSite: d.binding({ get: () => this.props.currentSite }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
       }), d.el(CodeEditor, {
+        currentSite: d.binding({ get: () => this.props.currentSite }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
         text: d.binding({ get: () => this.props.editorText }),
         onChange: this.props.onEditorChange,

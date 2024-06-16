@@ -602,7 +602,7 @@ class AppCtrl {
       await showModal(d.el(NetlifyDeployDoneDialog, { url: x }));
     },
 
-    editorChange: async x => await rfiles.saveFile(this.state.currentSite, this.state.currentFile, new Blob([x], { type: mimeLookup(this.state.currentFile) })),
+    editorChange: async (site, path, x) => await rfiles.saveFile(site, path, new Blob([x], { type: mimeLookup(this.state.currentFile) })),
   };
 
   onResizeDesignerPointerMove = ev => {
