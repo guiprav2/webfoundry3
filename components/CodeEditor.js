@@ -15,6 +15,7 @@ class CodeEditor {
     mode && this.editor.session.setMode(`ace/mode/${mode}`);
     this.editor.session.setTabSize(2);
     this.editor.session.setValue(this.props.text);
+    this.onChange = this.onChange.bind(this);
     this.editor.session.on('change', this.onChange);
     this.editor.focus();
   };
