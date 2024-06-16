@@ -486,7 +486,12 @@ class AppCtrl {
       ev.target.addEventListener('pointerup', this.onResizeDesignerPointerUp, { once: true });
     },
 
-    changeSelected: x => { this.state.s = x; this.state.currentPanel = x ? 'styles' : 'files' },
+    changeSelected: x => {
+      this.state.s = x;
+      if (!this.state.currentFile) { return }
+      this.state.currentPanel = x ? 'styles' : 'files';
+    },
+
     editorAction: x => this.state.actions.kbds[x](),
 
     addStyleKeyDown: async ev => {
