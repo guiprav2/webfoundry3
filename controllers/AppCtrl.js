@@ -9,6 +9,7 @@ import NetlifyDeployDialog from '../components/dialogs/NetlifyDeployDialog.js';
 import NetlifyDeployDoneDialog from '../components/dialogs/NetlifyDeployDoneDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
 import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
+import WelcomeDialog from '../components/dialogs/WelcomeDialog.js';
 import d from '../other/dominant.js';
 import morphdom from 'https://cdn.skypack.dev/morphdom/dist/morphdom-esm.js';
 import rfiles from '../repositories/FilesRepository.js';
@@ -16,6 +17,7 @@ import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
 import { isImage, joinPath, showModal, loadman, clearComponents, setComponents } from '../other/util.js';
 import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
+import { runTour } from '../other/tour.js';
 
 let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
@@ -222,14 +224,21 @@ class AppCtrl {
 
   actions = {
     reset: async () => {
+      await post('app.loadSites');
+
       let url = new URL(location.href);
       if (url.searchParams.get('import')) {
         history.replaceState(null, '', location.href.split('?')[0]);
         await post('app.importZipFromUrl', url.searchParams.get('import'));
+      } else {
+        let [btn] = await showModal(d.el(WelcomeDialog));
+        btn === 'startTour' && await runTour();
       }
-
-      await post('app.loadSites');
     },
+
+    tourDisable: (...xs) => xs.forEach(x => this.state.tourDisable.add(x)),
+    tourEnable: (...xs) => xs.forEach(x => this.state.tourDisable.delete(x)),
+    clearTourDisable: () => this.state.tourDisable = new Set(),
 
     selectIcon: x => {
       if (x !== 'play' && x !== 'pause') { this.state.currentPanel = x }
@@ -238,7 +247,10 @@ class AppCtrl {
 
     togglePreview: () => {
       this.state.preview = !this.state.preview;
-      if (this.state.preview && this.state.currentPanel === 'styles') { this.state.currentPanel = 'files' }
+      if (this.state.preview) {
+        post('app.changeSelected', null);
+        if (this.state.currentPanel === 'styles') { this.state.currentPanel = 'files' }
+      }
     },
 
     loadSites: async () => {
@@ -419,7 +431,12 @@ class AppCtrl {
       await post('app.loadFiles');
     },
 
-    dragStartFile: (ev, path) => { ev.dataTransfer.effectAllowed = 'move'; this.state.draggedFile = path },
+    dragStartFile: (ev, path) => {
+      if (ev.target.closest('[disabled], [wf-disabled]')) { return }
+      ev.dataTransfer.effectAllowed = 'move';
+      this.state.draggedFile = path;
+    },
+
     dragOverFile: ev => { ev.preventDefault(); ev.dataTransfer.dropEffect = 'move' },
     dropFile: (ev, path) => { ev.preventDefault(); ev.stopPropagation(); post('app.mvFile', this.state.draggedFile, path) },
 

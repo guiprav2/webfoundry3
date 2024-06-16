@@ -31,7 +31,7 @@ class PromptDialog {
           }}></textarea>
         `)}
         <div class="flex gap-1.5 mt-3">
-          <button value="cancel" ${{ class: styles.fullSecondaryBtn }}>Cancel</button>
+          <button value="cancel" ${{ class: styles.fullSecondaryBtn, disabled: () => state.app.tourDisable.has('cancelBtns') }}>Cancel</button>
           <button value="ok" ${{ class: styles.fullPrimaryBtn, disabled: () => !this.valid }}>OK</button>
         </div>
       </form>

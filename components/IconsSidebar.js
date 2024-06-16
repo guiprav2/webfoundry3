@@ -4,7 +4,7 @@ class IconsSidebar {
   constructor(props) { this.props = props }
 
   render = () => d.html`
-    <div class="IconsSidebar flex flex-col border-r border-black/50 select-none">
+    <div class="IconsSidebar flex flex-col border-r border-black/50 select-none" ${{ 'wf-disabled': () => this.props.tourDisable.has('IconsSidebar') }}>
       <div class="border-b border-black/50 transition-all text-xl gfont-[Pacifico] flex justify-center items-center select-none w-16 h-16">wf</div>
       ${this.renderButton('sites', 'nf-fa-sitemap')}
       ${this.renderButton('files', 'nf-fa-folder')}

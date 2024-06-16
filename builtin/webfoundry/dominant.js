@@ -5,7 +5,7 @@ var boundNodes = [];
 var ieNodes = navigator.userAgent.indexOf('Trident') ? [] : null;
 
 var classTypeRegExp = /^class\s/;
-var ariaRegExp = /^aria-/;
+var dashRegExp = /-/;
 var svgNsRegExp = /\/svg$/;
 var wsRegExp = / |\r|\n/;
 var onAttachRegExp = /^on:?attach$/i
@@ -100,9 +100,9 @@ Binding.prototype.update = function() {
 
   var el = this.target;
 
-  // aria-* and SVG element props need to be managed as attributes.
-  if (ariaRegExp.test(this.key) || svgNsRegExp.test(el.namespaceURI)) {
-    if (!nullish(newValue)) { el.setAttribute(this.key, newValue) }
+  // Attributes with dashes and SVG element props need to be managed as attributes.
+  if (dashRegExp.test(this.key) || svgNsRegExp.test(el.namespaceURI)) {
+    if (!nullish(newValue) && newValue !== false) { el.setAttribute(this.key, newValue) }
     else { el.removeAttribute(this.key) }
   } else {
     // All else are regular DOM element properties.
@@ -396,9 +396,9 @@ function createElement(type) {
       continue;
     }
 
-    // aria-* and SVG element props need to be managed as attributes.
-    if (ariaRegExp.test(k) || svgNsRegExp.test(el.namespaceURI)) {
-      if (!nullish(v)) { el.setAttribute(k, v) }
+    // Attributes with dashes and SVG element props need to be managed as attributes.
+    if (dashRegExp.test(k) || svgNsRegExp.test(el.namespaceURI)) {
+      if (!nullish(v) && v !== false) { el.setAttribute(k, v) }
       else { el.removeAttribute(k) }
     }
 
@@ -456,6 +456,9 @@ function ifAnchorBindingUpdate() {
     // If the value hasn't changed, do nothing else.
     return;
   }
+
+  // Fixes a weird issue on Chrome.
+  this.lastValue = newValue;
 
   // Since the value has changed, remove currently anchored nodes (if any).
   if (nAnchor.anchoredNodes && nAnchor.anchoredNodes.length) {

@@ -14,11 +14,13 @@ class App {
   render = () => d.html`
     <div class="App min-h-screen flex" ${{ onAttach: this.props.onAttach }}>
       ${d.el(IconsSidebar, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
         enabledIcons: d.binding({ get: () => this.props.enabledSidebarIcons }),
         currentPanel: d.binding({ get: () => this.props.currentPanel }),
         onSelect: this.props.onSelectIcon,
       })}
       ${d.if(() => this.props.currentPanel === 'sites', d.el(SitesPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
         sites: d.binding({ get: () => this.props.sites }),
         currentSite: d.binding({ get: () => this.props.currentSite }),
         onCreate: this.props.onCreateSite,
@@ -27,6 +29,7 @@ class App {
         onDelete: this.props.onDeleteSite,
       }))}
       ${d.if(() => this.props.currentPanel === 'files', d.el(FilesPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
         files: d.binding({ get: () => this.props.files }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
         onCreate: this.props.onCreateFile,
@@ -38,6 +41,7 @@ class App {
         onDrop: this.props.onDropFile,
       }))}
       ${d.if(() => this.props.currentPanel === 'styles', d.el(StylesPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
         styles: d.binding({ get: () => this.props.styles }),
         replacingStyle: d.binding({ get: () => this.props.replacingStyle }),
         onReplaceStyleKeyDown: this.props.onReplaceStyleKeyDown,
@@ -51,6 +55,7 @@ class App {
           <div class="text-7xl gfont-[Pacifico] text-black/50 select-none">Webfoundry</div>
         </div>
       `, d.if(() => this.props.currentFile.endsWith('.html'), d.el(Designer, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
         width: d.binding({ get: () => this.props.designerWidth }),
         height: d.binding({ get: () => this.props.designerHeight }),
         preview: d.binding({ get: () => this.props.preview }),
@@ -63,6 +68,7 @@ class App {
         currentSite: d.binding({ get: () => this.props.currentSite }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
       }), d.el(CodeEditor, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
         currentSite: d.binding({ get: () => this.props.currentSite }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
         text: d.binding({ get: () => this.props.editorText }),

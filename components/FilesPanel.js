@@ -5,7 +5,11 @@ class FilesPanel {
   constructor(props) { this.props = props }
 
   render = () => d.html`
-    <div class="FilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50" ${{ onDragOver: this.props.onDragOver, onDrop: this.props.onDrop }}>
+    <div class="FilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50" ${{
+      'wf-disabled': () => this.props.tourDisable.has('FilesPanel'),
+      onDragOver: this.props.onDragOver,
+      onDrop: this.props.onDrop,
+    }}>
       <div class="FilesPanel-fileList flex flex-col gap-2 p-4 max-h-screen overflow-auto">
         ${d.if(() => loadman.has('app.selectSite'), d.html`
           <div class="flex items-center gap-3">
@@ -20,6 +24,7 @@ class FilesPanel {
             class: [
               () => !state.app.expandedPath(path) && 'hidden',
               () => `ml-[${(path.split('/').length - 1) * 1.25}rem]`, () => this.props.currentFile === joinPath(path, name) && 'bg-black/70',
+              () => joinPath(path, name) === 'pages/index.html' && 'FilesPanel-indexHtml',
             ],
             onClick: () => this.props.onSelect(joinPath(path, name), isDir),
             draggable: true,

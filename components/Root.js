@@ -6,6 +6,7 @@ window.tap = x => (console.log(x), x);
 class Root {
   render = () => d.el(App, {
     onAttach: () => post('app.reset'),
+    tourDisable: d.binding({ get: () => state.app.tourDisable }),
     enabledSidebarIcons: d.binding({ get: () => state.app.enabledSidebarIcons }),
     currentPanel: d.binding({ get: () => state.app.currentPanel }),
     onSelectIcon: x => post('app.selectIcon', x),
@@ -43,6 +44,8 @@ class Root {
     onEditorChange: (site, path, x) => post('app.editorChange', site, path, x),
   });
 }
+
+addEventListener('click', ev => ev.target.closest('[disabled], [wf-disabled]') && (ev.preventDefault(), ev.stopPropagation()), true);
 
 let observer = new MutationObserver(muts => {
   let gfonts = [];
