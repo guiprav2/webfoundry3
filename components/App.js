@@ -6,6 +6,7 @@ import IconsSidebar from './IconsSidebar.js';
 import MediaViewer from './MediaViewer.js';
 import SitesPanel from './SitesPanel.js';
 import StylesPanel from './StylesPanel.js';
+import TilesPanel from './TilesPanel.js';
 import WfPanel from './WfPanel.js';
 import d from '../other/dominant.js';
 import { isImage, isVideo, isAudio } from '../other/util.js';
@@ -62,6 +63,10 @@ class App {
         onEdit: this.props.onEditStyle,
         onDelete: this.props.onDeleteStyle,
         onAddStyleKeyDown: this.props.onAddStyleKeyDown,
+        onAddStyleSubmit: this.props.onAddStyleSubmit,
+      }))}
+      ${d.if(() => this.props.currentPanel === 'tiles', d.el(TilesPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
       }))}
       ${d.if(() => this.props.currentPanel !== 'wf' && !this.props.currentFile, d.html`
         <div class="flex-1 bg-[#060a0f] flex justify-center items-center">

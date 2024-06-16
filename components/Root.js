@@ -33,6 +33,7 @@ class Root {
     onEditStyle: x => post('app.editStyle', x),
     onDeleteStyle: x => post('app.deleteStyle', x),
     onAddStyleKeyDown: ev => post('app.addStyleKeyDown', ev),
+    onAddStyleSubmit: () => post('app.addStyleSubmit'),
     designerWidth: d.binding({ get: () => state.app.designerWidth }),
     designerHeight: d.binding({ get: () => state.app.designerHeight }),
     preview: d.binding({ get: () => state.app.preview }),

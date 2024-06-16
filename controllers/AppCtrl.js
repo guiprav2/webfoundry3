@@ -29,6 +29,7 @@ class AppCtrl {
       files: () => !!this.state.currentSite,
       styles: () => !this.state.preview && this.state.s,
       actions: () => !!this.state.currentSite,
+      tiles: () => this.state.currentFile && !this.state.preview,
       play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
       pause: () => this.state.preview,
     },
@@ -377,11 +378,12 @@ class AppCtrl {
     },
 
     editorAction: x => this.state.actions.kbds[x](),
+    addStyleKeyDown: async ev => ev.key === 'Enter' && await post('app.addStyleSubmit'),
 
-    addStyleKeyDown: async ev => {
-      if (ev.key !== 'Enter') { return }
-      await post('app.addStyle', ev.target.value.trim());
-      ev.target.value = '';
+    addStyleSubmit: async () => {
+      let input = document.querySelector('.StylesPanel-addStyleInput');
+      await post('app.addStyle', input.value.trim());
+      input.value = '';
     },
 
     editStyle: x => this.state.replacingStyle = x,

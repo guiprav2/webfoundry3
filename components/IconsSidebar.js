@@ -10,6 +10,7 @@ class IconsSidebar {
       ${this.renderButton('files', 'nf-fa-folder')}
       ${this.renderButton('actions', 'nf-fa-hand')}
       ${this.renderButton('styles', 'nf-fa-paint_brush')}
+      ${this.renderButton('tiles', 'nf-md-checkerboard')}
       ${this.renderButton('play', 'nf-fa-play')}
       ${this.renderButton('pause', 'nf-fa-pause')}
     </div>

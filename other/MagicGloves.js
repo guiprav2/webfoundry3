@@ -1,6 +1,12 @@
 import Boo from './boo.js';
 import d from './dominant.js';
 
+function minmax(min, max, x) {
+  if (x < min) { return min }
+  if (x > max) { return max }
+  return x;
+}
+
 class MagicGloves {
   constructor(iframe) {
     Object.assign(this, { iframe });
@@ -9,6 +15,8 @@ class MagicGloves {
     iframe.contentDocument.addEventListener('dblclick', this.onDblClick, true);
     iframe.contentDocument.addEventListener('contextmenu', this.onContextMenu, true);
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown, true);
+    iframe.contentWindow.addEventListener('mousemove', this.onMouseMove, true);
+    iframe.contentWindow.addEventListener('keyup', this.onKeyUp, true);
     iframe.contentWindow.addEventListener('change', this.onChange, true);
 
     this.sov = new Boo(
@@ -34,8 +42,8 @@ class MagicGloves {
     (ev.shiftKey || ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') && ev.preventDefault();
   };
 
-  onClick = async (ev, dbl = false) => {
-    if (ev.ctrlKey) { return }
+  onClick = async ev => {
+    if (ev.ctrlKey || ev.target.classList.contains('tile')) { return }
     if (!state.app.tourDisable.has('gloves.preventDefault')) { ev.preventDefault(); ev.stopPropagation() }
     let target = ev.target;
     if (!this.iframe.contentDocument.body.contains(target)) { target = this.iframe.contentDocument.body }
@@ -64,6 +72,17 @@ class MagicGloves {
   };
 
   onKeyDown = ev => {
+    if (ev.key === 'Shift') {
+      state.app.s.append(this.tile = d.el('div', {
+        class: 'tile absolute w-[32px] h-[32px]',
+        style: {
+          backgroundImage: `url("${tilesPanel.tileset}")`,
+          backgroundPosition: `${-tilesPanel.tx * 32}px ${-tilesPanel.ty * 32}px`,
+        },
+        onClick: () => state.app.s.append(this.tile.cloneNode()),
+      }));
+    }
+
     if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') {
       ev.key === 'Escape' && ev.target.blur();
       return;
@@ -76,6 +95,20 @@ class MagicGloves {
     ev.preventDefault();
     ev.stopPropagation();
     post('app.editorAction', key);
+  };
+
+  onMouseMove = ev => {
+    if (!this.tile) { return }
+    let map = this.tile.closest('.relative');
+    let rect = map.getBoundingClientRect();
+    this.tile.style.left = `${minmax(0, 640 - 32, Math.floor((ev.clientX - rect.x) / 32) * 32)}px`;
+    this.tile.style.top = `${minmax(0, 480 - 32, Math.floor((ev.clientY - rect.y) / 32) * 32)}px`;
+  };
+
+  onKeyUp = ev => {
+    if (ev.key !== 'Shift' || !this.tile) { return }
+    this.tile.remove();
+    this.tile = null;
   };
 
   onChange = ev => {
