@@ -1,3 +1,4 @@
+import d from './dominant.js';
 import rfiles from '../repositories/FilesRepository.js';
 
 function isImage(path) { return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'].some(x => path?.endsWith?.(x)) }
@@ -29,9 +30,9 @@ async function showModal(x) {
 
 class LoadingManager {
   set = new Set();
-  add(x) { this.set.add(x) }
-  has(x) { this.set.has(x) }
-  rm(x) { this.set.delete(x) }
+  add(x) { this.set.add(x); d.update() }
+  has(x) { return this.set.has(x) }
+  rm(x) { this.set.delete(x); d.update() }
 }
 
 let loadman = new LoadingManager();

@@ -270,14 +270,19 @@ class AppCtrl {
     },
 
     selectSite: async x => {
-      this.state.currentSite = x;
-      this.state.currentFile = null;
-      this.state.replacingStyle = null;
-      this.state.preview = false;
-      await post('app.changeSelected', null);
-      await post('app.injectBuiltins', x);
-      await post('app.loadFiles');
-      await post('app.selectIcon', 'files');
+      try {
+        loadman.add('app.selectSite');
+        this.state.currentSite = x;
+        this.state.currentFile = null;
+        this.state.replacingStyle = null;
+        this.state.preview = false;
+        await post('app.changeSelected', null);
+        await post('app.injectBuiltins', x);
+        await post('app.loadFiles');
+        await post('app.selectIcon', 'files');
+      } finally {
+        loadman.rm('app.selectSite');
+      }
     },
 
     renameSite: async x => {
