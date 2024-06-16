@@ -15,7 +15,7 @@ class ImageGalleryDialog {
 
   async loadFolders() {
     let files = await rfiles.loadFiles(state.app.currentSite);
-    return [...new Set(files.filter(x => !x.startsWith('webfoundry/')).map(x => x.split('/').slice(0, -1).join('/')).filter(Boolean))];
+    return [...new Set(files.filter(x => x.startsWith('images/')).map(x => x.split('/').slice(0, -1).join('/')).filter(Boolean))];
   }
 
   async getImages(path) {

@@ -6,7 +6,7 @@ class FilesPanel {
 
   render = () => d.html`
     <div class="FilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50" ${{ onDragOver: this.props.onDragOver, onDrop: this.props.onDrop }}>
-      <div class="FilesPanel-fileList flex flex-col gap-2 p-4">
+      <div class="FilesPanel-fileList flex flex-col gap-2 p-4 max-h-screen overflow-auto">
         ${d.map(() => this.props.files, ([name, path, isDir]) => d.html`
           <a href="#" class="FilesPanel-file flex items-center gap-3 rounded outline-none py-1 justify-between px-2" ${{
             class: [
@@ -19,9 +19,9 @@ class FilesPanel {
             onDragOver: this.props.onDragOver,
             onDrop: ev => this.props.onDrop(ev, joinPath(path, name)),
           }}>
-            <div class="flex items-center gap-3">
+            <div class="max-w-[calc(100%_-_5rem)] flex items-center gap-3">
               <div class="nf p-2" ${{ class: () => `nf-fa-${isDir ? (state.app.expandedPath(path + name + '/.keep') ? 'folder_open' : 'folder') : 'file'}` }}></div>
-              <div class="SitesPanel-fileName">${name}</div>
+              <div class="SitesPanel-fileName overflow-hidden text-ellipsis">${name}</div>
             </div>
             <div class="flex">
               ${d.if(() => isDir, d.html`

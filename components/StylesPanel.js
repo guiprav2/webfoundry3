@@ -5,7 +5,7 @@ class StylesPanel {
 
   render = () => d.html`
     <div class="StylesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50 select-none">
-      <div class="StylesPanel-styleList flex flex-col gap-2 p-4">
+      <div class="StylesPanel-styleList flex flex-col gap-2 p-4 max-h-screen overflow-auto">
         ${d.map(() => this.props.styles, x => d.html`
           <div class="StylesPanel-style flex items-center gap-3 rounded outline-none py-1 justify-between px-2">
             <div class="flex items-center gap-3">

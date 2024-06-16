@@ -305,6 +305,7 @@ class AppCtrl {
 
       await rfiles.saveFile(id, 'components/.keep', new Blob([''], { type: 'text/plain' }));
       await rfiles.saveFile(id, 'controllers/.keep', new Blob([''], { type: 'text/plain' }));
+      await rfiles.saveFile(id, 'images/.keep', new Blob([''], { type: 'text/plain' }));
       await rfiles.saveFile(id, 'pages/.keep', new Blob([''], { type: 'text/plain' }));
       for (let [k, v] of Object.entries(files)) { await rfiles.saveFile(id, k, v) }
 
