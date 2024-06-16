@@ -441,6 +441,7 @@ class AppCtrl {
     dropFile: (ev, path) => { ev.preventDefault(); ev.stopPropagation(); post('app.mvFile', this.state.draggedFile, path) },
 
     mvFile: async (path, newPath) => {
+      if (newPath.startsWith(`${path}/`)) { return }
       let isDir = await rfiles.loadFile(this.state.currentSite, `${path}/.keep`) != null;
       let isNewPathDir = await rfiles.loadFile(this.state.currentSite, `${newPath}/.keep`) != null;
       if (!isNewPathDir) { newPath = newPath.split('/').slice(0, -1).join('/') }
