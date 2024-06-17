@@ -19,6 +19,137 @@ import { isImage, joinPath, showModal, loadman, clearComponents, setComponents }
 import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
 import { runTour } from '../other/tour.js';
 
+let weatherDemoAppJs = `let apiKey = 'e68ebff8f4c62313651fb45c31da51f6';
+
+class App {
+  state = {};
+  
+  actions = {
+    search: async ev => {
+      ev.preventDefault();
+
+      try {
+        this.state.checked = this.state.error = null;
+        d.update();
+        if (!this.state.typedCity?.trim?.()) { this.state.error = 'You have not entered a city name.'; return }
+        let res = await fetch(\`https://api.openweathermap.org/data/2.5/weather?q=\${this.state.typedCity}&appid=\${apiKey}&units=metric\`);
+        if (!res.ok) { throw new Error('Fetch failed') }
+        let data = await res.json();
+        this.state.city = this.state.typedCity;
+        this.state.temp = data.main.temp;
+        this.state.weather = data.weather[0].description;
+        this.state.checked = true;
+        console.log(this.state);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+        this.state.error = 'Error fetching weather data.';
+      }
+    },
+  };
+}
+
+export default App;`;
+
+let weatherDemoHtml = `<!doctype html>
+<meta charset="utf-8">
+<head>
+  <link class="wf-nf-link" rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+  <script class="wf-tw-script" src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script class="wf-tw-setup">
+    tailwind.config = {
+      darkMode: location.href.includes('/preview/') ? 'media' : 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: 'hsl(222.2, 47.4%, 11.2%)',
+              foreground: 'hsl(210, 40%, 98%)',
+            },
+            secondary: {
+              DEFAULT: 'hsl(210, 40%, 96.1%)',
+              foreground: 'hsl(222.2, 47.4%, 11.2%)',
+            },
+            muted: {
+              DEFAULT: 'hsl(210, 40%, 96.1%)',
+              foreground: 'hsl(215.4, 16.3%, 46.9%)',
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <script class="wf-gfonts-script">
+    let observer = new MutationObserver(muts => {
+      let gfonts = [];
+      for (let mut of muts) {
+        if (mut.type === 'childList') {
+          for (let x of mut.addedNodes) {
+            if (x.nodeType !== 1) { continue }
+            for (let y of [x, ...x.querySelectorAll('*')]) {
+              gfonts.push(...[...y.classList].filter(x => x.match(/^gfont-\\[.+?\\]$/)).map(x => x.slice('gfont-['.length, -1)));
+            }
+          }
+        } else if (mut.type === 'attributes') {
+          gfonts.push(...[...mut.target.classList].filter(x => x.match(/^gfont-\\[.+?\\]$/)).map(x => x.slice('gfont-['.length, -1)));
+        }
+      }
+
+      for (let x of gfonts) {
+        let id = \`gfont-[\${x}]\`;
+        let style = document.getElementById(id);
+        if (style) { continue }
+        style = document.createElement('style');
+        style.id = id;
+        style.textContent = \`
+          @import url('https://fonts.googleapis.com/css2?family=\${x.replace(/_/g, '+')}:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+          .gfont-\\\\[\${x}\\\\] { font-family: "\${x.replace(/_/g, ' ')}" }
+        \`;
+        document.head.append(style);
+      }
+    });
+
+    observer.observe(document, { attributes: true, childList: true, subtree: true });
+  </script>
+  <style class="wf-preflight">
+    [hidden] { display: none !important }
+  </style>
+</head>
+<body class="h-screen">
+  <div class="py-16 sm:py-24 min-h-screen flex justify-center items-center bg-[#091017]">
+    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="relative isolate overflow-hidden bg-gray-900 px-6 py-24 shadow-2xl sm:rounded-3xl sm:px-24 xl:py-32">
+        <h2 class="mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">My Awesome Weather App</h2>
+        <p class="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
+          Click the Preview (Play) icon on the sidebar and enter a city name to look it up on Open Weather Map.
+        </p>
+        <form class="mx-auto mt-10 flex max-w-md gap-x-4">
+          <label for="email-address" class="sr-only">Email address</label>
+          <input id="email-address" name="email" autocomplete="email" required="" class="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm sm:leading-6 outline-none" placeholder="Enter a city name" value="{{state.app.typedCity}}">
+          <button type="submit" class="flex-none rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" wf-onclick="post('app.search', event)">Search</button>
+        </form>
+        <p class="mx-auto max-w-xl text-center text-lg leading-8 mt-6 text-red-600" wf-if="state.app.error">
+          {{state.app.error}}
+        </p>
+        <p class="mx-auto max-w-xl text-center text-lg leading-8 text-gray-300 mt-6" wf-if="state.app.checked">
+          The temperature in {{state.app.city}} right now is {{state.app.temp}} °C
+        </p>
+        <p class="mx-auto max-w-xl text-center text-lg leading-8 text-gray-300" wf-if="state.app.checked">
+          Weather: {{state.app.weather}}
+        </p>
+        <svg viewBox="0 0 1024 1024" class="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2" aria-hidden="true">
+          <circle cx="512" cy="512" r="512" fill="url(#759c1415-0410-454c-8f7c-9a820de03641)" fill-opacity="0.7"></circle>
+          <defs>
+            <radialGradient id="759c1415-0410-454c-8f7c-9a820de03641" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(512)">
+              <stop stop-color="#7775D6"></stop>
+              <stop offset="1" stop-color="#E935C1" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+</body>`;
+
 let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
 <head>
@@ -275,9 +406,10 @@ class AppCtrl {
     doCreateSite: async x => {
       let id = crypto.randomUUID();
       await rsites.saveSite(id, { name: x });
-      await post('app.injectBuiltins', id, true);
+      await post('app.injectBuiltins', id, true, true);
       await post('app.loadSites');
       await post('app.selectSite', id);
+      await post('app.generateReflections');
       return id;
     },
 
@@ -313,7 +445,7 @@ class AppCtrl {
       await post('app.loadSites');
     },
 
-    injectBuiltins: async (id, wf) => {
+    injectBuiltins: async (id, wf, firstTime) => {
       let files = Object.fromEntries(await Promise.all([
         'webfoundry/app.js',
         'webfoundry/dominant.js',
@@ -331,8 +463,10 @@ class AppCtrl {
         await rfiles.saveFile(id, 'webfoundry/scripts.json', new Blob(['[]'], { type: 'application/json' }));
       }
 
-      if (!await rfiles.loadFile(id, 'pages/index.html')) {
-        await rfiles.saveFile(id, 'pages/index.html', new Blob([defaultHtml], { type: 'text/html' }));
+      if (firstTime) {
+        console.log('FUCK');
+        await rfiles.saveFile(id, 'controllers/App.js', new Blob([weatherDemoAppJs], { type: 'application/javascript' }));
+        await rfiles.saveFile(id, 'pages/index.html', new Blob([weatherDemoHtml], { type: 'text/html' }));
       }
     },
 
