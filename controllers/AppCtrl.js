@@ -510,14 +510,16 @@ class AppCtrl {
       ev.target.value = '';
     },
 
-    addStyle: x => {
+    addStyle: async x => {
       if (/^{{.+?}}$/.test(x)) { addWfClass(this.state.s, x) }
       else { this.state.s.classList.add(x) }
+      await post('app.pushHistory');
     },
 
-    deleteStyle: x => {
+    deleteStyle: async x => {
       if (/^{{.+?}}$/.test(x)) { rmWfClass(this.state.s, x) }
       else { this.state.s.classList.remove(x) }
+      await post('app.pushHistory');
     },
 
     contextMenu: where => {

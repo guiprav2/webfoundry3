@@ -2,11 +2,11 @@ import d from '../../other/dominant.js';
 import styles from '../../other/styles.js';
 
 class PromptDialog {
-  constructor(props) { this.props = props; this.value = this.props.initialValue }
+  constructor(props) { this.props = props; this.value = this.props.initialValue; this.props.allowEmpty ??= true }
   get valid() { return this.props.allowEmpty || this.value }
 
   onKeyDown = ev => {
-    if (ev.key !== 'Enter') { return }
+    if (ev.key !== 'Enter' || this.props.multiline) { return }
     ev.preventDefault();
     ev.target.closest('form').querySelector('[value="ok"]').click();
   };

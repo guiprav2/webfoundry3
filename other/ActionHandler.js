@@ -325,11 +325,9 @@ class ActionHandler {
 
   setPlaceholder = async () => {
     if (!this.s || (this.s.tagName !== 'INPUT' && this.s.tagName !== 'TEXTAREA')) { return }
-    let [btn, x] = await showModal(d.el(PlaceholderDialog, { value: this.s.getAttribute('placeholder'), expr: this.s.getAttribute('wf-placeholder') }));
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set input placeholder', value: this.s.getAttribute('placeholder') }));
     if (btn !== 'ok') { return }
-    let [value, expr] = x;
-    value.trim() ? this.s.setAttribute('placeholder', value.trim()) : this.s.removeAttribute('placeholder');
-    expr.trim() ? this.s.setAttribute('wf-placeholder', expr.trim()) : this.s.removeAttribute('wf-placeholder');
+    x.trim() ? this.s.setAttribute('placeholder', x.trim()) : this.s.removeAttribute('placeholder');
     post('app.pushHistory');
   };
 
