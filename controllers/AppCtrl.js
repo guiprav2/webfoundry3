@@ -305,8 +305,8 @@ class AppCtrl {
       sites: true,
       files: () => !!this.state.currentSite,
       styles: () => !this.state.preview && this.state.s,
-      play: () => this.state.currentFile && !this.state.preview,
-      pause: () => this.state.currentFile && this.state.preview,
+      play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
+      pause: () => this.state.preview,
     },
 
     currentPanel: 'sites',
