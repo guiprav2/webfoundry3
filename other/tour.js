@@ -240,21 +240,23 @@ async function runTour() {
 
     selectPlaceholder: async () => {
       let iframe = document.querySelector('.Designer iframe');
-      let placeholder = iframe.contentDocument.querySelector('.italic');
-      hl.target(placeholder, iframe);
+      let h2 = iframe.contentDocument.querySelector('h2');
+      hl.padding = 10;
+      hl.target(h2, iframe);
 
       let [p, destroy] = showInstructions('bottom', d.html`
         <div>
-          <div class="font-bold mb-2">Select placeholder element</div>
-          <div>By default, Webfoundry pages come with just a placeholder element inside.</div>
-          <div>Click to select it.</div>
+          <div class="font-bold mb-2">Select My Awesome Weather App heading</div>
+          <div>By default, Webfoundry creates a demo app for you.</div>
+          <div>Click the &lt;h2&gt; to select it.</div>
         </div>
       `);
 
       let { promise: p2, resolve: res2 } = Promise.withResolvers();
-      placeholder.addEventListener('click', res2, { once: true });
+      h2.addEventListener('click', res2, { once: true });
       if (await Promise.race([p, p2]) === 'close') { return 'abort' }
       destroy();
+      hl.padding = 0;
       return 'styleList';
     },
 
@@ -270,35 +272,6 @@ async function runTour() {
       `)[0];
 
       if (btn === 'close') { return 'abort' }
-      return 'changeFontSize';
-    },
-
-    changeFontSize: async () => {
-      await post('app.tourEnable', 'StylesPanel');
-      let iframe = document.querySelector('.Designer iframe');
-      let placeholder = iframe.contentDocument.querySelector('.italic');
-      hl.hide();
-
-      let [p, destroy] = showInstructions('bottom', d.html`
-        <div>
-          <div class="font-bold mb-2">Change font size</div>
-          <div>Suppose you want to increase the placeholder font size to <span class="font-bold">text-4xl</span>.</div>
-          <div>Either use the context menu (right-click anywhere), then go to <span class="font-bold">Styles > Basic > Typography</span> and click the right arrow next to <span class="font-bold">text-xs</span> until it reads <span class="font-bold">text-4xl</span>, or use the <span class="font-bold">Styles tab</span> in the top-left corner to add it directly from there.</div>
-          <div>Clicking the class name toggles it on and off, so beware of that.</div>
-          <div><span class="italic">Hint</span>: As you get used to Tailwind class names and keyboard shortcuts, you'll find yourself using the context menu less and less.</div>
-        </div>
-      `);
-
-      let { promise: p2, resolve: res2 } = Promise.withResolvers();
-      function frame() {
-        if (placeholder.classList.contains('text-4xl')) { res2(); return }
-        requestAnimationFrame(frame);
-      }
-
-      frame();
-      if (await Promise.race([p, p2]) === 'close') { return 'abort' }
-      destroy();
-      await post('app.tourDisable', 'StylesPanel');
       return 'preview';
     },
 
@@ -327,7 +300,7 @@ async function runTour() {
         <div>
           <div class="font-bold mb-2">Preview page</div>
           <div>This is what your page would look like to an end-user.</div>
-          <div>If you had links and buttons you'd be able to click them to also go to other pages, just like in the real site.</div>
+          <div>Try typing a city name and hitting Search.</div>
         </div>
         <button class="mt-4 rounded-md border border-white px-4 py-2 hover:text-neutral-700 hover:bg-white transition-colors" value="next">Next</button>
       `)[0];
