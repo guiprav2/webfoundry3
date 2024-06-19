@@ -39,7 +39,6 @@ class App {
         this.state.temp = data.main.temp;
         this.state.weather = data.weather[0].description;
         this.state.checked = true;
-        console.log(this.state);
       } catch (error) {
         console.error('Error fetching weather data:', error);
         this.state.error = 'Error fetching weather data.';
@@ -464,7 +463,6 @@ class AppCtrl {
       }
 
       if (firstTime) {
-        console.log('FUCK');
         await rfiles.saveFile(id, 'controllers/App.js', new Blob([weatherDemoAppJs], { type: 'application/javascript' }));
         await rfiles.saveFile(id, 'pages/index.html', new Blob([weatherDemoHtml], { type: 'text/html' }));
       }

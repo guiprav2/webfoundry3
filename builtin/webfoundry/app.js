@@ -273,7 +273,7 @@ function compile(root) {
 
         if (x.style.backgroundImage?.startsWith?.('url(')) {
           let url = JSON.parse(x.style.backgroundImage.slice(4, -1));
-          if (!url.startsWith('../')) { return }
+          if (!url.startsWith('../')) { continue }
           x.style.backgroundImage = `url("${url.slice(3)}")`;
         }
 
