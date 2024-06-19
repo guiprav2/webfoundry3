@@ -122,8 +122,7 @@ let weatherDemoHtml = `<!doctype html>
           Click the Preview (Play) icon on the sidebar and enter a city name to look it up on Open Weather Map.
         </p>
         <form class="mx-auto mt-10 flex max-w-md gap-x-4">
-          <label for="email-address" class="sr-only">Email address</label>
-          <input id="email-address" name="email" autocomplete="email" required="" class="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm sm:leading-6 outline-none" placeholder="Enter a city name" value="{{state.app.typedCity}}">
+          <input required="" class="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm sm:leading-6 outline-none" placeholder="Enter a city name" value="{{state.app.typedCity}}">
           <button type="submit" class="flex-none rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" wf-onclick="post('app.search', event)">Search</button>
         </form>
         <p class="mx-auto max-w-xl text-center text-lg leading-8 mt-6 text-red-600" wf-if="state.app.error">

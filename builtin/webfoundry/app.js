@@ -24,7 +24,9 @@ let loadedControllers = Object.fromEntries(await Promise.all(scripts.filter(x =>
 
 let components = Object.fromEntries((await Promise.all(
   Object.entries(templates).map(async ([k, v]) => k.startsWith('components/')
-    ? [[k.replace('.html', '.js'), scripts.includes(k.replace('.html', '.js')) ? (await import('../' + k.replace('.html', '.js'))).default : class GenericComponent {}]]
+    ? [[k.replace('.html', '.js'), scripts.includes(k.replace('.html', '.js'))
+      ? (await import('../' + k.replace('.html', '.js'))).default
+      : class GenericComponent { constructor(props) { this.props = props } }]]
     : []),
 )).flat());
 
@@ -38,7 +40,7 @@ window.renderTemplate = x => {
 
 window.renderComponent = (x, props) => {
   x = `components/${x}.html`;
-  let Component = components[x.replace('.html', '.js')] || class GenericComponent {};
+  let Component = components[x.replace('.html', '.js')];
   Component.prototype.render = function () {
     this.root = renderTemplate(x);
     this.root.ctx ??= {};

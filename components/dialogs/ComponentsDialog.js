@@ -18,7 +18,7 @@ class ComponentsDialog {
     this.propsEditor.setTheme('ace/theme/monokai');
     this.propsEditor.session.setMode('ace/mode/json');
     this.propsEditor.session.setTabSize(2);
-    this.propsEditor.session.setValue(this.selected === this.props.component ? this.props.props : '{}');
+    this.propsEditor.session.setValue(this.props.props || '{}');
     ace.require("ace/ext/beautify").beautify(this.propsEditor.session);
   };
 
