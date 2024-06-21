@@ -7,7 +7,7 @@ class CodeDialog {
   onAttach = () => {
     this.editor = ace.edit(this.editorRoot);
     this.editor.setTheme('ace/theme/monokai');
-    this.editor.session.setMode('ace/mode/html');
+    this.editor.session.setMode(`ace/mode/${this.props.mode || 'html'}`);
     this.editor.session.setTabSize(2);
     this.props.initialValue && this.editor.session.setValue(this.props.initialValue);
     ace.require("ace/ext/beautify").beautify(this.editor.session);

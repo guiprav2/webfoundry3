@@ -395,6 +395,15 @@ class ActionHandler {
     x ? this.s.setAttribute('wf-innerhtml', x) : this.s.removeAttribute('wf-innerhtml');
     post('app.pushHistory');
   };
+
+  evalJs = async () => {
+    let lastEval = localStorage.getItem('webfoundry:lastEval');
+    let [btn, x] = await showModal(d.el(CodeDialog, { title: 'Evaluate JavaScript', mode: 'javascript', initialValue: lastEval }));
+    if (btn !== 'ok') { return }
+    localStorage.setItem('webfoundry:lastEval', x);
+    try { new Function(x).call(this.s) }
+    finally { post('app.pushHistory') }
+  };
   
   kbds = {
     Escape: this.sToggle,
@@ -456,6 +465,7 @@ class ActionHandler {
     'Ctrl-c': this.setComponent,
     'Ctrl-v': this.setValue,
     'Ctrl-M': this.setInnerHtmlExpression,
+    'Ctrl-x': this.evalJs,
   };
 }
 
