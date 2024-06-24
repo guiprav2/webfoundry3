@@ -113,38 +113,50 @@ let weatherDemoHtml = `<!doctype html>
     [hidden] { display: none !important }
   </style>
 </head>
-<body class="h-screen">
-  <div class="py-16 sm:py-24 min-h-screen flex justify-center items-center bg-[#091017]">
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="relative isolate overflow-hidden bg-gray-900 px-6 py-24 shadow-2xl sm:rounded-3xl sm:px-24 xl:py-32">
-        <h2 class="mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">My Awesome Weather App</h2>
-        <p class="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
-          Click the Preview (Play) icon on the sidebar and enter a city name to look it up on Open Weather Map.
-        </p>
-        <form class="mx-auto mt-10 flex max-w-md gap-x-4">
-          <input required="" class="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm sm:leading-6 outline-none" placeholder="Enter a city name" value="{{state.app.typedCity}}">
-          <button type="submit" class="flex-none rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" wf-onclick="post('app.search', event)">Search</button>
-        </form>
-        <p class="mx-auto max-w-xl text-center text-lg leading-8 mt-6 text-red-600" wf-if="state.app.error">
-          {{state.app.error}}
-        </p>
-        <p class="mx-auto max-w-xl text-center text-lg leading-8 text-gray-300 mt-6" wf-if="state.app.checked">
-          The temperature in {{state.app.city}} right now is {{state.app.temp}} °C
-        </p>
-        <p class="mx-auto max-w-xl text-center text-lg leading-8 text-gray-300" wf-if="state.app.checked">
-          Weather: {{state.app.weather}}
-        </p>
-        <svg viewBox="0 0 1024 1024" class="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2" aria-hidden="true">
-          <circle cx="512" cy="512" r="512" fill="url(#759c1415-0410-454c-8f7c-9a820de03641)" fill-opacity="0.7"></circle>
-          <defs>
-            <radialGradient id="759c1415-0410-454c-8f7c-9a820de03641" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(512)">
-              <stop stop-color="#7775D6"></stop>
-              <stop offset="1" stop-color="#E935C1" stop-opacity="0"></stop>
-            </radialGradient>
-          </defs>
-        </svg>
+<body class="min-h-screen">
+  <div class="relative grid lg:grid-cols-2 overflow-hidden lg:h-screen">
+    <div class="min-h-[16px] relative py-16 flex flex-col sm:h-auto h-[90vh] lg:py-72 text-white bg-[#091017] shadow-xl border-white/25 border-r-2">
+      <div class="min-h-[16px] lg:pr-24">
+        <div class="min-h-[16px] absolute right-16 w-10 h-full border-t border-r hidden lg:block mt-[3.5rem] border-white">
+          <div class="w-2 h-2 rounded-full -left-2 -top-1 absolute bg-white"></div>
+        </div>
+        <div class="px-8" wf-onattach="anime({ targets: _1, translateY: [15, 0], easing: 'easeInOutQuad' })">
+          <div class="min-h-[16px] uppercase tracking-widest font-bold text-sm text-right">
+            Example Weather App
+          </div>
+          <h2 class="text-3xl tracking-tight sm:text-4xl max-w-md my-4 ml-auto text-right">Know the weather now anywhere on Earth!</h2><p class="mt-2 text-lg leading-8 mx-auto text-right" wf-if="false">
+            <span class="min-h-[16px]">Click the </span><span class="min-h-[16px] font-bold">Preview </span><span class="min-h-[16px] nf nf-fa-play"></span><span class="min-h-[16px]"> button to try this example weather app.</span>
+          </p>
+          <p class="mt-2 text-lg leading-8 mx-auto text-right" wf-if="false">
+            <span class="min-h-[16px]">Here in </span><span class="min-h-[16px] font-bold">Edit Mode </span><span class="min-h-[16px]">you can select and make changes to elements.</span>
+          </p>
+          <p class="mt-2 text-lg leading-8 mx-auto text-right" wf-if="false" hidden="">
+            <span class="min-h-[16px]">This demos a request to the Open Weather App API. Check </span><span class="min-h-[16px] font-bold">controllers/App.js</span><span class="min-h-[16px]"> to see how the JavaScript part works.</span>
+          </p>
+          <p class="mt-2 text-lg leading-8 text-right" wf-if="true" hidden="">
+            <span class="min-h-[16px]">Click the </span><span class="min-h-[16px] font-bold">Pause </span><span class="min-h-[16px] nf nf-fa-pause"></span><span class="min-h-[16px]"> button to go back to the editor.</span>
+          </p>
+          <p class="mt-2 text-lg leading-8 mx-auto text-right" hidden="">
+            Enter a city name to look it up on Open Weather Map.
+          </p>
+          <form class="flex max-w-md gap-x-4 ml-auto my-10" hidden="">
+
+            <input id="email-address" name="email" autocomplete="email" required="" class="min-w-0 flex-auto rounded-md px-3.5 ring-1 sm:text-sm sm:leading-6 outline-none border border-neutral-300 font-bold text-right py-1.5 placeholder:text-white bg-black/50 focus:ring-white focus:ring-1" placeholder="Enter a city name" value="{{state.app.typedCity}}">
+            <button type="submit" class="flex-none rounded-md px-3.5 text-sm font-semibold border border-neutral-300 bg-black/50 text-white focus:ring-1 ring-white outline-none" wf-onclick="post('app.search', event)">Search</button>
+          </form>
+          <p class="mt-2 text-lg leading-8 mx-auto text-right text-red-600" wf-if="state.app.error" hidden="">
+            {{state.app.error}}
+          </p>
+          <p class="mt-2 text-lg leading-8 mx-auto text-right" wf-if="state.app.checked" hidden="">
+            The temperature now in {{state.app.city}} is {{state.app.temp}} °C
+          </p>
+          <p class="mt-2 text-lg leading-8 mx-auto text-right" wf-if="state.app.checked" hidden="">
+            Weather: {{state.app.weather}}
+          </p>
+        </div>
       </div>
     </div>
+    <img class="min-h-[16px] object-cover h-[110vh]" src="https://i.pinimg.com/originals/ae/e8/3d/aee83d11caeb7cd3df17475de5df859d.jpg" wf-onattach="anime({ targets: _1, translateY: [-15, 0], easing: 'easeInOutQuad' })">
   </div>
 </body>`;
 
