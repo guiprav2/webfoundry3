@@ -1,6 +1,8 @@
+import anime from 'https://cdn.skypack.dev/animejs';
 import d from './dominant.js';
 import { camelCase } from 'https://cdn.skypack.dev/case-anything';
 
+window.anime = anime;
 window.d = d;
 window.tap = x => (console.log(x), x);
 
@@ -214,13 +216,13 @@ function compile(root) {
         let onAttachExpr = x.getAttribute('wf-onattach');
         if (onAttachExpr) {
             x.removeAttribute('wf-onattach');
-            d.el(x, { onAttach: () => wfeval(x, onAttachExpr) });
+            d.el(x, { onAttach: y => wfeval(x, onAttachExpr, y) });
         }
 
         let onDetachExpr = x.getAttribute('wf-ondetach');
         if (onDetachExpr) {
             x.removeAttribute('wf-ondetach');
-            d.el(x, { onDetach: () => wfeval(x, onDetachExpr) });
+            d.el(x, { onDetach: y => wfeval(x, onDetachExpr, y) });
         }
 
         let removedAttrs = [];
