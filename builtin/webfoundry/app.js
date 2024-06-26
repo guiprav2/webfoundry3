@@ -234,7 +234,8 @@ function compile(root) {
 
         for (let y of removedAttrs) { x.removeAttribute(y) }
 
-        let re = /({{.*?}})/g;
+        let re = /[^\\]({{.*?}})/g;
+        let re2 = /\\?({{.*?}})/g;
         let wfClassNames = x.getAttribute('wf-class') || '';
         if (wfClassNames && re.test(wfClassNames)) {
             x.removeAttribute('wf-class');
@@ -307,6 +308,7 @@ function compile(root) {
         }
 
         mapChildNodes(x, n => {
+            if (n.nodeType === Node.TEXT_NODE && re2.test(n.textContent)) { n.textContent = n.textContent.replaceAll(/\\{{/g, '{{') }
             if (n.nodeType !== Node.TEXT_NODE || n.parentElement.tagName === 'TEXTAREA' || !re.test(n.textContent)) { return n }
             let np = n.parentElement;
             return n.textContent.split(re).map(x => {

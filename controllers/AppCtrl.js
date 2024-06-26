@@ -11,6 +11,7 @@ import PromptDialog from '../components/dialogs/PromptDialog.js';
 import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
 import WelcomeDialog from '../components/dialogs/WelcomeDialog.js';
 import d from '../other/dominant.js';
+import html2canvas from 'https://cdn.skypack.dev/html2canvas';
 import morphdom from 'https://cdn.skypack.dev/morphdom/dist/morphdom-esm.js';
 import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
@@ -621,6 +622,14 @@ class AppCtrl {
       post('app.pushHistory');
       let mutobs = new MutationObserver(() => post('app.saveFile', this.state.currentFile, `<!doctype html>\n${this.state.editorDocument.documentElement.outerHTML}`));
       mutobs.observe(this.state.editorDocument.documentElement, { attributes: true, childList: true, subtree: true, characterData: true });
+      setTimeout(() => post('app.snapshot'), 1000);
+    },
+
+
+    snapshot: async () => {
+      if (this.state.currentFile !== 'pages/index.html') { return }
+      let canvas = await html2canvas(this.state.editorDocument.body, { height: 720 });
+      canvas.toBlob(blob => rfiles.saveFile(this.state.currentSite, 'webfoundry/snapshot.png', blob));
     },
 
     resizeDesigner: ev => {
