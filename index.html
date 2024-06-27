@@ -8,7 +8,9 @@
     <script src="https://cdn.jsdelivr.net/combine/npm/ace-builds@1.23.4,npm/ace-builds@1.23.4/src-min-noconflict/theme-monokai.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-html.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-css.min.js,npm/ace-builds@1.23.4/src-min-noconflict/mode-javascript.min.js,npm/ace-builds@1.23.4/src-min-noconflict/ext-beautify.min.js"></script>
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GL13QDJ82K"></script>
-    <script>
+    <script type="module">
+      import posthog from 'https://cdn.skypack.dev/posthog-js';
+
       if (location.hostname !== 'localhost' && !localStorage.getItem('webfoundry:noanalytics')) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -34,6 +36,7 @@
         g.log=function(b,d){h("log",{level:b,msg:d})},g.consent=function(b){h("setIdentity",{consent:!arguments.length||b})}}(),s="fetch",
         f="XMLHttpRequest",g._w={},g._w[f]=m[f],g._w[s]=m[s],m[s]&&(m[s]=function(){return g._w[s].apply(this,arguments)}),g._v="2.0.0")
         }(window,document,window._fs_namespace,"script",window._fs_script);
+        posthog.init('phc_e2EcE75kZy9OS0ZCkRanwEgnpE2holHq088QCOY2K6N', { api_host: 'https://us.i.posthog.com', person_profiles: 'always' })
       }
     </script>
     <script type="module">
