@@ -234,8 +234,9 @@ function compile(root) {
 
         for (let y of removedAttrs) { x.removeAttribute(y) }
 
-        let re = /[^\\]({{.*?}})/g;
+        let re = /(?<=[^\\])({{.*?}})/g;
         let re2 = /\\?({{.*?}})/g;
+        let re3 = /({{.*?}})/g;
         let wfClassNames = x.getAttribute('wf-class') || '';
         if (wfClassNames && re.test(wfClassNames)) {
             x.removeAttribute('wf-class');
@@ -311,8 +312,8 @@ function compile(root) {
             if (n.nodeType === Node.TEXT_NODE && re2.test(n.textContent)) { n.textContent = n.textContent.replaceAll(/\\{{/g, '{{') }
             if (n.nodeType !== Node.TEXT_NODE || n.parentElement.tagName === 'TEXTAREA' || !re.test(n.textContent)) { return n }
             let np = n.parentElement;
-            return n.textContent.split(re).map(x => {
-                if (!re.test(x)) { return document.createTextNode(x) }
+            return n.textContent.split(re3).map(x => {
+                if (!re3.test(x)) { return document.createTextNode(x) }
                 return d.text(() => wfeval(np, x.slice(2, -2)));
             });
         });
