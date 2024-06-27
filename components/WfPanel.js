@@ -5,7 +5,7 @@ class WfPanel {
   constructor(props) { this.props = props }
 
   render = () => d.html`
-    <div class="WfPanel w-full flex flex-col gap-4 py-32 px-24" ${{ onAttach: () => this.timestamp = Date.now() }}>
+    <div class="WfPanel w-full max-h-screen flex flex-col gap-4 py-32 px-24 overflow-auto" ${{ onAttach: () => this.timestamp = Date.now() }}>
       <div class="gfont-[Pacifico] text-4xl">Webfoundry</div>
       <div class="text-neutral-400 text-2xl">The precision visual Tailwind CSS editor</div>
       <div class="flex gap-16 xl:gap-32">
