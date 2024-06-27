@@ -467,7 +467,7 @@ class ActionHandler {
     'Ctrl-p': this.setPlaceholder,
     'Alt-d': this.toggleDarkMode,
     'Ctrl-D': this.changeDisabledExpression,
-    'Ctrl-u': this.changeType,
+    'Ctrl-e': this.changeType,
     'Ctrl-M': this.changeFormMethod,
     'Ctrl-I': this.changeId,
     'Ctrl-c': this.setComponent,
