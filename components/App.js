@@ -5,6 +5,7 @@ import IconsSidebar from './IconsSidebar.js';
 import MediaViewer from './MediaViewer.js';
 import SitesPanel from './SitesPanel.js';
 import StylesPanel from './StylesPanel.js';
+import WfPanel from './WfPanel.js';
 import d from '../other/dominant.js';
 import { isImage, isVideo, isAudio } from '../other/util.js';
 
@@ -19,6 +20,13 @@ class App {
         currentPanel: d.binding({ get: () => this.props.currentPanel }),
         onSelect: this.props.onSelectIcon,
       })}
+      ${d.if(() => this.props.currentPanel === 'wf', d.el(WfPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
+        sites: d.binding({ get: () => this.props.sites }),
+        currentSite: d.binding({ get: () => this.props.currentSite }),
+        onCreate: this.props.onCreateSite,
+        onSelect: this.props.onSelectSite,
+      }))}
       ${d.if(() => this.props.currentPanel === 'sites', d.el(SitesPanel, {
         tourDisable: d.binding({ get: () => this.props.tourDisable }),
         sites: d.binding({ get: () => this.props.sites }),
@@ -50,11 +58,11 @@ class App {
         onDelete: this.props.onDeleteStyle,
         onAddStyleKeyDown: this.props.onAddStyleKeyDown,
       }))}
-      ${d.if(() => !this.props.currentFile, d.html`
+      ${d.if(() => this.props.currentPanel !== 'wf' && !this.props.currentFile, d.html`
         <div class="flex-1 bg-[#060a0f] flex justify-center items-center">
           <div class="text-7xl gfont-[Pacifico] text-black/50 select-none">Webfoundry</div>
         </div>
-      `, d.if(() => this.props.currentFile.endsWith('.html'), d.el(Designer, {
+      `, d.if(() => this.props.currentPanel !== 'wf' && this.props.currentFile.endsWith('.html'), d.el(Designer, {
         tourDisable: d.binding({ get: () => this.props.tourDisable }),
         width: d.binding({ get: () => this.props.designerWidth }),
         height: d.binding({ get: () => this.props.designerHeight }),
@@ -64,16 +72,16 @@ class App {
         contextMenu: d.binding({ get: () => this.props.contextMenu }),
         onLoad: this.props.onLoadDesigner,
         onResize: this.props.onResizeDesigner,
-      }), d.if(() => isImage(this.props.currentFile) || isVideo(this.props.currentFile) || isAudio(this.props.currentFile), d.el(MediaViewer, {
+      }), d.if(() => this.props.currentPanel !== 'wf' && (isImage(this.props.currentFile) || isVideo(this.props.currentFile) || isAudio(this.props.currentFile)), d.el(MediaViewer, {
         currentSite: d.binding({ get: () => this.props.currentSite }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
-      }), d.el(CodeEditor, {
+      }), d.if(() => this.props.currentPanel !== 'wf', d.el(CodeEditor, {
         tourDisable: d.binding({ get: () => this.props.tourDisable }),
         currentSite: d.binding({ get: () => this.props.currentSite }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
         text: d.binding({ get: () => this.props.editorText }),
         onChange: this.props.onEditorChange,
-      }))))}
+      })))))}
     </div>
   `;
 }

@@ -134,6 +134,7 @@ function popInstructions(opt, x) {
 
 async function runTour() {
   let hl = new ElementHighlight();
+  await post('app.selectIcon', 'sites');
 
   await stateFlow({
     appTabs: async () => {

@@ -9,7 +9,6 @@ import NetlifyDeployDialog from '../components/dialogs/NetlifyDeployDialog.js';
 import NetlifyDeployDoneDialog from '../components/dialogs/NetlifyDeployDoneDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
 import RenameFileDialog from '../components/dialogs/RenameFileDialog.js';
-import WelcomeDialog from '../components/dialogs/WelcomeDialog.js';
 import d from '../other/dominant.js';
 import html2canvas from 'https://cdn.skypack.dev/html2canvas';
 import morphdom from 'https://cdn.skypack.dev/morphdom/dist/morphdom-esm.js';
@@ -322,6 +321,7 @@ let defaultComponentHtml = `<!doctype html>
 class AppCtrl {
   state = {
     enabledSidebarIcons: {
+      wf: true,
       sites: true,
       files: () => !!this.state.currentSite,
       styles: () => !this.state.preview && this.state.s,
@@ -329,7 +329,7 @@ class AppCtrl {
       pause: () => this.state.preview,
     },
 
-    currentPanel: 'sites',
+    currentPanel: 'wf',
     sites: [],
     currentSite: null,
     files: [],
@@ -381,9 +381,6 @@ class AppCtrl {
       if (url.searchParams.get('import')) {
         history.replaceState(null, '', location.href.split('?')[0]);
         await post('app.importZipFromUrl', url.searchParams.get('import'));
-      } else {
-        let [btn] = await showModal(d.el(WelcomeDialog));
-        btn === 'startTour' && await runTour();
       }
     },
 
