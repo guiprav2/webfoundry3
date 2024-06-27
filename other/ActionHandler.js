@@ -405,6 +405,14 @@ class ActionHandler {
     finally { post('app.pushHistory') }
   };
   
+  changeName = async () => {
+    if (!this.s || (this.s.tagName !== 'INPUT' && this.s.tagName !== 'TEXTAREA' && this.s.tagName !== 'BUTTON')) { return }
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change form name', initialValue: this.s.name }));
+    if (btn !== 'ok') { return }
+    this.s.name = x;
+    post('app.pushHistory');
+  };
+
   kbds = {
     Escape: this.sToggle,
     '{': this.changeMeta,
@@ -466,6 +474,7 @@ class ActionHandler {
     'Ctrl-v': this.setValue,
     'Ctrl-M': this.setInnerHtmlExpression,
     'Ctrl-x': this.evalJs,
+    'Ctrl-b': this.changeName,
   };
 }
 

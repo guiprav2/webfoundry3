@@ -223,6 +223,15 @@ let defaultHtml = `<!doctype html>
   </script>
   <style class="wf-preflight">
     [hidden] { display: none !important }
+    .component-pattern {
+      background-color: #06c;
+      background-image: linear-gradient(rgba(255,255,255,0.2) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,255,255,0.2) 2px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+      background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    }
   </style>
 </head>
 <body class="min-h-screen">
