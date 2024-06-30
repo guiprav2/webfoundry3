@@ -234,15 +234,15 @@ function compile(root) {
 
         for (let y of removedAttrs) { x.removeAttribute(y) }
 
-        let re = /(?<=[^\\])({{.*?}})/g;
-        let re2 = /\\?({{.*?}})/g;
+        let re = /(?<=[^\\]|^)({{.*?}})/g;
+        let re2 = /\\({{.*?}})/g;
         let re3 = /({{.*?}})/g;
         let wfClassNames = x.getAttribute('wf-class') || '';
-        if (wfClassNames && re.test(wfClassNames)) {
+        if (wfClassNames && re3.test(wfClassNames)) {
             x.removeAttribute('wf-class');
             let replacedClassNames = new Set();
             d.el(x, {
-                class: wfClassNames.split(re).filter(y => y.trim()).map(y => {
+                class: wfClassNames.split(re3).filter(y => y.trim()).map(y => {
                     y = y.slice(2, -2);
                     if (y.startsWith('replaces ')) {
                         let [, replaces, expr] = /^replaces ([^:]+): (.+)$/.exec(y);
@@ -309,7 +309,7 @@ function compile(root) {
         }
 
         mapChildNodes(x, n => {
-            if (n.nodeType === Node.TEXT_NODE && re2.test(n.textContent)) { n.textContent = n.textContent.replaceAll(/\\{{/g, '{{') }
+            if (n.nodeType === Node.TEXT_NODE && re2.test(n.textContent)) { n.textContent = n.textContent.replaceAll(/\\{{/g, '{{'); return n }
             if (n.nodeType !== Node.TEXT_NODE || n.parentElement.tagName === 'TEXTAREA' || !re.test(n.textContent)) { return n }
             let np = n.parentElement;
             return n.textContent.split(re3).map(x => {
