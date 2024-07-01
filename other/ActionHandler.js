@@ -252,18 +252,6 @@ class ActionHandler {
     post('app.pushHistory');
   };
   
-  toggleEditable = ev => {
-    let pe = this.s.closest('[contenteditable="true"]');
-    if (!pe || pe === this.s) {
-      let t = pe || this.s;
-      if ([...this.s.querySelectorAll('*')].every(x => x.matches('span, button, input, ul, ol, li, br'))) { t = t.parentElement }
-      if (!JSON.parse(pe?.contentEditable || false)) { t.contentEditable = true }
-      else { t.removeAttribute('contenteditable') }
-      ev && ev.preventDefault();
-    }
-    post('app.pushHistory');
-  };
-
   toggleHidden = ev => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     this.s.hidden = !this.s.hidden;
@@ -456,7 +444,6 @@ class ActionHandler {
     B: this.changeBgUpload,
     m: this.changeHtml,
     M: this.changeInnerHtml,
-    v: this.toggleEditable,
     x: this.toggleHidden,
     D: this.netlifyDeploy,
     'Ctrl-z': this.undo,
