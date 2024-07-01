@@ -390,8 +390,8 @@ class AppCtrl {
     clearTourDisable: () => this.state.tourDisable = new Set(),
 
     selectIcon: x => {
-      if (x !== 'play' && x !== 'pause') { this.state.currentPanel = x }
-      else { post('app.togglePreview') }
+      this.state.prevPanel = null;
+      if (x !== 'play' && x !== 'pause') { this.state.currentPanel = x } else { post('app.togglePreview') }
     },
 
     togglePreview: () => {
@@ -647,7 +647,11 @@ class AppCtrl {
 
     changeSelected: x => {
       this.state.s = x;
-      if (!x && (this.state.currentPanel === 'styles' || this.state.currentPanel === 'actions')) { this.state.currentPanel = 'files' }
+      if (x && this.state.prevPanel) { this.state.currentPanel = this.state.prevPanel }
+      if (!x && (this.state.currentPanel === 'styles' || this.state.currentPanel === 'actions')) {
+        this.state.prevPanel = this.state.currentPanel;
+        this.state.currentPanel = 'files';
+      }
     },
 
     editorAction: x => this.state.actions.kbds[x](),
