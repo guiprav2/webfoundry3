@@ -49,6 +49,9 @@ class App {
         onDragOver: this.props.onDragOverFile,
         onDrop: this.props.onDropFile,
       }))}
+      ${d.if(() => this.props.currentPanel === 'actions', d.el(ActionsPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
+      }))}
       ${d.if(() => this.props.currentPanel === 'styles', d.el(StylesPanel, {
         tourDisable: d.binding({ get: () => this.props.tourDisable }),
         styles: d.binding({ get: () => this.props.styles }),
@@ -58,9 +61,6 @@ class App {
         onEdit: this.props.onEditStyle,
         onDelete: this.props.onDeleteStyle,
         onAddStyleKeyDown: this.props.onAddStyleKeyDown,
-      }))}
-      ${d.if(() => this.props.currentPanel === 'actions', d.el(ActionsPanel, {
-        tourDisable: d.binding({ get: () => this.props.tourDisable }),
       }))}
       ${d.if(() => this.props.currentPanel !== 'wf' && !this.props.currentFile, d.html`
         <div class="flex-1 bg-[#060a0f] flex justify-center items-center">
