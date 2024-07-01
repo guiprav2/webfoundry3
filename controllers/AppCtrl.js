@@ -325,6 +325,7 @@ class AppCtrl {
       sites: true,
       files: () => !!this.state.currentSite,
       styles: () => !this.state.preview && this.state.s,
+      actions: () => !this.state.preview && this.state.s,
       play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
       pause: () => this.state.preview,
     },
@@ -644,12 +645,7 @@ class AppCtrl {
       ev.target.addEventListener('pointerup', this.onResizeDesignerPointerUp, { once: true });
     },
 
-    changeSelected: x => {
-      this.state.s = x;
-      if (!this.state.currentFile) { return }
-      this.state.currentPanel = x ? 'styles' : 'files';
-    },
-
+    changeSelected: x => this.state.s = x,
     editorAction: x => this.state.actions.kbds[x](),
 
     addStyleKeyDown: async ev => {

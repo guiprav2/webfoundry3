@@ -1,3 +1,4 @@
+import ActionsPanel from './ActionsPanel.js';
 import CodeEditor from './CodeEditor.js';
 import Designer from './Designer.js';
 import FilesPanel from './FilesPanel.js';
@@ -57,6 +58,9 @@ class App {
         onEdit: this.props.onEditStyle,
         onDelete: this.props.onDeleteStyle,
         onAddStyleKeyDown: this.props.onAddStyleKeyDown,
+      }))}
+      ${d.if(() => this.props.currentPanel === 'actions', d.el(ActionsPanel, {
+        tourDisable: d.binding({ get: () => this.props.tourDisable }),
       }))}
       ${d.if(() => this.props.currentPanel !== 'wf' && !this.props.currentFile, d.html`
         <div class="flex-1 bg-[#060a0f] flex justify-center items-center">

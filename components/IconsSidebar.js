@@ -9,6 +9,7 @@ class IconsSidebar {
       ${this.renderButton('sites', 'nf-fa-sitemap')}
       ${this.renderButton('files', 'nf-fa-folder')}
       ${this.renderButton('styles', 'nf-fa-paint_brush')}
+      ${this.renderButton('actions', 'nf-md-dots_vertical')}
       ${this.renderButton('play', 'nf-fa-play')}
       ${this.renderButton('pause', 'nf-fa-pause')}
     </div>
