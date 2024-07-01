@@ -6,6 +6,38 @@ function isVideo(path) { return ['.mp4', '.webm', '.ogv', '.mov', '.avi'].some(x
 function isAudio(path) { return ['.mp3', '.wav', '.ogg', '.flac', '.m4a'].some(x => path?.endsWith?.(x)) }
 function joinPath(path, name) { return [...path?.split?.('/') || [], name].filter(Boolean).join('/') }
 
+function formatHtml(x) {
+  let div = document.createElement('div');
+  div.innerHTML = x;
+  return [...div.childNodes].map(y => formatNode(y)).join('\n');
+}
+
+function formatNode(x, lv = 0) {
+  let indent = '  '.repeat(lv);
+
+  if (x.nodeType === Node.COMMENT_NODE) {
+    let div = document.createElement('div');
+    div.append(x.cloneNode());
+    if (!div.innerHTML.includes('\n')) { return indent + div.innerHTML }
+    let lns = div.innerHTML.slice(4, -3).split('\n').map(y => indent + '  ' + y.trim());
+    return [indent + '<!--', ...lns, indent + '-->'].join('\n');
+  }
+
+  if (x.nodeType === Node.TEXT_NODE) {
+    let div = document.createElement('div');
+    div.append(x.cloneNode());
+    return div.innerHTML.split('\n').map(y => indent + y).join('\n');
+  }
+
+  let selfClosing = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(x.tagName);
+  let openTag = x.cloneNode().outerHTML.replace(/<\/.+>$/, '');
+  let closeTag = !selfClosing ? `</${x.tagName.toLowerCase()}>` : '';
+  if (x.classList.contains('whitespace-pre') || x.classList.contains('whitespace-pre-wrap')) { return indent + x.outerHTML }
+  let children = [...x.childNodes].map(y => formatNode(y, lv + 1));
+  if (!children.length) { return indent + openTag + closeTag }
+  return [indent + openTag, ...children, closeTag && indent + closeTag].filter(Boolean).join('\n');
+}
+
 async function selectFile(accept) {
   let { promise: p, resolve: res } = Promise.withResolvers();
   let input = d.el('input', { type: 'file', accept, class: 'hidden' });
@@ -62,4 +94,4 @@ async function setComponents(currentSite, x) {
     y.replaceWith(templRoot);
   }
 }
-export { isImage, isVideo, isAudio, joinPath, selectFile, showModal, LoadingManager, loadman, clearComponents, setComponents };
+export { isImage, isVideo, isAudio, joinPath, formatHtml, selectFile, showModal, LoadingManager, loadman, clearComponents, setComponents };

@@ -1,5 +1,6 @@
 import d from '../../other/dominant.js';
 import styles from '../../other/styles.js';
+import { formatHtml } from '../../other/util.js';
 
 class CodeDialog {
   constructor(props) { this.props = props }
@@ -9,8 +10,9 @@ class CodeDialog {
     this.editor.setTheme('ace/theme/monokai');
     this.editor.session.setMode(`ace/mode/${this.props.mode || 'html'}`);
     this.editor.session.setTabSize(2);
-    this.props.initialValue && this.editor.session.setValue(this.props.initialValue);
-    ace.require("ace/ext/beautify").beautify(this.editor.session);
+    let value = this.props.initialValue;
+    if (value && (!this.props.mode || this.props.mode === 'html')) { value = formatHtml(value) }
+    value && this.editor.session.setValue(value);
     this.editor.focus();
   };
 
