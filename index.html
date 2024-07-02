@@ -47,13 +47,23 @@
   </head>
   <body class="overflow-hidden sans text-neutral-100 bg-[#060a0f]">
     <script type="module">
+      import NoSafari from './components/NoSafari.js';
       import Root from './components/Root.js';
       import d from './other/dominant.js';
       import { state, post } from './controllers/ctrls.js';
-      Object.assign(window, { state, post });
-      addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault(), true);
-      navigator.serviceWorker.register('sw.bundle.js');
-      document.body.append(d.el(Root));
+
+      (() => {
+        let userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('android')) {
+          document.body.append(d.el(NoSafari));
+          return;
+        }
+
+        Object.assign(window, { state, post });
+        addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault(), true);
+        navigator.serviceWorker.register('sw.bundle.js');
+        document.body.append(d.el(Root));
+      })();
     </script>
   </body>
 </html>
