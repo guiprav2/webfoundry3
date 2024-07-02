@@ -5,7 +5,7 @@ class Mobile {
       </div>
       <div class="flow-root h-[50vh] p-3 bg-[#faf9f6]">
         <div class="-mt-[25vh]">
-          <div class="text-center whitespace-pre text-[#faf9f6] mb-8">The prevision visual
+          <div class="text-center whitespace-pre text-[#faf9f6] mb-8">The precision visual
 Tailwind CSS editor</div>
           <div class="max-w-xl mx-auto">
             <div style="padding:56.25% 0 0 0;position:relative;">
