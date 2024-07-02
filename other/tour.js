@@ -262,6 +262,7 @@ async function runTour() {
     },
 
     styleList: async () => {
+      await post('app.selectIcon', 'styles');
       hl.target('.StylesPanel-styleList');
 
       let btn = await popInstructions({ target: '.StylesPanel-styleList' }, d.html`
