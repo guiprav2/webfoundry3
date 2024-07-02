@@ -15,7 +15,7 @@ class WfPanel {
             <button class="aspect-square rounded-md border nf nf-fa-plus border-neutral-500 text-neutral-400 outline-none" ${{ onClick: () => this.props.onCreate() }}></button>
             ${d.map(() => this.props.sites, x => d.html`
               <button class="aspect-square relative rounded-md overflow-hidden outline-none shadow-xl" ${{ onClick: () => this.props.onSelect(x.id) }}>
-                <img class="aspect-square object-cover w-full h-full" ${{ src: () => `/files/${x.id}/webfoundry/snapshot.png?` + this.timestamp }}>
+                <img class="aspect-square object-cover w-full h-full" ${{ src: () => `/files/${x.id}/webfoundry/snapshot.png?` + this.timestamp, onError: ev => ev.target.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1280px-SMPTE_Color_Bars.svg.png' }}>
                 <div class="absolute left-0 right-0 bottom-0 px-3 py-1 bg-neutral-900 text-center">${x.name}</div>
               </button>
             `)}
