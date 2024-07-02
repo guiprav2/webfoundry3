@@ -40,7 +40,7 @@ class FilesPanel {
               ${d.if(() => isDir, d.html`
                 <button class="FilesPanel-createInsideBtn outline-none nf p-2 nf-fa-plus" ${{ onClick: ev => { ev.stopPropagation(); this.props.onCreate(joinPath(path, name), isDir) } }}></button>`
               )}
-              ${d.if(() => !['components', 'controllers', 'pages'].includes(joinPath(path, name)), d.html`
+              ${d.if(() => !['components', 'controllers', 'images', 'pages'].includes(joinPath(path, name)), d.html`
                 <button class="FilesPanel-renameBtn outline-none nf p-2 nf-fa-pencil" ${{ onClick: ev => { ev.stopPropagation(); this.props.onRename(joinPath(path, name), isDir) } }}></button>
                 <button class="FilesPanel-deleteBtn outline-none nf p-2 nf-fa-trash" ${{ onClick: ev => { ev.stopPropagation(); this.props.onDelete(joinPath(path, name), isDir) } }}></button>
               `)}
