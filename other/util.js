@@ -9,7 +9,7 @@ function joinPath(path, name) { return [...path?.split?.('/') || [], name].filte
 function formatHtml(x) {
   let div = document.createElement('div');
   div.innerHTML = x;
-  return [...div.childNodes].map(y => formatNode(y)).join('\n');
+  return [...div.childNodes].map(y => formatNode(y)).filter(Boolean).join('\n');
 }
 
 function formatNode(x, lv = 0) {
@@ -26,7 +26,8 @@ function formatNode(x, lv = 0) {
   if (x.nodeType === Node.TEXT_NODE) {
     let div = document.createElement('div');
     div.append(x.cloneNode());
-    return div.innerHTML.split('\n').map(y => indent + y).join('\n');
+    if (!div.innerHTML.trim()) { return null }
+    return div.innerHTML.split('\n').filter(y => y.trim()).map(y => indent + y.trim()).join('\n');
   }
 
   let selfClosing = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(x.tagName);
