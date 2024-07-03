@@ -89,7 +89,10 @@ class ActionsPanel {
         <div>Change placeholder</div>
         <div class="font-mono">Ctrl-p</div>
       </button>
-      <!-- hello -->
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.editorAction', 'Ctrl-C') }}>
+        <div>Change Emmet</div>
+        <div class="font-mono">Ctrl-C</div>
+      </button>
       <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.editorAction', 'm') }}>
         <div>Change HTML</div>
         <div class="font-mono">m</div>

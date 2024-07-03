@@ -1,10 +1,11 @@
+import ChangeSrcDialog from '../components/dialogs/ChangeSrcDialog.js';
 import CodeDialog from '../components/dialogs/CodeDialog.js';
 import ComponentsDialog from '../components/dialogs/ComponentsDialog.js';
 import EventHandlersDialog from '../components/dialogs/EventHandlersDialog.js';
 import ImageGalleryDialog from '../components/dialogs/ImageGalleryDialog.js';
 import PromptDialog from '../components/dialogs/PromptDialog.js';
-import ChangeSrcDialog from '../components/dialogs/ChangeSrcDialog.js';
 import d from './dominant.js';
+import emmet from 'https://cdn.skypack.dev/emmet';
 import lf from 'https://cdn.skypack.dev/localforage';
 import { clearComponents, setComponents, showModal } from './util.js';
 
@@ -401,6 +402,15 @@ class ActionHandler {
     post('app.pushHistory');
   };
 
+  changeEmmet = async () => {
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change Emmet', initialValue: localStorage.getItem('webfoundry:lastEmmet') || '' }));
+    if (btn !== 'ok') { return }
+    let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
+    this.s.outerHTML = emmet(x);
+    this.s = p.children[i];
+    post('app.pushHistory');
+  };
+
   kbds = {
     Escape: this.sToggle,
     '{': this.changeMeta,
@@ -462,6 +472,7 @@ class ActionHandler {
     'Ctrl-M': this.setInnerHtmlExpression,
     'Ctrl-x': this.evalJs,
     'Ctrl-b': this.changeName,
+    'Ctrl-C': this.changeEmmet,
   };
 }
 

@@ -724,11 +724,29 @@ function effect(cond, fn) {
 
   addEventListener('update', () => {
     let value = cond();
-    if (value === lastValue) { return }
+    if (shallowEq(value, lastValue)) { return }
     lastValue = value;
     fn(value);
     d.update();
   });
+}
+
+function shallowEq(a, b) {
+  if (a === b) return true;
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    if (Array.isArray(a) && Array.isArray(b)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) { if (a[i] !== b[i]) { return false } }
+      return true;
+    } else if (!Array.isArray(a) && !Array.isArray(b)) {
+      const aKeys = Object.keys(a);
+      const bKeys = Object.keys(b);
+      if (aKeys.length !== bKeys.length) { return false }
+      for (let key of aKeys) { if (a[key] !== b[key]) { return false } }
+      return true;
+    }
+  }
+  return false;
 }
 
 function fromContext(n, k) {

@@ -4,14 +4,21 @@ import d from './dominant.js';
 class MagicGloves {
   constructor(iframe) {
     Object.assign(this, { iframe });
+    iframe.contentDocument.addEventListener('mousedown', this.onMouseDown, true);
     iframe.contentDocument.addEventListener('click', this.onClick, true);
     iframe.contentDocument.addEventListener('contextmenu', this.onContextMenu, true);
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown, true);
     iframe.contentWindow.addEventListener('change', this.onChange, true);
-    this.sov = new Boo(d.el(MagicOverlay, { s: () => state.app.s }), () => state.app.s, { origin: iframe, transitionClass: 'transition-all' });
+
+    d.effect(() => state.app.s instanceof Set ? [...state.app.s] : [state.app.s], s => {
+      this.sovs?.forEach?.(x => x.disable());
+      this.sovs = s.map(sx => new Boo(d.el(MagicOverlay, { s: sx }), sx, { origin: iframe, transitionClass: 'transition-all' }));
+    });
   }
 
   get isComponent() { return this.iframe.contentWindow.location.pathname.split('/')[3] === 'components' }
+
+  onMouseDown = ev => ev.shiftKey && ev.preventDefault();
 
   onClick = ev => {
     if (ev.ctrlKey) { return }
@@ -22,7 +29,7 @@ class MagicGloves {
     if (componentRoot && !componentRoot.contains(target)) { post('app.changeSelected', componentRoot); return }
     let closestComponentRoot = target.closest('[wf-component]');
     let closestSvgRoot = target.closest('svg');
-    post('app.changeSelected', closestComponentRoot || closestSvgRoot || target);
+    post(!ev.shiftKey ? 'app.changeSelected' : 'app.addSelection', closestComponentRoot || closestSvgRoot || target);
   };
 
   onContextMenu = async ev => {
@@ -53,7 +60,7 @@ class MagicGloves {
     ev.target.setAttribute('value', ev.target.value);
   };
 
-  destroy() { this.sov.disable() }
+  destroy() { this.sovs?.forEach?.(x => x.disable()) }
 }
 
 class MagicOverlay {

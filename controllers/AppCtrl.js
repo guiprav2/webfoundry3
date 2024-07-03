@@ -348,7 +348,6 @@ class AppCtrl {
     },
 
     currentFile: null,
-    styles: ['flex', 'justify-center', 'items-center'],
     designerWidth: '100%',
     designerHeight: '100vh',
     preview: false,
@@ -365,10 +364,15 @@ class AppCtrl {
 
     get styles() {
       let { s } = this;
-      let styles = s ? [...s.classList] : [];
-      if (s.tagName === 'BODY' && styles.includes('min-h-screen')) { styles.splice(styles.indexOf('min-h-screen'), 1) }
-      s && styles.push(...getWfClass(s));
-      return styles;
+
+      if (s instanceof Set) {
+        return [...[...s].map(x => new Set([...x.classList, ...getWfClass(x)])).reduce((a, b) => a.intersection(b))];
+      } else {
+        let styles = s ? [...s.classList] : [];
+        if (s.tagName === 'BODY' && styles.includes('min-h-screen')) { styles.splice(styles.indexOf('min-h-screen'), 1) }
+        s && styles.push(...getWfClass(s));
+        return styles;
+      }
     },
 
     tourDisable: new Set(),
@@ -654,6 +658,16 @@ class AppCtrl {
       }
     },
 
+    addSelection: x => {
+      if (!(this.state.s instanceof Set)) { this.state.s = new Set([this.state.s]) }
+      this.state.s.add(x);
+      if (x && this.state.prevPanel) { this.state.currentPanel = this.state.prevPanel }
+      if (!x && (this.state.currentPanel === 'styles' || this.state.currentPanel === 'actions')) {
+        this.state.prevPanel = this.state.currentPanel;
+        this.state.currentPanel = 'files';
+      }
+    },
+
     editorAction: x => this.state.actions.kbds[x](),
 
     addStyleKeyDown: async ev => {
@@ -673,14 +687,14 @@ class AppCtrl {
     },
 
     addStyle: async x => {
-      if (/^{{.+?}}$/.test(x)) { addWfClass(this.state.s, x) }
-      else { this.state.s.classList.add(x) }
+      if (/^{{.+?}}$/.test(x)) { this.state.s instanceof Set ? this.state.s.forEach(sx => addWfClass(sx, x)) : addWfClass(this.state.s, x)}
+      else { this.state.s instanceof Set ? this.state.s.forEach(sx => sx.classList.add(x)) : this.state.s.classList.add(x)}
       await post('app.pushHistory');
     },
 
     deleteStyle: async x => {
-      if (/^{{.+?}}$/.test(x)) { rmWfClass(this.state.s, x) }
-      else { this.state.s.classList.remove(x) }
+      if (/^{{.+?}}$/.test(x)) { this.state.s instanceof Set ? this.state.s.forEach(sx => rmWfClass(sx, x)) : rmWfClass(this.state.s, x)}
+      else { this.state.s instanceof Set ? this.state.s.forEach(sx => sx.classList.remove(x)) : this.state.s.classList.remove(x)}
       await post('app.pushHistory');
     },
 
