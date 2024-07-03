@@ -20,7 +20,7 @@ class MagicGloves {
 
   onMouseDown = ev => ev.shiftKey && ev.preventDefault();
 
-  onClick = ev => {
+  onClick = async ev => {
     if (ev.ctrlKey) { return }
     if (!state.app.tourDisable.has('gloves.preventDefault')) { ev.preventDefault(); ev.stopPropagation() }
     let target = ev.target;
@@ -29,7 +29,14 @@ class MagicGloves {
     if (componentRoot && !componentRoot.contains(target)) { post('app.changeSelected', componentRoot); return }
     let closestComponentRoot = target.closest('[wf-component]');
     let closestSvgRoot = target.closest('svg');
-    post(!ev.shiftKey ? 'app.changeSelected' : 'app.addSelection', closestComponentRoot || closestSvgRoot || target);
+    await post(!ev.shiftKey ? 'app.changeSelected' : 'app.addSelection', closestComponentRoot || closestSvgRoot || target);
+
+    if (!ev.shiftKey && ev.target.closest('.wf-view-html')) {
+      await post('app.changeSelected', ev.target.closest('.wf-view-html'));
+      await post('app.editorAction', 'ArrowUp');
+      await post('app.editorAction', 'm');
+      return;
+    }
   };
 
   onContextMenu = async ev => {
