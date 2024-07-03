@@ -1,6 +1,7 @@
 import anime from 'https://cdn.skypack.dev/animejs';
 import d from './dominant.js';
 import { camelCase } from 'https://cdn.skypack.dev/case-anything';
+import { marked } from 'https://esm.sh/marked@13.0.1';
 
 window.anime = anime;
 window.d = d;
@@ -314,7 +315,9 @@ function compile(root) {
             let np = n.parentElement;
             return n.textContent.split(re3).map(x => {
                 if (!re3.test(x)) { return document.createTextNode(x) }
-                return d.text(() => wfeval(np, x.slice(2, -2)));
+                x = x.slice(2, -2).trim();
+                if (x.startsWith('markdown:')) { return d.el('div', { class: 'prose', innerHTML: () => marked(wfeval(np, x.slice('markdown:'.length).trim())) }) }
+                return d.text(() => wfeval(np, x));
             });
         });
     }
