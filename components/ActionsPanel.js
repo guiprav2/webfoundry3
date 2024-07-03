@@ -81,6 +81,18 @@ class ActionsPanel {
         <div class="font-mono">Ctrl-↓</div>
       </button>
       <div>HTML</div>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.editorAction', 'Ctrl-u') }}>
+        <div>Normalize styles (union)</div>
+        <div class="font-mono">Ctrl-u</div>
+      </button>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.editorAction', 'Ctrl-U') }}>
+        <div>Normalize styles (intersection)</div>
+        <div class="font-mono">Ctrl-U</div>
+      </button>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.editorAction', 'e') }}>
+        <div>Change tag</div>
+        <div class="font-mono">e</div>
+      </button>
       <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.editorAction', 'e') }}>
         <div>Change tag</div>
         <div class="font-mono">e</div>

@@ -70,14 +70,14 @@ class ActionHandler {
   createInsideFirst = () => { this.create('afterbegin') };
   createInsideLast = () => { this.create('beforeend') };
   
-  create = pos => {
+  create = async pos => {
     if (this.isComponent && this.s === this.editorDocument.body.firstElementChild && (pos === 'beforebegin' || pos === 'afterend')) { return }
     if (this.s.tagName === 'BODY' && (pos === 'beforebegin' || pos === 'afterend')) { return }
     let x = d.html`<div class="min-h-[16px]">`;
     this.s.insertAdjacentElement(pos, x);
     this.s = x;
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   copy = async () => { this.s && await lf.setItem('copy', this.s.outerHTML) };
@@ -96,10 +96,10 @@ class ActionHandler {
     this.s.insertAdjacentElement(pos, y);
     this.s = y;
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
-  rm = () => {
+  rm = async () => {
     let { editorDocument } = this;
     if (this.s === editorDocument.documentElement || this.s === editorDocument.body || this.s === editorDocument.head) { return }
     this.copy();
@@ -107,27 +107,27 @@ class ActionHandler {
     this.s.remove();
     this.s = p.children[i] || p.children[i - 1] || p;
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   wrap = () => { this.wrapTagName('div') };
   
-  wrapTagName = x => {
+  wrapTagName = async x => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = `<${x}>${this.s.outerHTML}</${x}>`;
     this.s = p.children[i];
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
-  unwrap = () => {
+  unwrap = async () => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = this.s.innerHTML;
     this.s = p.children[i];
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeTag = async () => {
@@ -138,10 +138,10 @@ class ActionHandler {
     if (this.s.tagName === 'DIALOG' && x !== 'dialog') { this.s.open = false }
     this.changeTagName(x);
     if (x === 'dialog') { this.s.open = false; this.s.showModal() }
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
-  changeTagName = x => {
+  changeTagName = async x => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     let tagName = this.s.tagName.toLowerCase();
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
@@ -149,21 +149,21 @@ class ActionHandler {
     this.s.outerHTML = this.s.outerHTML.replace(tagName, x);
     this.s = p.children[i];
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeText = async () => {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change text', placeholder: 'Text', initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeMultilineText = async () => {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change multiline text', placeholder: 'Text', multiline: true, initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeHref = async () => {
@@ -172,7 +172,7 @@ class ActionHandler {
     if (this.s.tagName === 'DIV' || this.s.tagName === 'SPAN') { this.changeTagName('a') }
     else if (this.s.tagName !== 'A') { this.wrapTagName('a') }
     if (x) { this.s.href = x } else { this.s.removeAttribute('href') }
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeSrcUrl = async () => {
@@ -182,7 +182,7 @@ class ActionHandler {
     this.s.tagName !== 'VIDEO' && this.s.tagName !== 'AUDIO' && this.s.tagName !== 'IFRAME' && this.changeTagName('img');
     if (src) { this.s.src = src } else { this.s.removeAttribute('src') }
     if (expr) { this.s.setAttribute('wf-src', expr) } else { this.s.removeAttribute('wf-src') }
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeBgUrl = async () => {
@@ -197,7 +197,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     if (x) { this.s.style.backgroundImage = `url(${JSON.stringify(x)})` }
     else { this.s.style.backgroundImage = '' }
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeSrcUpload = async () => {
@@ -211,7 +211,7 @@ class ActionHandler {
     while (commonSegments < pagePath.length && imgPath[commonSegments] === pagePath[commonSegments]) { commonSegments++ }
     let backsteps = pagePath.length - commonSegments;
     this.s.src = new Array(backsteps).fill('../').join('') + detail;
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeBgUpload = async () => {
@@ -224,7 +224,7 @@ class ActionHandler {
     while (commonSegments < pagePath.length && imgPath[commonSegments] === pagePath[commonSegments]) { commonSegments++ }
     let backsteps = pagePath.length - commonSegments;
     this.s.style.backgroundImage = `url(${JSON.stringify(new Array(backsteps).fill('../').join('') + detail)})`;
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeHtml = async () => {
@@ -237,7 +237,7 @@ class ActionHandler {
     await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
   changeInnerHtml = async () => {
@@ -250,26 +250,26 @@ class ActionHandler {
     await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
   
-  toggleHidden = ev => {
+  toggleHidden = async ev => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     this.s.hidden = !this.s.hidden;
     if (!this.s.hidden && this.s.tagName === 'DIALOG') { this.s.open = false; this.s.showModal() }
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   netlifyDeploy = () => post('app.netlifyDeploy');
 
-  undo = () => {
+  undo = async () => {
     if (this.s?.tagName === 'INPUT' || this.s?.tagName === 'TEXTAREA') { return }
-    post('app.undo');
+    await post('app.undo');
   };
 
-  redo = () => {
+  redo = async () => {
     if (this.s?.tagName === 'INPUT' || this.s?.tagName === 'TEXTAREA') { return }
-    post('app.redo');
+    await post('app.redo');
   };
 
   setEventHandlers = async () => {
@@ -293,7 +293,7 @@ class ActionHandler {
     toBeRemoved.forEach(x => this.s.removeAttribute(x));
 
     for (let x of newHandlers) { this.s.setAttribute(`wf-on${x.name}`, x.expr) }
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   setIfExpression = async () => {
@@ -301,7 +301,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set if expression', placeholder: 'Expression', initialValue: this.s.getAttribute('wf-if') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-if', x.trim()) : this.s.removeAttribute('wf-if');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   setMapExpression = async () => {
@@ -309,7 +309,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set map expression', placeholder: 'Expression', initialValue: this.s.getAttribute('wf-map') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-map', x.trim()) : this.s.removeAttribute('wf-map');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   setPlaceholder = async () => {
@@ -317,7 +317,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set input placeholder', initialValue: this.s.getAttribute('placeholder') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('placeholder', x.trim()) : this.s.removeAttribute('placeholder');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   toggleDarkMode = () => this.editorDocument.documentElement.classList.toggle('dark');
@@ -327,7 +327,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change disabled expression', initialValue: this.s.getAttribute('wf-disabled') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-disabled', x.trim()) : this.s.removeAttribute('wf-disabled');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   changeType = async () => {
@@ -335,7 +335,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change input type', initialValue: this.s.getAttribute('type') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('type', x.trim()) : this.s.removeAttribute('type');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   changeFormMethod = async () => {
@@ -343,7 +343,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change form method', initialValue: this.s.getAttribute('method') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('method', x.trim()) : this.s.removeAttribute('method');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   changeId = async () => {
@@ -351,7 +351,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change ID', initialValue: this.s.getAttribute('id') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('id', x.trim()) : this.s.removeAttribute('id');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   setComponent = async () => {
@@ -365,7 +365,7 @@ class ActionHandler {
     this.s.replaceWith(templRoot);
     await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   setValue = async () => {
@@ -373,7 +373,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set value', initialValue: this.s.value }));
     if (btn !== 'ok') { return }
     this.s.value = x;
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   setInnerHtmlExpression = async () => {
@@ -382,7 +382,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     x = x.trim();
     x ? this.s.setAttribute('wf-innerhtml', x) : this.s.removeAttribute('wf-innerhtml');
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   evalJs = async () => {
@@ -391,7 +391,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     localStorage.setItem('webfoundry:lastEval', x);
     try { new Function(x).call(this.s) }
-    finally { post('app.pushHistory') }
+    finally { await post('app.pushHistory') }
   };
   
   changeName = async () => {
@@ -399,7 +399,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change form name', initialValue: this.s.name }));
     if (btn !== 'ok') { return }
     this.s.name = x;
-    post('app.pushHistory');
+    await post('app.pushHistory');
   };
 
   changeEmmet = async () => {
@@ -408,7 +408,24 @@ class ActionHandler {
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = emmet(x);
     this.s = p.children[i];
-    post('app.pushHistory');
+    await post('app.pushHistory');
+  };
+
+  normalizeStylesUnion = async () => {
+    if (!(state.app.s instanceof Set)) { return }
+    new Set([...state.app.s].flatMap(x => [...x.classList])).forEach(x => state.app.s.forEach(y => y.classList.add(x)));
+    await post('app.pushHistory');
+  };
+
+  normalizeStylesIntersect = async () => {
+    if (!(state.app.s instanceof Set)) { return }
+    let xs = new Set([...state.app.s].map(x => new Set([...x.classList])).reduce((a, b) => a.intersection(b)));
+    for (let y of state.app.s) {
+      for (let z of y.classList) {
+        if (!xs.has(z)) { y.classList.remove(z) }
+      }
+    }
+    await post('app.pushHistory');
   };
 
   kbds = {
@@ -473,6 +490,8 @@ class ActionHandler {
     'Ctrl-x': this.evalJs,
     'Ctrl-b': this.changeName,
     'Ctrl-C': this.changeEmmet,
+    'Ctrl-u': this.normalizeStylesUnion,
+    'Ctrl-U': this.normalizeStylesIntersect,
   };
 }
 
