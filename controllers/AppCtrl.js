@@ -184,7 +184,7 @@ let playgroundHtml = `<!doctype html>
               Example Button
             </button>
           </div>
-          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none wf-view-html">
+          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow shadow wf-view-html">
             <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
             <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
               View / Change HTML
@@ -198,7 +198,7 @@ let playgroundHtml = `<!doctype html>
               Shop Now
             </button>
           </div>
-          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none wf-view-html">
+          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow shadow wf-view-html">
             <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
             <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
               View / Change HTML
@@ -229,7 +229,7 @@ let playgroundHtml = `<!doctype html>
               Following the raid, which lasted 12 hours, FBI director Jesse Sanderman made this statment, “This is the biggest bazooka and stolen painting bust since 2009. We’re still on the look out for a fugitive under the pseudonym ‘Mountain Man’. Our sources say he’s connected to a painting smuggling ring. It seems he was the pervious owner of these crummy stolen paintings.”
             </div>
           </div>
-          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-4 wf-view-html">
+          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-4 wf-view-html">
             <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
             <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
               View / Change HTML
@@ -248,7 +248,7 @@ let playgroundHtml = `<!doctype html>
             </div>
             <div class="text-center whitespace-pre-wrap px-12 gfont-[Georgia] text-xl italic text-[#c2b385]">"I crafted this glorious beer to express my undying love for my beautiful city."<div class="not-italic text-sm">— MOUNTAIN MAN</div></div>
           </div>
-          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-4 wf-view-html">
+          <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-4 wf-view-html">
             <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
             <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
               View / Change HTML
@@ -298,7 +298,7 @@ let playgroundHtml = `<!doctype html>
           </div>
         </div>
       </div>
-      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-4 wf-view-html">
+      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-4 wf-view-html">
         <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
         <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
           View / Change HTML
@@ -376,7 +376,7 @@ let playgroundHtml = `<!doctype html>
           </div>
         </div>
       </div>
-      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-4 wf-view-html">
+      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-4 wf-view-html">
         <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
         <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
           View / Change HTML
@@ -405,7 +405,7 @@ let playgroundHtml = `<!doctype html>
         </div>
         <div style="background-image: url(&quot;http://playground.webflow.com/playground/img/newsletter-stripes.png&quot;);" class="h-2"></div>
       </div>
-      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-4 wf-view-html">
+      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-4 wf-view-html">
         <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
         <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
           View / Change HTML
@@ -459,7 +459,7 @@ let playgroundHtml = `<!doctype html>
           </div>
         </div>
       </div>
-      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-4 wf-view-html">
+      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-4 wf-view-html">
         <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
         <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
           View / Change HTML
@@ -547,7 +547,7 @@ let playgroundHtml = `<!doctype html>
           </div>
         </div>
       </div>
-      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-8 wf-view-html">
+      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-8 wf-view-html">
         <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
         <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
           View / Change HTML
@@ -673,7 +673,7 @@ let playgroundHtml = `<!doctype html>
           </button>
         </div>
       </div>
-      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto mt-8 wf-view-html">
+      <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto mt-8 wf-view-html">
         <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
         <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
           View / Change HTML
@@ -686,7 +686,7 @@ let playgroundHtml = `<!doctype html>
     </div>
     <div class="border-t border-neutral-400 mt-8 border-b">
       <div class="h-[100px] flex flex-col justify-end" style="background-image: url(&quot;http://playground.webflow.com/playground/img/footer-bg-stripes.jpg&quot;);">
-        <div style="background-image: url(&quot;http://playground.webflow.com/playground/img/footer-stitch.png&quot;);"></div>
+        <div class="h-3" style="background-image: url(&quot;http://playground.webflow.com/playground/img/footer-stitch.png&quot;);"></div>
       </div>
       <div class="bg-cover" style="background-image: url(&quot;http://playground.webflow.com/playground/img/footer-bg-dark.jpg&quot;);">
         <div class="flex flex-col items-center bg-cover" style="background-image: url(&quot;http://playground.webflow.com/playground/img/footer-bg.png&quot;);">
@@ -771,7 +771,7 @@ let playgroundHtml = `<!doctype html>
         </div>
       </div>
     </div>
-    <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center outline-none mx-auto my-8 wf-view-html">
+    <button class="rounded-lg border border-gray-300 flex overflow-hidden justify-self-center items-stretch outline-none bg-white shadow mx-auto my-8 wf-view-html">
       <div class="w-10 flex justify-center items-center nf nf-fa-code bg-sky-600 text-white"></div>
       <div class="font-bold text-gray-600 px-4 py-2 row-start-2">
         View / Change HTML
