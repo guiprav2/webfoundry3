@@ -19,10 +19,13 @@ class ActionHandler {
   set s(x) { post('app.changeSelected', x) }
   
   sToggle = () => {
-    let pe = this.s && this.s.closest('[contenteditable="true"]');
-    if (pe) { pe.removeAttribute('contenteditable') }
-    if (this.s) { this.sPrev = this.s; this.s = null }
-    else if (this.editorDocument.contains(this.sPrev)) { this.s = this.sPrev; this.sPrev = null }
+    if (this.s instanceof Set || this.sPrev instanceof Set) {
+      if (this.s) { this.sPrev = this.s; this.s = null }
+      else { this.s = new Set([...this.sPrev].filter(x => this.editorDocument.contains(x))) }
+    } else {
+      if (this.s) { this.sPrev = this.s; this.s = null }
+      else if (this.editorDocument.contains(this.sPrev)) { this.s = this.sPrev; this.sPrev = null }
+    }
     d.update();
   };
 
@@ -43,7 +46,7 @@ class ActionHandler {
   selectLastChild = () => this.select('lastElementChild');
   
   select = x => {
-    if (!this.s) { return }
+    if (!this.s || this.s instanceof Set) { return }
     let y = this.s[x];
     if (this.isComponent && !this.editorDocument.body.firstElementChild.contains(y)) { return }
     let closestComponentRoot = y && y.closest('[wf-component]');
@@ -56,11 +59,12 @@ class ActionHandler {
   mvDown = () => { this.mv(1) };
   
   mv = i => {
+    if (!this.s || this.s instanceof Set) { return }
     let p = this.s.parentElement, j = [...p.childNodes].indexOf(this.s), k = 1, pv;
     while (true) {
-    pv = p.childNodes[j + (i * k)];
-    if (!pv || (pv.nodeType !== Node.COMMENT_NODE && pv.nodeType !== Node.TEXT_NODE) || pv.textContent.trim()) { break }
-    k++;
+      pv = p.childNodes[j + (i * k)];
+      if (!pv || (pv.nodeType !== Node.COMMENT_NODE && pv.nodeType !== Node.TEXT_NODE) || pv.textContent.trim()) { break }
+      k++;
     }
     pv && p.insertBefore(this.s, i < 1 ? pv : pv.nextSibling);
   };
@@ -71,6 +75,8 @@ class ActionHandler {
   createInsideLast = () => { this.create('beforeend') };
   
   create = async pos => {
+    if (!this.s || this.s instanceof Set) { return }
+    let p = this.s.parentElement, j = [...p.childNodes].indexOf(this.s), k = 1, pv;
     if (this.isComponent && this.s === this.editorDocument.body.firstElementChild && (pos === 'beforebegin' || pos === 'afterend')) { return }
     if (this.s.tagName === 'BODY' && (pos === 'beforebegin' || pos === 'afterend')) { return }
     let x = d.html`<div class="min-h-[16px]">`;
@@ -80,7 +86,10 @@ class ActionHandler {
     await post('app.pushHistory');
   };
   
-  copy = async () => { this.s && await lf.setItem('copy', this.s.outerHTML) };
+  copy = async () => {
+    if (!this.s || this.s instanceof Set) { return }
+    this.s && await lf.setItem('copy', this.s.outerHTML);
+  };
   
   pasteAfter = () => { this.paste('afterend') };
   pasteBefore = () => { this.paste('beforebegin') };
@@ -88,6 +97,7 @@ class ActionHandler {
   pasteInsideLast = () => { this.paste('beforeend') };
   
   paste = async pos => {
+    if (!this.s || this.s instanceof Set) { return }
     if (this.isComponent && this.s === this.editorDocument.body.firstElementChild && (pos === 'beforebegin' || pos === 'afterend')) { return }
     if (this.s.tagName === 'BODY' && (pos === 'beforebegin' || pos === 'afterend')) { return }
     let x = d.html`<div>`;

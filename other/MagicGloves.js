@@ -10,8 +10,15 @@ class MagicGloves {
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown, true);
     iframe.contentWindow.addEventListener('change', this.onChange, true);
 
+    this.sov = new Boo(
+      d.el(MagicOverlay, { s: () => state.app.s instanceof Set ? null : state.app.s }),
+      () => state.app.s instanceof Set ? null : state.app.s,
+      { origin: iframe, transitionClass: 'transition-all' },
+    );
+
     d.effect(() => state.app.s instanceof Set ? [...state.app.s] : [state.app.s], s => {
       this.sovs?.forEach?.(x => x.disable());
+      if (s.length <= 1) { return }
       this.sovs = s.map(sx => new Boo(d.el(MagicOverlay, { s: sx }), sx, { origin: iframe, transitionClass: 'transition-all' }));
     });
   }
@@ -67,7 +74,7 @@ class MagicGloves {
     ev.target.setAttribute('value', ev.target.value);
   };
 
-  destroy() { this.sovs?.forEach?.(x => x.disable()) }
+  destroy() { this.sov?.disable?.(); this.sovs?.forEach?.(x => x.disable()) }
 }
 
 class MagicOverlay {
