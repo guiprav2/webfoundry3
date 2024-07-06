@@ -21,8 +21,8 @@ class CreateFileDialog {
         <div class="flex items-center gap-3">
           <div>New:</div>
           <select class="outline-none bg-transparent *:bg-[#121212] *:text-neutral-100" ${{ onChange: this.onChangeType }}>
-            <option value="file" selected>File</option>
-            <option value="folder">Folder</option>
+            <option value="file" ${{ selected: () => !this.props.fileDisabled, disabled: () => this.props.fileDisabled }}>File</option>
+            <option value="folder" ${{ selected: () => this.props.fileDisabled }}>Folder</option>
           </select>
         </div>
         <input class="outline-none mt-2 w-full rounded px-2 py-1 bg-[#2b2d3130] disabled:opacity-50 focus:bg-[#2b2d3150]" ${{

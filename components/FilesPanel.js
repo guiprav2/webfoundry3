@@ -10,6 +10,11 @@ class FilesPanel {
       onDragOver: this.props.onDragOver,
       onDrop: this.props.onDrop,
     }}>
+      <button class="FilesPanel-createBtn outline-none border-b border-black/50 transition-all h-12 text-xl bg-[#0071b2] transition-colors hover:bg-[#008ad9]" ${{
+        onClick: () => this.props.onCreateRootFolder(),
+      }}>
+        Create
+      </button>
       <div class="FilesPanel-fileList flex flex-col gap-2 p-4 max-h-screen overflow-auto">
         ${d.if(() => loadman.has('app.selectSite'), d.html`
           <div class="flex items-center gap-3">
@@ -34,7 +39,7 @@ class FilesPanel {
           }}>
             <div class="max-w-[calc(100%_-_5rem)] flex items-center gap-3">
               <div class="nf p-2" ${{ class: () => `nf-fa-${isDir ? (state.app.expandedPath(path + name + '/.keep') ? 'folder_open' : 'folder') : 'file'}` }}></div>
-              <div class="SitesPanel-fileName overflow-hidden text-ellipsis">${name}</div>
+              <div class="FilesPanel-fileName overflow-hidden text-ellipsis">${name}</div>
             </div>
             <div class="flex">
               ${d.if(() => isDir, d.html`

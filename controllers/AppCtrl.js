@@ -250,6 +250,13 @@ class AppCtrl {
       // TODO: Toggle path
     },
 
+    createRootFolder: async () => {
+      let [btn,, name] = await showModal(d.el(CreateFileDialog, { fileDisabled: true }));
+      if (btn !== 'ok') { return }
+      await rfiles.saveFile(this.state.currentSite, `${name}/.keep`, '');
+      await post('app.loadFiles')
+    },
+
     renameFile: async (x, isDir) => {
       let [btn, name] = await showModal(d.el(RenameFileDialog, { initialValue: x.split('/').at(-1) }));
       if (btn !== 'ok') { return }
