@@ -27,7 +27,7 @@ class AppCtrl {
       sites: true,
       files: () => !!this.state.currentSite,
       styles: () => !this.state.preview && this.state.s,
-      actions: () => !this.state.preview && this.state.s,
+      actions: () => !!this.state.currentSite,
       play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
       pause: () => this.state.preview,
     },
