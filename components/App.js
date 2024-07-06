@@ -41,6 +41,7 @@ class App {
         tourDisable: d.binding({ get: () => this.props.tourDisable }),
         files: d.binding({ get: () => this.props.files }),
         currentFile: d.binding({ get: () => this.props.currentFile }),
+        onCreate: this.props.onCreateFile,
         onCreateRootFolder: this.props.onCreateRootFolder,
         onSelect: this.props.onSelectFile,
         onRename: this.props.onRenameFile,
