@@ -12,14 +12,18 @@ class MagicGloves {
 
     this.sov = new Boo(
       d.el(MagicOverlay, { s: () => state.app.s instanceof Set ? null : state.app.s }),
-      () => state.app.s instanceof Set ? null : state.app.s,
+      () => state.app.s instanceof Set ? [...state.app.s][0] : state.app.s,
       { origin: iframe, transitionClass: 'transition-all' },
     );
 
     d.effect(() => state.app.s instanceof Set ? [...state.app.s] : [state.app.s], s => {
-      this.sovs?.forEach?.(x => x.disable());
-      if (s.length <= 1) { return }
-      this.sovs = s.map(sx => new Boo(d.el(MagicOverlay, { s: sx }), sx, { origin: iframe, transitionClass: 'transition-all' }));
+      this.sovs ??= [];
+      if (this.sovs.length >= s.length - 1) { for (let i = s.length - 1; i < this.sovs.length; i++) { this.sovs[i].disable(); this.sovs[i] = null } }
+      this.sovs.length = s.length - 1;
+      for (let i = 0; i < this.sovs.length; i++) {
+        if (this.sovs[i]) { continue }
+        this.sovs[i] = new Boo(d.el(MagicOverlay, { s: () => s[i + 1] }), () => s[i + 1], { origin: iframe, transitionClass: 'transition-all' });
+      }
     });
   }
 
