@@ -102,6 +102,20 @@ class App {
         this.interceptorSetup();
         this.pushPopStateSetup();
         this.update();
+
+        window.triggerRouterError = code => {
+            let templ = templates[`pages/${code}.html`];
+            if (!templ) { throw new Error(`No error page found for code ${code}`) }
+            let templDoc = new DOMParser().parseFromString(templ, 'text/html');
+            let templRoot = document.createElement('div');
+            for (let x of templDoc.body.attributes) {
+                templRoot.setAttribute(x.name, x.value);
+            }
+            templRoot.innerHTML = templDoc.body.innerHTML;
+            this.content = compile(templRoot);
+            for (let x of document.querySelectorAll('dialog')) { x.remove() }
+            d.update();
+        };
     }
 
     interceptorSetup() {
