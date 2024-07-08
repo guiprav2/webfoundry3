@@ -17,6 +17,7 @@ import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
 import { isImage, joinPath, showModal, loadman, clearComponents, setComponents } from '../other/util.js';
 import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
+import { nanoid } from 'https://cdn.skypack.dev/nanoid';
 import { playgroundHtml, defaultHtml, defaultComponentHtml } from '../other/html.js';
 import { runTour } from '../other/tour.js';
 
@@ -335,6 +336,7 @@ class AppCtrl {
       this.state.editorWindow = iframe.contentWindow;
       this.state.editorDocument = iframe.contentDocument;
       this.state.actions = new ActionHandler();
+      this.state.editorDocument.querySelectorAll('*').forEach(x => { !x.id && x.setAttribute('id', nanoid()) });
       this.state.designerLoading = false;
       post('app.pushHistory');
       let mutobs = new MutationObserver(() => post('app.saveFile', this.state.currentFile, `<!doctype html>\n${this.state.editorDocument.documentElement.outerHTML}`));

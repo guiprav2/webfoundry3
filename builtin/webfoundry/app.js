@@ -208,6 +208,7 @@ function compile(root) {
             let parent = x.parentElement;
             x.replaceWith(d.map(() => wfeval(parent, iterExpr), y => {
                 let n = compile(clone.cloneNode(true));
+                n.removeAttribute('id');
                 n.ctx = { [varname]: y };
                 return n;
             }));

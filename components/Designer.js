@@ -4,7 +4,7 @@ class Designer {
   constructor(props) { this.props = props }
 
   render = () => d.html`
-    <div class="Designer flex-1 bg-[#060a0f] flex items-center">
+    <div class="Designer flex-1 h-screen bg-[#060a0f] flex items-center">
       ${d.if(() => !this.props.loading, d.html`<div class="Designer-padder flex-1"></div>`)}
       ${d.portal(() => this.props.contextMenu)}
       <div class="Designer-contents flex flex-col bg-neutral-100" ${{ class: () => this.props.loading && 'hidden', style: { width: () => this.props.width, height: () => this.props.height }  }}>
