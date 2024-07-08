@@ -6,6 +6,7 @@ class MagicGloves {
     Object.assign(this, { iframe });
     iframe.contentDocument.addEventListener('mousedown', this.onMouseDown, true);
     iframe.contentDocument.addEventListener('click', this.onClick, true);
+    iframe.contentDocument.addEventListener('dblclick', this.onDblClick, true);
     iframe.contentDocument.addEventListener('contextmenu', this.onContextMenu, true);
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown, true);
     iframe.contentWindow.addEventListener('change', this.onChange, true);
@@ -29,9 +30,11 @@ class MagicGloves {
 
   get isComponent() { return this.iframe.contentWindow.location.pathname.split('/')[3] === 'components' }
 
-  onMouseDown = ev => ev.shiftKey && ev.preventDefault();
+  onMouseDown = ev => {
+    (ev.shiftKey || ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') && ev.preventDefault();
+  };
 
-  onClick = async ev => {
+  onClick = async (ev, dbl = false) => {
     if (ev.ctrlKey) { return }
     if (!state.app.tourDisable.has('gloves.preventDefault')) { ev.preventDefault(); ev.stopPropagation() }
     let target = ev.target;
@@ -49,6 +52,8 @@ class MagicGloves {
       return;
     }
   };
+
+  onDblClick = ev => (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') && ev.target.focus();
 
   onContextMenu = async ev => {
     if (ev.ctrlKey) { return }
