@@ -438,6 +438,15 @@ class ActionHandler {
     await post('app.pushHistory');
   };
 
+  setPageTitle = async () => {
+    let title = this.editorDocument.querySelector('head > title');
+    if (!title) { title = document.createElement('title'); this.editorDocument.head.append(title) }
+    let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set page title', initialValue: title.textContent || '' }));
+    if (btn !== 'ok') { return }
+    title.textContent = x;
+    await post('app.pushHistory');
+  };
+
   kbds = {
     Escape: this.sToggle,
     '{': this.changeMeta,
@@ -502,6 +511,7 @@ class ActionHandler {
     'Ctrl-C': this.changeEmmet,
     'Ctrl-u': this.normalizeStylesUnion,
     'Ctrl-U': this.normalizeStylesIntersect,
+    'Ctrl-T': this.setPageTitle,
   };
 }
 
