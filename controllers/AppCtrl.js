@@ -29,7 +29,7 @@ class AppCtrl {
       files: () => !!this.state.currentSite,
       styles: () => !this.state.preview && this.state.s,
       actions: () => !!this.state.currentSite,
-      tiles: () => this.state.currentFile && !this.state.preview,
+      tiles: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
       play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
       pause: () => this.state.preview,
     },

@@ -37,11 +37,13 @@ class MagicGloves {
   };
 
   onMouseMove = ev => {
-    let x = Math.floor((ev.clientX - 449) / 32) * 32, y = Math.floor(ev.clientY / 32) * 32;
-    this.mouseX = x;
-    this.mouseY = y;
+    let tmap = ev.target.closest('.tilemap');
+    if (!tmap) { return }
+    let rect = tmap.getBoundingClientRect();
+    this.tx = Math.floor((ev.clientX - rect.left) / 32);
+    this.ty = Math.floor((ev.clientY - rect.top) / 32);
     if (!ev.shiftKey || !this.floatingTile) { return }
-    Object.assign(this.floatingTile.style, { left: `${x}px`, top: `${y}px` });
+    for (let [k, v] of Object.entries({ '--x': this.tx, '--y': this.ty })) { this.floatingTile.style.setProperty(k, v) }
   };
 
   onClick = async ev => {
@@ -78,12 +80,14 @@ class MagicGloves {
     if (ev.key === 'Shift' && state.app.currentPanel === 'tiles') {
       let tmap = state.app.s.closest('.tilemap');
       if (!tmap) { return }
-      let tile = d.el('div', {
-        class: 'floating tile absolute w-[32px] h-[32px]',
-        style: { backgroundImage: tmap.style.backgroundImage, left: `${this.mouseX}px`, top: `${this.mouseY}px` },
-      });
+      let tile = d.el('div', { class: 'floating tile' });
+      tile.style.backgroundImage = tmap.style.backgroundImage;
       tmap.append(tile);
+      let pi = [...tmap.childNodes].indexOf(tile);
+      tile.outerHTML = tile.outerHTML;
+      tile = tmap.childNodes[pi];
       this.floatingTile = tile;
+      tile.addEventListener('click', () => tmap.append(tile.cloneNode()));
       return;
     }
 
@@ -103,8 +107,8 @@ class MagicGloves {
 
   onKeyUp = ev => {
     if (ev.key !== 'Shift' || !this.floatingTile) { return }
-    //this.floatingTile.remove();
-    //this.floatingTile = null;
+    this.floatingTile.remove();
+    this.floatingTile = null;
   };
 
   onChange = ev => {
