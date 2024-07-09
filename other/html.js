@@ -2,6 +2,7 @@ let playgroundHtml = `<!doctype html>
 <meta charset="utf-8">
 <head>
   <link class="wf-nf-link" rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+  <link class="wf-main-link" rel="stylesheet" href="../styles/main.css">
   <script class="wf-tw-script" src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <script class="wf-tw-setup">
     tailwind.config = {
@@ -763,6 +764,7 @@ let defaultHtml = `<!doctype html>
 <meta charset="utf-8">
 <head>
   <link class="wf-nf-link" rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+  <link class="wf-main-link" rel="stylesheet" href="../styles/main.css">
   <script class="wf-tw-script" src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <script class="wf-tw-setup">
     tailwind.config = {
@@ -840,6 +842,7 @@ let defaultComponentHtml = `<!doctype html>
 <meta charset="utf-8">
 <head>
   <link class="wf-nf-link" rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+  <link class="wf-main-link" rel="stylesheet" href="../styles/main.css">
   <script class="wf-tw-script" src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <script class="wf-tw-setup">
     tailwind.config = {
