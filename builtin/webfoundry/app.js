@@ -153,7 +153,8 @@ class App {
         }
         templRoot.innerHTML = templDoc.body.innerHTML;
         this.content = compile(templRoot);
-        document.querySelector('head > title').textContent = templDoc.querySelector('head > title').textContent || '';
+        let title = templDoc.querySelector('head > title');
+        if (title) { document.querySelector('head > title').textContent = title.textContent }
         for (let x of document.querySelectorAll('dialog')) { x.remove() }
         d.update();
     }
