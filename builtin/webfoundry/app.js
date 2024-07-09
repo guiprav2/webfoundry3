@@ -156,6 +156,7 @@ class App {
         let title = templDoc.querySelector('head > title');
         if (title) { document.querySelector('head > title').textContent = title.textContent }
         for (let x of document.querySelectorAll('dialog')) { x.remove() }
+        scrollTo(0, 0);
         d.update();
     }
 
