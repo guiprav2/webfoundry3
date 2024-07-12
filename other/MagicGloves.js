@@ -47,6 +47,10 @@ class MagicGloves {
   };
 
   onClick = async ev => {
+    if (state.app.currentPanel === 'tiles') {
+      let tmap = ev.target.closest('.tilemap');
+      tilesPanel.setTileset(this.iframe.contentWindow.location.pathname.replace(/index.html$/, '') + tmap.style.backgroundImage.slice(5, -2));
+    }
     if (ev.shiftKey && state.app.currentPanel === 'tiles') { return }
     if (ev.ctrlKey) { return }
     if (!state.app.tourDisable.has('gloves.preventDefault')) { ev.preventDefault(); ev.stopPropagation() }
@@ -82,6 +86,7 @@ class MagicGloves {
       if (!tmap) { return }
       let tile = d.el('div', { class: 'floating tile' });
       tile.style.backgroundImage = tmap.style.backgroundImage;
+      for (let [k, v] of Object.entries({ '--tx': tilesPanel.tx, '--ty': tilesPanel.ty })) { tile.style.setProperty(k, v) }
       tmap.append(tile);
       let pi = [...tmap.childNodes].indexOf(tile);
       tile.outerHTML = tile.outerHTML;

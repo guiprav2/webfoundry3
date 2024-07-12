@@ -4,11 +4,7 @@ import { selectFile } from '../other/util.js';
 class TilesPanel {
   constructor(props) { window.tilesPanel = this; this.props = props }
 
-  onLoadTileset = async () => {
-    let file = await selectFile('image/*');
-    this.tileset = URL.createObjectURL(file);
-    d.update();
-  };
+  setTileset = async url => { this.tileset = url; d.update() };
 
   onClickTileset = ev => {
     let rect = this.tilesetImg.getBoundingClientRect();
@@ -19,11 +15,6 @@ class TilesPanel {
 
   render = () => d.html`
     <div class="TilesPanel flex flex-col bg-[#091017] text-neutral-100 w-96 border-r border-black/50 select-none">
-      <button class="TilesPanel-loadTilesetBtn outline-none border-b border-black/50 transition-all h-12 text-xl bg-[#0071b2] transition-colors hover:bg-[#008ad9]" ${{
-        onClick: () => this.onLoadTileset(),
-      }}>
-        Load Tileset
-      </button>
       <div class="p-8 overflow-auto">
         <div class="relative">
           ${this.selector = d.html`<div class="absolute hidden w-[32px] h-[32px] border border-blue-500 z-10" ${{
