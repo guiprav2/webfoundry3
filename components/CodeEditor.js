@@ -11,7 +11,7 @@ class CodeEditor {
     this.editor = ace.edit(this.root);
     this.editor.setFontSize('16px');
     this.editor.setTheme('ace/theme/monokai');
-    let mode = { css: 'css', js: 'javascript' }[this.currentFile.split('.').pop()];
+    let mode = { css: 'css', js: 'javascript', md: 'markdown' }[this.currentFile.split('.').pop()];
     mode && this.editor.session.setMode(`ace/mode/${mode}`);
     this.editor.session.setTabSize(2);
     this.editor.session.setValue(this.props.text);
