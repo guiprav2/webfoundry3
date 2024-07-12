@@ -44,7 +44,7 @@ class AIImageDialog {
     ev.target.closest('form').querySelector('button[value="ok"]').click();
   };
 
-  onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = [this.forcePng(this.name.trim()), this.generated]; this.root.close(ev.submitter.value) };
+  onSubmit = ev => { ev.preventDefault(); this.root.returnDetail = [this.name && this.forcePng(this.name.trim()), this.generated]; this.root.close(ev.submitter.value) };
 
   render = () => this.root = d.html`
     <dialog class="outline-none rounded-lg shadow-xl text-neutral-100 bg-[#091017] w-96 p-3 pt-2">
