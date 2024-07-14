@@ -8,7 +8,7 @@ class IconsSidebar {
       ${this.renderWfButton()}
       ${this.renderButton('sites', 'nf-fa-sitemap')}
       ${this.renderButton('files', 'nf-fa-folder')}
-      ${this.renderButton('actions', 'nf-fa-hand')}
+      ${this.renderButton('actions', 'nf-md-dots_vertical_circle')}
       ${this.renderButton('styles', 'nf-fa-paint_brush')}
       ${this.renderButton('play', 'nf-fa-play')}
       ${this.renderButton('pause', 'nf-fa-pause')}

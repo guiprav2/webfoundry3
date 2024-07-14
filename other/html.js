@@ -123,7 +123,7 @@ let playgroundHtml = `<!doctype html>
             <span class="font-bold">
               Actions panel
             </span>
-            <span class="nf nf-fa-hand"></span>
+            <span class="nf nf-md-dots_vertical_circle"></span>
             <span>
               and click
             </span>
@@ -320,7 +320,7 @@ let playgroundHtml = `<!doctype html>
             <span class="font-bold">
               Actions panel
             </span>
-            <span class="nf nf-fa-hand"></span>
+            <span class="nf nf-md-dots_vertical_circle"></span>
             <span>
               and select
             </span>
@@ -344,7 +344,7 @@ let playgroundHtml = `<!doctype html>
             <span class="font-bold">
               Actions panel
             </span>
-            <span class="nf nf-fa-hand"></span>
+            <span class="nf nf-md-dots_vertical_circle"></span>
             <span>
               and select
             </span>
