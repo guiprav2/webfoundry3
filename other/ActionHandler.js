@@ -79,7 +79,7 @@ class ActionHandler {
     let p = this.s.parentElement, j = [...p.childNodes].indexOf(this.s), k = 1, pv;
     if (this.isComponent && this.s === this.editorDocument.body.firstElementChild && (pos === 'beforebegin' || pos === 'afterend')) { return }
     if (this.s.tagName === 'BODY' && (pos === 'beforebegin' || pos === 'afterend')) { return }
-    let x = d.html`<div class="min-h-[16px]">`;
+    let x = d.html`<div>`;
     this.s.insertAdjacentElement(pos, x);
     this.s = x;
     d.update();

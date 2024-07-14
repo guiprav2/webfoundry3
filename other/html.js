@@ -60,6 +60,8 @@ let playgroundHtml = `<!doctype html>
   </script>
   <style class="wf-preflight">
     [hidden] { display: none !important }
+    body { display: flow-root }
+    :empty { min-height: 16px }
   </style>
 </head>
 <body class="min-h-screen" style="background-image: url('http://playground.webflow.com/playground/img/page-bg.png')">
@@ -735,8 +737,8 @@ let playgroundHtml = `<!doctype html>
               <div class="uppercase text-neutral-300 text-xl gfont-[Oswald]">
                 Our Beer News
               </div>
-              <input class="min-h-[16px] bg-black/40 px-4 py-2 mt-4 outline-none border border-neutral-600 w-full" placeholder="Your email">
-              <button class="min-h-[16px] px-4 py-2 bg-[#988e68] text-white rounded mt-4">
+              <input class="bg-black/40 px-4 py-2 mt-4 outline-none border border-neutral-600 w-full" placeholder="Your email">
+              <button class="px-4 py-2 bg-[#988e68] text-white rounded mt-4">
                 OK
               </button>
             </div>
@@ -821,6 +823,8 @@ let defaultHtml = `<!doctype html>
   </script>
   <style class="wf-preflight">
     [hidden] { display: none !important }
+    body { display: flow-root }
+    :empty { min-height: 16px }
     .component-pattern {
       background-color: #06c;
       background-image: linear-gradient(rgba(255,255,255,0.2) 2px, transparent 2px),
@@ -898,6 +902,8 @@ let defaultComponentHtml = `<!doctype html>
   </script>
   <style class="wf-preflight">
     [hidden] { display: none !important }
+    body { display: flow-root }
+    :empty { min-height: 16px }
   </style>
   <style class="wf-component-preflight">
     body{
