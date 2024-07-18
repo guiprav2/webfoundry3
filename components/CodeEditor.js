@@ -19,7 +19,7 @@ class CodeEditor {
   };
 
   onDetach = () => this.editor?.session?.off?.('change', this.onChange);
-  onChange = debounce(() => post('app.editorChange', this.currentSite, this.currentFile, this.editor.session.getValue()), 200);
+  onChange = debounce(() => post('editor.changeCodeEditor', this.currentSite, this.currentFile, this.editor.session.getValue()), 200);
   render = () => this.root = d.html`<div class="CodeEditor flex-1" ${{ onAttach: this.onAttach, onDetach: this.onDetach }}></div>`;
 }
 

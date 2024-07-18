@@ -12,12 +12,12 @@ class MagicGloves {
     iframe.contentWindow.addEventListener('change', this.onChange, true);
 
     this.sov = new Boo(
-      d.el(MagicOverlay, { s: () => state.app.s instanceof Set ? null : state.app.s }),
-      () => state.app.s instanceof Set ? [...state.app.s][0] : state.app.s,
+      d.el(MagicOverlay, { s: () => state.editor.s instanceof Set ? null : state.editor.s }),
+      () => state.editor.s instanceof Set ? [...state.editor.s][0] : state.editor.s,
       { origin: iframe, transitionClass: 'transition-all' },
     );
 
-    d.effect(() => state.app.s instanceof Set ? [...state.app.s] : [state.app.s], s => {
+    d.effect(() => state.editor.s instanceof Set ? [...state.editor.s] : [state.editor.s], s => {
       this.sovs ??= [];
       if (this.sovs.length >= s.length - 1) { for (let i = s.length - 1; i < this.sovs.length; i++) { this.sovs[i].disable(); this.sovs[i] = null } }
       this.sovs.length = s.length - 1;
@@ -40,15 +40,15 @@ class MagicGloves {
     let target = ev.target;
     if (!this.iframe.contentDocument.body.contains(target)) { target = this.iframe.contentDocument.body }
     let componentRoot = this.isComponent && this.iframe.contentDocument.body.firstElementChild;
-    if (componentRoot && !componentRoot.contains(target)) { post('app.changeSelected', componentRoot); return }
+    if (componentRoot && !componentRoot.contains(target)) { post('editor.changeSelected', componentRoot); return }
     let closestComponentRoot = target.closest('[wf-component]');
     let closestSvgRoot = target.closest('svg');
-    await post(!ev.shiftKey ? 'app.changeSelected' : 'app.addSelection', closestComponentRoot || closestSvgRoot || target);
+    await post(!ev.shiftKey ? 'editor.changeSelected' : 'editor.addSelection', closestComponentRoot || closestSvgRoot || target);
 
     if (!ev.shiftKey && ev.target.closest('.wf-view-html')) {
-      await post('app.changeSelected', ev.target.closest('.wf-view-html'));
-      await post('app.editorAction', 'ArrowUp');
-      await post('app.editorAction', 'm');
+      await post('editor.changeSelected', ev.target.closest('.wf-view-html'));
+      await post('editor.action', 'ArrowUp');
+      await post('editor.action', 'm');
       return;
     }
   };
@@ -59,8 +59,8 @@ class MagicGloves {
     if (ev.ctrlKey) { return }
     ev.preventDefault();
     ev.stopPropagation();
-    if (!state.app.s) { this.onClick(ev) }
-    parent.postMessage({ type: 'action', action: 'app.contextMenu', args: [{ x: ev.clientX, y: ev.clientY }] }, '*');
+    if (!state.editor.s) { this.onClick(ev) }
+    parent.postMessage({ type: 'action', action: 'editor.contextMenu', args: [{ x: ev.clientX, y: ev.clientY }] }, '*');
   };
 
   onKeyDown = ev => {
@@ -72,10 +72,10 @@ class MagicGloves {
     let key = ev.key;
     if (ev.ctrlKey) { key = 'Ctrl-' + key }
     if (ev.altKey) { key = 'Alt-' + key }
-    if (!state.app.hasActionHandler(key)) { return }
+    if (!state.editor.hasActionHandler(key)) { return }
     ev.preventDefault();
     ev.stopPropagation();
-    post('app.editorAction', key);
+    post('editor.action', key);
   };
 
   onChange = ev => {

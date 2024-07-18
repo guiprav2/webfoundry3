@@ -1,7 +1,9 @@
 import AppCtrl from './AppCtrl.js';
+import EditorCtrl from './EditorCtrl.js';
 
 let sections = {
   app: new AppCtrl(),
+  editor: new EditorCtrl(),
 };
 
 let state = {};

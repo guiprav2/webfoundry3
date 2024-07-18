@@ -13,10 +13,10 @@ class ActionHandler {
   get isComponent() { return this.editorWindow.location.pathname.split('/')[3] === 'components' }
   get sidebarNode() { return this.designer.sidebarNode }
   get toolbarNode() { return this.designer.editor.toolbarNode }
-  get editorWindow() { return state.app.editorWindow }
-  get editorDocument() { return state.app.editorDocument }
-  get s() { return state.app.s }
-  set s(x) { post('app.changeSelected', x) }
+  get editorWindow() { return state.editor.editorWindow }
+  get editorDocument() { return state.editor.editorDocument }
+  get s() { return state.editor.s }
+  set s(x) { post('editor.changeSelected', x) }
   
   sToggle = () => {
     if (this.s instanceof Set || this.sPrev instanceof Set) {
@@ -83,7 +83,7 @@ class ActionHandler {
     this.s.insertAdjacentElement(pos, x);
     this.s = x;
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   copy = async () => {
@@ -106,7 +106,7 @@ class ActionHandler {
     this.s.insertAdjacentElement(pos, y);
     this.s = y;
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   rm = async () => {
@@ -117,7 +117,7 @@ class ActionHandler {
     this.s.remove();
     this.s = p.children[i] || p.children[i - 1] || p;
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   wrap = () => { this.wrapTagName('div') };
@@ -128,7 +128,7 @@ class ActionHandler {
     this.s.outerHTML = `<${x}>${this.s.outerHTML}</${x}>`;
     this.s = p.children[i];
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   unwrap = async () => {
@@ -137,7 +137,7 @@ class ActionHandler {
     this.s.outerHTML = this.s.innerHTML;
     this.s = p.children[i];
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeTag = async () => {
@@ -148,7 +148,7 @@ class ActionHandler {
     if (this.s.tagName === 'DIALOG' && x !== 'dialog') { this.s.open = false }
     this.changeTagName(x);
     if (x === 'dialog') { this.s.open = false; this.s.showModal() }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeTagName = async x => {
@@ -159,21 +159,21 @@ class ActionHandler {
     this.s.outerHTML = this.s.outerHTML.replace(tagName, x);
     this.s = p.children[i];
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeText = async () => {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change text', placeholder: 'Text', initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeMultilineText = async () => {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change multiline text', placeholder: 'Text', multiline: true, initialValue: this.s.textContent }));
     if (btn !== 'ok') { return }
     this.s.textContent = x;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeHref = async () => {
@@ -182,7 +182,7 @@ class ActionHandler {
     if (this.s.tagName === 'DIV' || this.s.tagName === 'SPAN') { this.changeTagName('a') }
     else if (this.s.tagName !== 'A') { this.wrapTagName('a') }
     if (x) { this.s.href = x } else { this.s.removeAttribute('href') }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeSrcUrl = async () => {
@@ -192,7 +192,7 @@ class ActionHandler {
     this.s.tagName !== 'VIDEO' && this.s.tagName !== 'AUDIO' && this.s.tagName !== 'IFRAME' && this.changeTagName('img');
     if (src) { this.s.src = src } else { this.s.removeAttribute('src') }
     if (expr) { this.s.setAttribute('wf-src', expr) } else { this.s.removeAttribute('wf-src') }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeBgUrl = async () => {
@@ -207,7 +207,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     if (x) { this.s.style.backgroundImage = `url(${JSON.stringify(x)})` }
     else { this.s.style.backgroundImage = '' }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeSrcUpload = async () => {
@@ -221,7 +221,7 @@ class ActionHandler {
     while (commonSegments < pagePath.length && imgPath[commonSegments] === pagePath[commonSegments]) { commonSegments++ }
     let backsteps = pagePath.length - commonSegments;
     this.s.src = new Array(backsteps).fill('../').join('') + detail;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeBgUpload = async () => {
@@ -234,7 +234,7 @@ class ActionHandler {
     while (commonSegments < pagePath.length && imgPath[commonSegments] === pagePath[commonSegments]) { commonSegments++ }
     let backsteps = pagePath.length - commonSegments;
     this.s.style.backgroundImage = `url(${JSON.stringify(new Array(backsteps).fill('../').join('') + detail)})`;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeHtml = async () => {
@@ -247,7 +247,7 @@ class ActionHandler {
     await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   changeInnerHtml = async () => {
@@ -260,26 +260,26 @@ class ActionHandler {
     await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
     d.update();
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
   
   toggleHidden = async ev => {
     if (!this.s || this.s.tagName === 'BODY') { return }
     this.s.hidden = !this.s.hidden;
     if (!this.s.hidden && this.s.tagName === 'DIALOG') { this.s.open = false; this.s.showModal() }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   netlifyDeploy = () => post('app.netlifyDeploy');
 
   undo = async () => {
     if (this.s?.tagName === 'INPUT' || this.s?.tagName === 'TEXTAREA') { return }
-    await post('app.undo');
+    await post('editor.undo');
   };
 
   redo = async () => {
     if (this.s?.tagName === 'INPUT' || this.s?.tagName === 'TEXTAREA') { return }
-    await post('app.redo');
+    await post('editor.redo');
   };
 
   setEventHandlers = async () => {
@@ -303,7 +303,7 @@ class ActionHandler {
     toBeRemoved.forEach(x => this.s.removeAttribute(x));
 
     for (let x of newHandlers) { this.s.setAttribute(`wf-on${x.name}`, x.expr) }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setIfExpression = async () => {
@@ -311,7 +311,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set if expression', placeholder: 'Expression', initialValue: this.s.getAttribute('wf-if') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-if', x.trim()) : this.s.removeAttribute('wf-if');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setMapExpression = async () => {
@@ -319,7 +319,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set map expression', placeholder: 'Expression', initialValue: this.s.getAttribute('wf-map') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-map', x.trim()) : this.s.removeAttribute('wf-map');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setPlaceholder = async () => {
@@ -327,7 +327,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set input placeholder', initialValue: this.s.getAttribute('placeholder') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('placeholder', x.trim()) : this.s.removeAttribute('placeholder');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   toggleDarkMode = () => this.editorDocument.documentElement.classList.toggle('dark');
@@ -337,7 +337,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change disabled expression', initialValue: this.s.getAttribute('wf-disabled') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('wf-disabled', x.trim()) : this.s.removeAttribute('wf-disabled');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   changeType = async () => {
@@ -345,7 +345,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change input type', initialValue: this.s.getAttribute('type') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('type', x.trim()) : this.s.removeAttribute('type');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   changeFormMethod = async () => {
@@ -353,7 +353,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change form method', initialValue: this.s.getAttribute('method') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('method', x.trim()) : this.s.removeAttribute('method');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   changeId = async () => {
@@ -361,7 +361,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change ID', initialValue: this.s.getAttribute('id') }));
     if (btn !== 'ok') { return }
     x.trim() ? this.s.setAttribute('id', x.trim()) : this.s.removeAttribute('id');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setComponent = async () => {
@@ -375,7 +375,7 @@ class ActionHandler {
     this.s.replaceWith(templRoot);
     await setComponents(state.app.currentSite, p.children[i]);
     this.s = p.children[i];
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setValue = async () => {
@@ -383,7 +383,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set value', initialValue: this.s.value }));
     if (btn !== 'ok') { return }
     this.s.value = x;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setInnerHtmlExpression = async () => {
@@ -392,7 +392,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     x = x.trim();
     x ? this.s.setAttribute('wf-innerhtml', x) : this.s.removeAttribute('wf-innerhtml');
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   evalJs = async () => {
@@ -401,7 +401,7 @@ class ActionHandler {
     if (btn !== 'ok') { return }
     localStorage.setItem('webfoundry:lastEval', x);
     try { new Function(x).call(this.s) }
-    finally { await post('app.pushHistory') }
+    finally { await post('editor.pushHistory') }
   };
   
   changeName = async () => {
@@ -409,7 +409,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Change form name', initialValue: this.s.name }));
     if (btn !== 'ok') { return }
     this.s.name = x;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   changeEmmet = async () => {
@@ -418,24 +418,24 @@ class ActionHandler {
     let p = this.s.parentElement, i = [...p.children].indexOf(this.s);
     this.s.outerHTML = emmet(x);
     this.s = p.children[i];
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   normalizeStylesUnion = async () => {
-    if (!(state.app.s instanceof Set)) { return }
-    new Set([...state.app.s].flatMap(x => [...x.classList])).forEach(x => state.app.s.forEach(y => y.classList.add(x)));
-    await post('app.pushHistory');
+    if (!(state.editor.s instanceof Set)) { return }
+    new Set([...state.editor.s].flatMap(x => [...x.classList])).forEach(x => state.editor.s.forEach(y => y.classList.add(x)));
+    await post('editor.pushHistory');
   };
 
   normalizeStylesIntersect = async () => {
-    if (!(state.app.s instanceof Set)) { return }
-    let xs = new Set([...state.app.s].map(x => new Set([...x.classList])).reduce((a, b) => a.intersection(b)));
-    for (let y of state.app.s) {
+    if (!(state.editor.s instanceof Set)) { return }
+    let xs = new Set([...state.editor.s].map(x => new Set([...x.classList])).reduce((a, b) => a.intersection(b)));
+    for (let y of state.editor.s) {
       for (let z of y.classList) {
         if (!xs.has(z)) { y.classList.remove(z) }
       }
     }
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   setPageTitle = async () => {
@@ -444,7 +444,7 @@ class ActionHandler {
     let [btn, x] = await showModal(d.el(PromptDialog, { title: 'Set page title', initialValue: title.textContent || '' }));
     if (btn !== 'ok') { return }
     title.textContent = x;
-    await post('app.pushHistory');
+    await post('editor.pushHistory');
   };
 
   kbds = {

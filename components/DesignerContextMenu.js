@@ -11,7 +11,7 @@ class DesignerContextMenu {
     <div class="flex items-start text-neutral-900 gap-1">
       <div class="flex flex-col gap-1 border border-neutral-200 rounded-md p-1 text-sm bg-white shadow">
         ${this.renderSubMenuOption('el', 'Elements')}
-        ${d.if(() => state.app.history.i > 0 || state.app.history.i < state.app.history.entries.length - 1, this.renderSubMenuOption('history', 'History'))}
+        ${d.if(() => state.editor.history.i > 0 || state.editor.history.i < state.editor.history.entries.length - 1, this.renderSubMenuOption('history', 'History'))}
         ${this.renderSubMenuOption('html', 'HTML')}
         ${this.renderSubMenuOption('textMedia', 'Text & Media')}
         ${this.renderSubMenuOption('styles', 'Styles')}
@@ -24,7 +24,7 @@ class DesignerContextMenu {
   renderSubmenus = {
     el: () => d.html`
       <div class="flex flex-col gap-1 border border-neutral-200 rounded-md p-1 text-sm bg-white shadow">
-        ${d.if(() => state.app.s.tagName !== 'BODY', d.html`
+        ${d.if(() => state.editor.s.tagName !== 'BODY', d.html`
           ${this.renderActionBtn('Create after', 'a')}
           ${this.renderActionBtn('Create before', 'A')}
         `)}
@@ -45,15 +45,15 @@ class DesignerContextMenu {
 
     history: () => d.html`
       <div class="flex flex-col gap-1 border border-neutral-200 rounded-md p-1 text-sm bg-white shadow">
-        ${d.if(() => state.app.history.i > 0, this.renderActionBtn('Undo', 'Ctrl-z'))}
-        ${d.if(() => state.app.history.i < state.app.history.entries.length - 1, this.renderActionBtn('Redo', 'Ctrl-y'))}
+        ${d.if(() => state.editor.history.i > 0, this.renderActionBtn('Undo', 'Ctrl-z'))}
+        ${d.if(() => state.editor.history.i < state.editor.history.entries.length - 1, this.renderActionBtn('Redo', 'Ctrl-y'))}
       </div>
     `,
 
     html: () => d.html`
       <div class="flex flex-col gap-1 border border-neutral-200 rounded-md p-1 text-sm bg-white shadow">
         ${this.renderActionBtn('Change meta', '{')}
-        ${d.if(() => state.app.s.tagName !== 'BODY', d.html`
+        ${d.if(() => state.editor.s.tagName !== 'BODY', d.html`
           ${this.renderActionBtn('Wrap', 'w')}
           ${this.renderActionBtn('Unwrap', 'W')}
           ${this.renderActionBtn('Change tag', 'e')}
@@ -61,7 +61,7 @@ class DesignerContextMenu {
         ${this.renderActionBtn('Change placeholder', 'Ctrl-p')}
         ${this.renderActionBtn('Change HTML', 'm')}
         ${this.renderActionBtn('Change inner HTML', 'M')}
-        ${d.if(() => state.app.s.tagName !== 'BODY', this.renderActionBtn('Toggle hidden', 'x'))}
+        ${d.if(() => state.editor.s.tagName !== 'BODY', this.renderActionBtn('Toggle hidden', 'x'))}
       </div>
     `,
 
@@ -631,7 +631,7 @@ class DesignerContextMenu {
     let mods = x => [this.bp !== 'none' && this.bp, ...this.sts, x].filter(Boolean).join(':');
 
     let active = (dbg) => {
-      let x = [...state.app.s?.classList || []].find(x => classNames.map(mods).includes(x));
+      let x = [...state.editor.s?.classList || []].find(x => classNames.map(mods).includes(x));
       if (!x) { return null }
       return x.split(':').at(-1);
     };
@@ -645,7 +645,7 @@ class DesignerContextMenu {
           () => classNames.length < 2 ? 'justify-center' : 'justify-between',
           () => active() ? 'font-bold text-blue-900 bg-neutral-100' : 'hover:bg-neutral-100',
         ],
-        onClick: () => { state.app.s.classList.toggle(mods(selected)); post('app.pushHistory') },
+        onClick: () => { state.editor.s.classList.toggle(mods(selected)); post('editor.pushHistory') },
       }}>
         ${d.if(() => classNames.length >= 2, d.html`
           <div class="nf nf-fa-chevron_left text-xs" ${{
@@ -654,9 +654,9 @@ class DesignerContextMenu {
               let delta = ev.ctrlKey ? 10 : 1;
               let i = classNames.indexOf(selected) - delta;
               if (i < 0) { i = classNames.length - 1 }
-              state.app.s.classList.remove(mods(selected));
-              state.app.s.classList.add(mods(selected = classNames[i]));
-              post('app.pushHistory');
+              state.editor.s.classList.remove(mods(selected));
+              state.editor.s.classList.add(mods(selected = classNames[i]));
+              post('editor.pushHistory');
             },
           }}></div>
         `)}
@@ -668,9 +668,9 @@ class DesignerContextMenu {
               let delta = ev.ctrlKey ? 10 : 1;
               let i = classNames.indexOf(selected) + delta;
               if (i >= classNames.length) { i = 0 }
-              state.app.s.classList.remove(mods(selected));
-              state.app.s.classList.add(mods(selected = classNames[i]));
-              post('app.pushHistory');
+              state.editor.s.classList.remove(mods(selected));
+              state.editor.s.classList.add(mods(selected = classNames[i]));
+              post('editor.pushHistory');
             },
           }}></div>
         `)}
@@ -680,7 +680,7 @@ class DesignerContextMenu {
 
   renderActionBtn = (label, key) => d.html`
     <button class="flex justify-between gap-3 rounded px-2 py-1 hover:bg-neutral-100" ${{
-      onClick: () => { post('app.editorAction', key); this.props.close() },
+      onClick: () => { post('editor.action', key); this.props.close() },
     }}>
       ${label}
       <div class="rounded px-2 mono text-xs bg-neutral-200/50">${key}</div>
