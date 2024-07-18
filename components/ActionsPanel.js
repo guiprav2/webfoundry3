@@ -1,8 +1,6 @@
 import d from '../other/dominant.js';
 
 class ActionsPanel {
-  constructor(props) { this.props = props }
-
   render = () => d.html`
     <div class="ActionsPanel flex flex-col bg-[#091017] text-neutral-100 w-96 h-screen border-r border-black/50 p-6 space-y-4 select-none overflow-auto">
       ${d.if(() => state.app.s, d.html`

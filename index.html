@@ -51,9 +51,9 @@
   </head>
   <body class="overflow-hidden sans text-neutral-100 bg-[#060a0f]">
     <script type="module">
+      import App from './components/App.js';
       import Mobile from './components/Mobile.js';
       import NoSafari from './components/NoSafari.js';
-      import Root from './components/Root.js';
       import d from './other/dominant.js';
       import { state, post } from './controllers/ctrls.js';
 
@@ -64,7 +64,7 @@
         Object.assign(window, { state, post });
         addEventListener('click', ev => ev.target.closest('a')?.getAttribute?.('href')?.startsWith?.('#') && ev.preventDefault(), true);
         navigator.serviceWorker.register('sw.bundle.js');
-        document.body.append(d.el(Root));
+        document.body.append(d.el(App));
       })();
     </script>
   </body>

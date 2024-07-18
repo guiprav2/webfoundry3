@@ -2,8 +2,6 @@ import d from '../other/dominant.js';
 import { runTour } from '../other/tour.js';
 
 class WfPanel {
-  constructor(props) { this.props = props }
-
   render = () => d.html`
     <div class="WfPanel w-full max-h-screen flex flex-col gap-4 py-32 px-24 overflow-auto" ${{ onAttach: () => this.timestamp = Date.now() }}>
       <div class="gfont-[Pacifico] text-4xl">Webfoundry</div>
@@ -12,9 +10,9 @@ class WfPanel {
         <div class="flex flex-col gap-3 flex-1">
           <div class="text-2xl mb-4">Start</div>
           <div class="grid gap-6 lg:grid-cols-4">
-            <button class="aspect-square rounded-md border nf nf-fa-plus border-neutral-500 text-neutral-400 outline-none" ${{ onClick: () => this.props.onCreate() }}></button>
-            ${d.map(() => this.props.sites, x => d.html`
-              <button class="aspect-square relative rounded-md overflow-hidden outline-none shadow-xl" ${{ onClick: () => this.props.onSelect(x.id) }}>
+            <button class="aspect-square rounded-md border nf nf-fa-plus border-neutral-500 text-neutral-400 outline-none" ${{ onClick: () => post('app.createSite') }}></button>
+            ${d.map(() => state.app.sites, x => d.html`
+              <button class="aspect-square relative rounded-md overflow-hidden outline-none shadow-xl" ${{ onClick: () => post('app.selectSite', x.id) }}>
                 <img class="aspect-square object-cover w-full h-full" ${{ src: () => `/files/${x.id}/webfoundry/snapshot.png?` + this.timestamp, onError: ev => ev.target.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1280px-SMPTE_Color_Bars.svg.png' }}>
                 <div class="absolute left-0 right-0 bottom-0 px-3 py-1 bg-neutral-900 text-center">${x.name}</div>
               </button>
