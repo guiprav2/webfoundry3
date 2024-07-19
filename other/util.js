@@ -7,6 +7,10 @@ function isAudio(path) { return ['.mp3', '.wav', '.ogg', '.flac', '.m4a'].some(x
 function joinPath(path, name) { return [...path?.split?.('/') || [], name].filter(Boolean).join('/') }
 
 function formatHtml(x) {
+  if (x.trim().startsWith('<body')) {
+    let doc = new DOMParser().parseFromString(x, 'text/html');
+    return formatNode(doc.body);
+  }
   let div = document.createElement('div');
   div.innerHTML = x;
   return [...div.childNodes].map(y => formatNode(y)).filter(Boolean).join('\n');
