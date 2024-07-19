@@ -680,7 +680,7 @@ class DesignerContextMenu {
 
   renderActionBtn = (label, key) => d.html`
     <button class="flex justify-between gap-3 rounded px-2 py-1 hover:bg-neutral-100" ${{
-      onClick: () => { post('editor.action', key); this.props.close() },
+      onClick: () => { post('editor.kbdAction', key); this.props.close() },
     }}>
       ${label}
       <div class="rounded px-2 mono text-xs bg-neutral-200/50">${key}</div>

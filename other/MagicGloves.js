@@ -47,8 +47,8 @@ class MagicGloves {
 
     if (!ev.shiftKey && ev.target.closest('.wf-view-html')) {
       await post('editor.changeSelected', ev.target.closest('.wf-view-html'));
-      await post('editor.action', 'ArrowUp');
-      await post('editor.action', 'm');
+      await post('editor.kbdAction', 'ArrowUp');
+      await post('editor.kbdAction', 'm');
       return;
     }
   };
@@ -75,7 +75,7 @@ class MagicGloves {
     if (!state.editor.hasActionHandler(key)) { return }
     ev.preventDefault();
     ev.stopPropagation();
-    post('editor.action', key);
+    post('editor.kbdAction', key);
   };
 
   onChange = ev => {
