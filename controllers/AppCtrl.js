@@ -24,7 +24,7 @@ class AppCtrl {
       files: () => !!this.state.currentSite,
       styles: () => !state.editor.preview && state.editor.s,
       actions: () => !!this.state.currentSite,
-      play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !this.state.preview,
+      play: () => this.state.currentFile?.match?.(/^pages\/.+\.html$/) && !state.editor.preview,
       pause: () => state.editor.preview,
     },
 

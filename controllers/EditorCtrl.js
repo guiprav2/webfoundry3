@@ -22,7 +22,7 @@ class EditorCtrl {
 
     buildFrameSrc: () => {
       if (!state.app.currentSite || !state.app.currentFile) { return '' }
-      let src = `${this.state.preview ? 'preview' : 'files'}/${state.app.currentSite}/${!state.app.preview ? state.app.currentFile : state.app.currentFile.replace('pages/', '')}`
+      let src = `${this.state.preview ? 'preview' : 'files'}/${state.app.currentSite}/${!this.state.preview ? state.app.currentFile : state.app.currentFile.replace('pages/', '')}`
       if (this.state.qsPreview) { src += `?${this.state.qsPreview}` }
       return src;
     },
