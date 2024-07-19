@@ -393,6 +393,7 @@ class EditorCtrl {
       let p = this.state.s.parentElement, i = [...p.children].indexOf(this.state.s);
       this.state.s.outerHTML = x;
       await setComponents(state.app.currentSite, p.children[i]);
+      if (p.children[i].outerHTML === '<head></head>') { p.children[i].remove() } // Workaround for weird Firefox bug
       this.state.s = p.children[i];
       await post('editor.pushHistory');
     },
