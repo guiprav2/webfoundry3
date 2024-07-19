@@ -9,6 +9,7 @@ class MagicGloves {
     iframe.contentDocument.addEventListener('dblclick', this.onDblClick, true);
     iframe.contentDocument.addEventListener('contextmenu', this.onContextMenu, true);
     iframe.contentWindow.addEventListener('keydown', this.onKeyDown, true);
+    addEventListener('keydown', this.onKeyDown, true);
     iframe.contentWindow.addEventListener('change', this.onChange, true);
 
     this.sov = new Boo(
