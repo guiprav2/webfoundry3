@@ -11,7 +11,6 @@ import d from '../other/dominant.js';
 import emmet from 'https://cdn.skypack.dev/emmet';
 import html2canvas from 'https://cdn.skypack.dev/html2canvas';
 import lf from 'https://cdn.skypack.dev/localforage';
-import morphdom from 'https://cdn.skypack.dev/morphdom/dist/morphdom-esm.js';
 import rfiles from '../repositories/FilesRepository.js';
 import { clearComponents, setComponents, showModal } from '../other/util.js';
 
@@ -38,7 +37,7 @@ class EditorCtrl {
         return [...[...s].map(x => new Set([...x.classList, ...getWfClass(x)])).reduce((a, b) => a.intersection(b))];
       } else {
         let styles = s ? [...s.classList] : [];
-        if (s.tagName === 'BODY' && styles.includes('min-h-screen')) { styles.splice(styles.indexOf('min-h-screen'), 1) }
+        if (s?.tagName === 'BODY' && styles.includes('min-h-screen')) { styles.splice(styles.indexOf('min-h-screen'), 1) }
         s && styles.push(...getWfClass(s));
         return styles;
       }
@@ -182,7 +181,14 @@ class EditorCtrl {
       if (!history.i) { return }
       this.state.s && post('editor.changeSelected', null);
       history.i--;
-      morphdom(iframe.contentDocument.documentElement, history.entries[history.i]);
+      let doc = new DOMParser().parseFromString(history.entries[history.i], 'text/html');
+      let dt = doc.querySelector('head > title');
+      let ft = iframe.contentDocument.querySelector('head > title');
+      if (dt) {
+        if (!ft) { ft = document.createElement('title'); iframe.contentDocument.head.append(ft) }
+        ft.textContent = dt.textContent;
+      }
+      iframe.contentDocument.body.outerHTML = doc.body.outerHTML;
     },
 
     redo: () => {
@@ -191,7 +197,8 @@ class EditorCtrl {
       if (history.i >= history.entries.length - 1) { return }
       this.state.s && post('editor.changeSelected', null);
       history.i++;
-      morphdom(iframe.contentDocument.documentElement, history.entries[history.i]);
+      let doc = new DOMParser().parseFromString(history.entries[history.i], 'text/html');
+      iframe.contentDocument.body.outerHTML = doc.body.outerHTML;
     },
 
     changeCodeEditor: async (site, path, x) => await rfiles.saveFile(site, path, new Blob([x], { type: mimeLookup(state.app.currentFile) })),
