@@ -7,6 +7,43 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <dirent.h>
+
+// Global variable to store the path of the temporary directory
+char output_dir[64];
+
+// Function to recursively delete a directory
+int delete_directory(const char *path) {
+    struct dirent *entry;
+    DIR *dir = opendir(path);
+    if (!dir) {
+        perror("opendir");
+        return -1;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        char fullpath[512];
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+        snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
+        if (entry->d_type == DT_DIR) {
+            delete_directory(fullpath);
+        } else {
+            unlink(fullpath);
+        }
+    }
+    closedir(dir);
+    rmdir(path);
+    return 0;
+}
+
+// Cleanup function to delete the temporary directory
+void cleanup() {
+    if (delete_directory(output_dir) != 0) {
+        fprintf(stderr, "Failed to delete temporary directory: %s\n", output_dir);
+    }
+}
 
 void extract_tarball(const char *data, size_t size, const char *output_dir) {
     struct archive *archive;
@@ -59,7 +96,6 @@ int main(int argc, char *argv[]) {
     char *buffer;
     long size;
     char template[] = "/tmp/self_extract_XXXXXX";
-    char output_dir[64];
     int fd;
 
     self = fopen(argv[0], "rb");
@@ -121,20 +157,39 @@ int main(int argc, char *argv[]) {
         if (!next_marker) break; // Exit loop if no further markers are found
     }
 
-    // Change to the temporary directory
-    if (chdir(output_dir) != 0) {
-        perror("chdir");
+    // Fork a child process to execute the Electron app
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
         exit(EXIT_FAILURE);
+    } else if (pid == 0) {
+        // Child process
+        // Change to the temporary directory
+        if (chdir(output_dir) != 0) {
+            perror("chdir");
+            exit(EXIT_FAILURE);
+        }
+
+        // Execute the Electron app
+        printf("Starting Electron...\n");
+        char *exec_args[] = {"node", "./node_modules/.bin/electron", ".", NULL};
+        execvp("node", exec_args);
+
+        // If execvp fails
+        perror("execvp");
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        // Wait for the child process to finish
+        int status;
+        waitpid(pid, &status, 0);
+
+        // Cleanup temporary directory
+        cleanup();
+
+        // Exit with the same status as the child process
+        exit(WEXITSTATUS(status));
     }
-
-    // Execute the electron app
-    printf("Starting Electron...\n");
-    char *exec_args[] = {"node", "./node_modules/.bin/electron", ".", NULL};
-    execvp("node", exec_args);
-
-    // If execvp fails
-    perror("execvp");
-    exit(EXIT_FAILURE);
 
     return 0;
 }

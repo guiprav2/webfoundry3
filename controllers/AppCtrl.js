@@ -341,7 +341,7 @@ class AppCtrl {
 
     exportElectron: async () => {
       let program = await fetchFile('sfx');
-      let bundle = await fetchFile('https://filet.guiprav.com/webfoundry/20e5d78d-8ddd-4eb1-872d-d8f44cb52c05/linux-electron-bundle.tar.gz');
+      let bundle = await fetchFile('https://filet.guiprav.com/webfoundry/c21b65e8-4790-4bbb-9671-b9851cd48438/linux-electron-bundle.tar.gz');
       let files = {};
       for (let file of await rfiles.loadFiles(this.state.currentSite)) { files[file] = await rfiles.loadFile(this.state.currentSite, file) }
       let blob = new Blob([program, '=== TARSTART ===', bundle, '=== TARSTART ===', await tarball(files)], { type: 'application/x-tar' });
