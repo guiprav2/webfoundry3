@@ -340,8 +340,8 @@ class AppCtrl {
     },
 
     exportElectron: async () => {
-      let program = await fetchFile('sfx');
-      let bundle = await fetchFile('linux-tauri-bundle.tar.gz');
+      let program = await fetchFile('native/sfx');
+      let bundle = await fetchFile('native/linux-tauri-bundle.tar.gz');
       let files = {};
       for (let file of await rfiles.loadFiles(this.state.currentSite)) { files[file] = await rfiles.loadFile(this.state.currentSite, file) }
       let blob = new Blob([program, '=== TARSTART ===', bundle, '=== TARSTART ===', await tarball(files)], { type: 'application/x-tar' });
