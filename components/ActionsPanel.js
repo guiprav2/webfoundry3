@@ -176,8 +176,8 @@ class ActionsPanel {
       <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.exportZip') }}>
         <div>Export ZIP</div>
       </button>
-      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.exportElectron') }}>
-        <div>Export Electron</div>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.exportDesktop') }}>
+        <div>Export desktop app</div>
       </button>
       <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.netlifyDeploy') }}>
         <div>Deploy to Netlify</div>

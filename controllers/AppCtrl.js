@@ -339,7 +339,7 @@ class AppCtrl {
       await showModal(d.el(NetlifyDeployDoneDialog, { url: x }));
     },
 
-    exportElectron: async () => {
+    exportDesktop: async () => {
       let program = await fetchFile('native/sfx');
       let bundle = await fetchFile('native/linux-tauri-bundle.tar.gz');
       let files = {};
