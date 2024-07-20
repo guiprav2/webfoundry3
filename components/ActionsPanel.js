@@ -169,7 +169,16 @@ class ActionsPanel {
           <div class="font-mono">Ctrl-x</div>
         </button>
       `)}
-      <div>Deploy</div>
+      <div>Import, Export, and Deploy</div>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.importZip') }}>
+        <div>Import ZIP</div>
+      </button>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.exportZip') }}>
+        <div>Export ZIP</div>
+      </button>
+      <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.exportElectron') }}>
+        <div>Export Electron</div>
+      </button>
       <button class="text-left px-4 py-2 rounded-md bg-black/50 hover:bg-black/70 flex justify-between gap-3 outline-none w-full" ${{ onClick: () => post('app.netlifyDeploy') }}>
         <div>Deploy to Netlify</div>
         ${d.if(() => state.editor.s, d.html`<div class="font-mono">D</div>`)}

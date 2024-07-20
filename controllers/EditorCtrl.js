@@ -13,6 +13,7 @@ import html2canvas from 'https://cdn.skypack.dev/html2canvas';
 import lf from 'https://cdn.skypack.dev/localforage';
 import rfiles from '../repositories/FilesRepository.js';
 import { clearComponents, setComponents, showModal } from '../other/util.js';
+import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
 
 class EditorCtrl {
   state = {

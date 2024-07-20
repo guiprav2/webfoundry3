@@ -10,6 +10,7 @@ import d from '../other/dominant.js';
 import rfiles from '../repositories/FilesRepository.js';
 import rsites from '../repositories/SitesRepository.js';
 import structuredFiles from '../other/structuredFiles.js';
+import tarball from '../other/tarball.js';
 import { isImage, joinPath, showModal, loadman, clearComponents } from '../other/util.js';
 import { lookup as mimeLookup } from 'https://cdn.skypack.dev/mrmime';
 import { nanoid } from 'https://cdn.skypack.dev/nanoid';
@@ -214,7 +215,7 @@ class AppCtrl {
     createRootFolder: async () => {
       let [btn,, name] = await showModal(d.el(CreateFileDialog, { fileDisabled: true }));
       if (btn !== 'ok') { return }
-      await rfiles.saveFile(this.state.currentSite, `${name}/.keep`, '');
+      await rfiles.saveFile(this.state.currentSite, `${name}/.keep`, new Blob([''], { type: 'text/plain' }));
       await post('app.loadFiles')
     },
 
@@ -328,7 +329,7 @@ class AppCtrl {
 
     exportZip: async () => {
       let blob = await rfiles.exportZip(this.state.currentSite);
-      let a = d.html`<a class="hidden" ${{ download: `${this.state.sites[this.state.currentSite].name}.zip`, href: URL.createObjectURL(blob) }}>`;
+      let a = d.html`<a class="hidden" ${{ download: `${this.state.sites.find(x => x.id === this.state.currentSite).name}.zip`, href: URL.createObjectURL(blob) }}>`;
       document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     },
 
@@ -336,6 +337,16 @@ class AppCtrl {
       let [btn, x] = await showModal(d.el(NetlifyDeployDialog));
       if (btn !== 'ok') { return }
       await showModal(d.el(NetlifyDeployDoneDialog, { url: x }));
+    },
+
+    exportElectron: async () => {
+      let program = await fetchFile('sfx');
+      let bundle = await fetchFile('https://filet.guiprav.com/webfoundry/20e5d78d-8ddd-4eb1-872d-d8f44cb52c05/linux-electron-bundle.tar.gz');
+      let files = {};
+      for (let file of await rfiles.loadFiles(this.state.currentSite)) { files[file] = await rfiles.loadFile(this.state.currentSite, file) }
+      let blob = new Blob([program, '=== TARSTART ===', bundle, '=== TARSTART ===', await tarball(files)], { type: 'application/x-tar' });
+      let a = d.html`<a class="hidden" ${{ download: `${this.state.sites.find(x => x.id === this.state.currentSite).name}.app`, href: URL.createObjectURL(blob) }}>`;
+      document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     },
   };
 }

@@ -139,7 +139,9 @@ class App {
     }
 
     update() {
-        let parts = location.pathname.slice(1).split('/');
+        let url = new URL(location.href);
+        if (!this.electronRoot) { this.electronRoot = url.searchParams.get('electronRoot') }
+        let parts = !this.electronRoot ? url.pathname.slice(1).split('/') : url.pathname.slice(this.electronRoot.length + 1).split('/');
         if (parts[0] === 'preview') { parts.splice(0, 2) }
         if (parts.length === 1 && !parts[0]) { parts[0] = 'index.html' }
         let path = 'pages/' + parts.join('/');
