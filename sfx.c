@@ -171,9 +171,9 @@ int main(int argc, char *argv[]) {
         }
 
         // Execute the Electron app
-        printf("Starting Electron...\n");
-        char *exec_args[] = {"node", "./node_modules/.bin/electron", ".", NULL};
-        execvp("node", exec_args);
+        printf("Starting app...\n");
+        char *exec_args[] = {NULL};
+        execvp("./webfoundry-app", exec_args);
 
         // If execvp fails
         perror("execvp");
