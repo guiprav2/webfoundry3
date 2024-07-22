@@ -4,16 +4,56 @@
 #include <unistd.h>
 #include <archive.h>
 #include <archive_entry.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <direct.h>
+#include <io.h>
+#include <fcntl.h>
+#define mkdtemp _mktemp
+#define unlink _unlink
+#define rmdir _rmdir
+#define pid_t HANDLE
+#else
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <sys/wait.h>
+#endif
 
 // Global variable to store the path of the temporary directory
 char output_dir[64];
 
 // Function to recursively delete a directory
 int delete_directory(const char *path) {
+#ifdef _WIN32
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind;
+    char fullpath[512];
+
+    snprintf(fullpath, sizeof(fullpath), "%s\\*.*", path);
+    hFind = FindFirstFile(fullpath, &findFileData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        perror("FindFirstFile");
+        return -1;
+    }
+
+    do {
+        if (strcmp(findFileData.cFileName, ".") == 0 || strcmp(findFileData.cFileName, "..") == 0) {
+            continue;
+        }
+        snprintf(fullpath, sizeof(fullpath), "%s\\%s", path, findFileData.cFileName);
+        if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            delete_directory(fullpath);
+        } else {
+            unlink(fullpath);
+        }
+    } while (FindNextFile(hFind, &findFileData) != 0);
+
+    FindClose(hFind);
+    rmdir(path);
+    return 0;
+#else
     struct dirent *entry;
     DIR *dir = opendir(path);
     if (!dir) {
@@ -36,6 +76,7 @@ int delete_directory(const char *path) {
     closedir(dir);
     rmdir(path);
     return 0;
+#endif
 }
 
 // Cleanup function to delete the temporary directory
@@ -123,11 +164,22 @@ int main(int argc, char *argv[]) {
 
     // Create temporary directory
     strcpy(output_dir, template);
+#ifdef _WIN32
+    if (_mktemp(output_dir) == NULL) {
+        perror("mkdtemp");
+        exit(EXIT_FAILURE);
+    }
+    if (_mkdir(output_dir) != 0) {
+        perror("mkdir");
+        exit(EXIT_FAILURE);
+    }
+#else
     fd = mkdtemp(output_dir);
     if (fd == -1) {
         perror("mkdtemp");
         exit(EXIT_FAILURE);
     }
+#endif
 
     printf("Extracting to directory: %s\n", output_dir);
 
@@ -157,6 +209,30 @@ int main(int argc, char *argv[]) {
         if (!next_marker) break; // Exit loop if no further markers are found
     }
 
+#ifdef _WIN32
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+
+    char command[512];
+    snprintf(command, sizeof(command), "%s\\webfoundry-app", output_dir);
+
+    if (!CreateProcess(NULL, command, NULL, NULL, FALSE, 0, NULL, output_dir, &si, &pi)) {
+        fprintf(stderr, "CreateProcess failed (%d)\n", GetLastError());
+        exit(EXIT_FAILURE);
+    }
+
+    WaitForSingleObject(pi.hProcess, INFINITE);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
+    // Cleanup temporary directory
+    cleanup();
+
+    return 0;
+#else
     // Fork a child process to execute the Electron app
     pid_t pid = fork();
     if (pid == -1) {
@@ -192,4 +268,5 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
+#endif
 }

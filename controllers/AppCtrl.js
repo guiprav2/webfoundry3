@@ -340,12 +340,12 @@ class AppCtrl {
     },
 
     exportDesktop: async () => {
-      let program = await fetchFile('native/sfx');
-      let bundle = await fetchFile('native/linux-tauri-bundle.tar.gz');
+      let program = await fetchFile('native/sfx.exe');
+      let bundle = await fetchFile('native/windows-tauri-bundle.tar');
       let files = {};
       for (let file of await rfiles.loadFiles(this.state.currentSite)) { files[file] = await rfiles.loadFile(this.state.currentSite, file) }
-      let blob = new Blob([program, '=== TARSTART ===', bundle, '=== TARSTART ===', await tarball(files)], { type: 'application/x-tar' });
-      let a = d.html`<a class="hidden" ${{ download: `${this.state.sites.find(x => x.id === this.state.currentSite).name}.app`, href: URL.createObjectURL(blob) }}>`;
+      let blob = new Blob([program, '=== TARSTART ===', bundle, '=== TARSTART ===', await tarball(files)], { type: 'application/vnd.microsoft.portable-executable' });
+      let a = d.html`<a class="hidden" ${{ download: `${this.state.sites.find(x => x.id === this.state.currentSite).name}.exe`, href: URL.createObjectURL(blob) }}>`;
       document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     },
   };
