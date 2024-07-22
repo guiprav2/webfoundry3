@@ -1,0 +1,16 @@
+{
+  "name": "webfoundry-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "get-port": "^7.1.0"
+  }
+}
