@@ -22,7 +22,7 @@
 #endif
 
 // Global variable to store the path of the temporary directory
-char output_dir[64];
+char output_dir[512];
 
 // Function to recursively delete a directory
 int delete_directory(const char *path) {
@@ -136,8 +136,29 @@ int main(int argc, char *argv[]) {
     FILE *self;
     char *buffer;
     long size;
+
+#ifdef _WIN32
+    char temp_path[512];
+    GetTempPath(sizeof(temp_path), temp_path);
+    snprintf(output_dir, sizeof(output_dir), "%s\\self_extract_XXXXXX", temp_path);
+    if (_mktemp(output_dir) == NULL) {
+        perror("mkdtemp");
+        exit(EXIT_FAILURE);
+    }
+    if (_mkdir(output_dir) != 0) {
+        perror("mkdir");
+        exit(EXIT_FAILURE);
+    }
+#else
     char template[] = "/tmp/self_extract_XXXXXX";
-    int fd;
+    strcpy(output_dir, template);
+    if (mkdtemp(output_dir) == NULL) {
+        perror("mkdtemp");
+        exit(EXIT_FAILURE);
+    }
+#endif
+
+    printf("Extracting to directory: %s\n", output_dir);
 
     self = fopen(argv[0], "rb");
     if (!self) {
@@ -161,27 +182,6 @@ int main(int argc, char *argv[]) {
     }
 
     fclose(self);
-
-    // Create temporary directory
-    strcpy(output_dir, template);
-#ifdef _WIN32
-    if (_mktemp(output_dir) == NULL) {
-        perror("mkdtemp");
-        exit(EXIT_FAILURE);
-    }
-    if (_mkdir(output_dir) != 0) {
-        perror("mkdir");
-        exit(EXIT_FAILURE);
-    }
-#else
-    fd = mkdtemp(output_dir);
-    if (fd == -1) {
-        perror("mkdtemp");
-        exit(EXIT_FAILURE);
-    }
-#endif
-
-    printf("Extracting to directory: %s\n", output_dir);
 
     char marker[512];
     snprintf(marker, sizeof(marker), "%s %s %s", "===", "TARSTART", "===");

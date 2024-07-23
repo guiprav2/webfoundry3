@@ -17,6 +17,6 @@ app.get('*', (req, res) => {
   let port = await getPort();
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
-    fs.writeFileSync('/tmp/tauri-port', port.toString());
+    fs.writeFileSync('tauri-port', port.toString());
   });
 })();
