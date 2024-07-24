@@ -8,7 +8,7 @@ class StylesPanel {
           <div class="StylesPanel-style flex items-center gap-3 rounded outline-none py-1 justify-between px-2">
             <div class="flex items-center gap-3">
               <div class="nf p-2 nf-fa-paint_brush"></div>
-              ${d.if(() => state.app.replacingStyle !== x,
+              ${d.if(() => state.editor.replacingStyle !== x,
                 d.html`<div class="SitesPanel-styleName">${x}</div>`,
                 d.html`<input class="w-full outline-none bg-transparent" ${{
                   onAttach: x => { x.select() },
