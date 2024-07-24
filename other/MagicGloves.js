@@ -119,16 +119,16 @@ class MagicOverlay {
           class: () => this.isHorizontal ? '-left-5 top-1/2 -translate-y-1/2' : 'left-1/2 -top-5 -translate-x-1/2',
           onClick: ev => this.onClickAdd(ev, 'before'),
         }}>
-          <div class="size-4 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
-            <div class="scale-50 nf nf-fa-plus"></div>
+          <div class="size-[calc(1rem_+_1px)] flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
+            <div class="relative -top-px scale-50 nf nf-fa-plus"></div>
           </div>
         </button>
         <button class="absolute flex justify-center items-center p-3 group pointer-events-auto" ${{
           class: () => this.isHorizontal ? '-right-5 top-1/2 -translate-y-1/2' : 'left-1/2 -bottom-5 -translate-x-1/2',
           onClick: ev => this.onClickAdd(ev, 'after'),
         }}>
-          <div class="size-4 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
-            <div class="scale-50 nf nf-fa-plus"></div>
+          <div class="size-[calc(1rem_+_1px)] flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
+            <div class="relative -top-px scale-50 nf nf-fa-plus"></div>
           </div>
         </button>
       `)}
