@@ -48,10 +48,10 @@ class EditorCtrl {
   };
 
   actions = {
-    togglePreview: () => {
+    togglePreview: async () => {
       this.state.preview = !this.state.preview;
       if (this.state.preview) {
-        post('editor.changeSelected', null);
+        await post('editor.changeSelected', null);
         if (this.state.currentPanel === 'styles') { this.state.currentPanel = 'files' }
       }
     },
@@ -87,13 +87,10 @@ class EditorCtrl {
       ev.target.addEventListener('pointerup', this.onResizeDesignerPointerUp, { once: true });
     },
 
-    changeSelected: x => {
+    changeSelected: async x => {
       this.state.s = x;
-      if (x && this.state.prevPanel) { this.state.currentPanel = this.state.prevPanel }
-      if (!x && (this.state.currentPanel === 'styles' || this.state.currentPanel === 'actions')) {
-        this.state.prevPanel = this.state.currentPanel;
-        this.state.currentPanel = 'files';
-      }
+      if (x && state.app.currentPanel !== 'styles' && state.app.currentPanel !== 'actions') { await post('app.selectIcon', 'styles') }
+      else if (!x && (state.app.currentPanel === 'actions' || state.app.currentPanel === 'styles')) { await post('app.selectIcon', 'files') }
     },
 
     addSelection: x => {
@@ -206,13 +203,13 @@ class EditorCtrl {
 
     // ---
 
-    sToggle: () => {
+    sToggle: async () => {
       if (this.state.s instanceof Set || this.state.sPrev instanceof Set) {
-        if (this.state.s) { this.state.sPrev = this.state.s; this.state.s = null }
-        else { this.state.s = new Set([...this.state.sPrev].filter(x => this.state.editorDocument.contains(x))) }
+        if (this.state.s) { this.state.sPrev = this.state.s; await post('editor.changeSelected', null) }
+        else { await post('editor.changeSelected', new Set([...this.state.sPrev].filter(x => this.state.editorDocument.contains(x)))) }
       } else {
-        if (this.state.s) { this.state.sPrev = this.state.s; this.state.s = null }
-        else if (this.state.editorDocument.contains(this.state.sPrev)) { this.state.s = this.state.sPrev; this.state.sPrev = null }
+        if (this.state.s) { this.state.sPrev = this.state.s; await post('editor.changeSelected', null) }
+        else if (this.state.editorDocument.contains(this.state.sPrev)) { await post('editor.changeSelected', this.state.sPrev); this.state.sPrev = null }
       }
     },
 
