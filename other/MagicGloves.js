@@ -91,17 +91,43 @@ class MagicOverlay {
   constructor(props) { this.props = props }
   get s() { return d.resolve(this.props.s) }
 
+  get isSmall() { return this.s.offsetWidth < 16 || this.s.offsetHeight < 16 }
+  get isHorizontal() { return this.s.tagName === 'SPAN' || this.s.matches('.inline, .inline-block') || this.s.parentElement.matches('.flex:not(.flex-col), .grid') }
+
+  onClickAdd(ev, where) {
+    if (ev.shiftKey || this.s.tagName === 'BODY') {
+      switch (where) {
+        case 'before': post('editor.create', 'afterbegin'); break;
+        case 'after': post('editor.create', 'beforeend'); break;
+      }
+    } else {
+      switch (where) {
+        case 'before': post('editor.create', 'beforebegin'); break;
+        case 'after': post('editor.create', 'afterend'); break;
+      }
+    }
+  }
+
   render = () => d.html`
     <div class="rounded border border-blue-400 opacity-1 z-10 pointer-events-none">
-      <span class="absolute right-0 bottom-0 -mr-1 -mb-2 rounded-lg px-2 py-0.5 empty:hidden whitespace-nowrap font-xs text-white bg-blue-400/90">
-        <i class="nf nf-md-vector_square"></i>
-        ${d.text(() => {
-          if (!this.s || this.s.nodeType !== Node.ELEMENT_NODE) { return }
-          let txt = this.s.classList[0];
-          if (/^[A-Z]/.test(txt)) { return txt }
-          return this.s.tagName.toLowerCase();
-        })}
-      </span>
+      ${d.if(() => !this.isSmall, d.html`
+        <button class="absolute flex justify-center items-center p-3 group pointer-events-auto" ${{
+          class: () => this.isHorizontal ? '-left-6 top-1/2 -translate-y-1/2' : 'left-1/2 -top-6 -translate-x-1/2',
+          onClick: ev => this.onClickAdd(ev, 'before'),
+        }}>
+          <div class="size-6 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
+            <div class="scale-75 nf nf-fa-plus"></div>
+          </div>
+        </button>
+        <button class="absolute flex justify-center items-center p-3 group pointer-events-auto" ${{
+          class: () => this.isHorizontal ? '-right-6 top-1/2 -translate-y-1/2' : 'left-1/2 -bottom-6 -translate-x-1/2',
+          onClick: ev => this.onClickAdd(ev, 'after'),
+        }}>
+          <div class="size-6 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
+            <div class="scale-75 nf nf-fa-plus"></div>
+          </div>
+        </button>
+      `)}
     </div>
   `;
 }
