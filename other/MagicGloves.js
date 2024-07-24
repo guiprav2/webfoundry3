@@ -91,8 +91,8 @@ class MagicOverlay {
   constructor(props) { this.props = props }
   get s() { return d.resolve(this.props.s) }
 
-  get isSmall() { return this.s.offsetWidth < 16 || this.s.offsetHeight < 16 }
-  get isHorizontal() { return this.s.tagName === 'SPAN' || this.s.matches('.inline, .inline-block') || this.s.parentElement.matches('.flex:not(.flex-col), .grid') }
+  get isSmall() { return !this.s || this.s.offsetWidth < 16 || this.s.offsetHeight < 16 }
+  get isHorizontal() { return !this.s || this.s.tagName === 'SPAN' || this.s.matches('.inline, .inline-block') || this.s.parentElement.matches('.flex:not(.flex-col), .grid') }
 
   onClickAdd(ev, where) {
     if (ev.shiftKey || this.s.tagName === 'BODY') {
