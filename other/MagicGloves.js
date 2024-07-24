@@ -96,7 +96,22 @@ class MagicOverlay {
   get s() { return d.resolve(this.props.s) }
 
   get isSmall() { return !this.s || this.s.offsetWidth < 16 || this.s.offsetHeight < 16 }
-  get isHorizontal() { return !this.s || this.s.tagName === 'SPAN' || this.s.tagName === 'INPUT' || this.s.matches('.inline, .inline-block') || this.s.parentElement.matches('.flex:not(.flex-col), .grid') }
+
+  get isInlineTag() {
+    return !this.s || [
+      'A', 'ABBR', 'ACRONYM', 'B', 'BDI', 'BDO', 'BIG', 'BUTTON', 'CITE',
+      'CODE', 'DATA', 'DATALIST', 'DEL', 'DFN', 'EM', 'I', 'IMG',
+      'INPUT', 'INS', 'KBD', 'LABEL', 'MAP', 'MARK', 'METER', 'OBJECT',
+      'OUTPUT', 'PICTURE', 'PROGRESS', 'Q', 'RUBY', 'S', 'SAMP',
+      'SELECT', 'SLOT', 'SMALL', 'SPAN', 'STRONG', 'SUB', 'SUP', 'SVG',
+      'TIME', 'U', 'TT', 'VAR', 'VIDEO', 'WBR'
+    ].includes(this.s.tagName);
+  }
+
+  get isHorizontal() {
+    if (this.s && this.s.parentElement.matches('.flex:not(.flex-col), .grid')) { return true }
+    return !this.s || this.isInlineTag || this.s.matches('.inline, .inline-block');
+  }
 
   onClickAdd(ev, where) {
     if (ev.shiftKey || this.s.tagName === 'BODY') {
@@ -120,7 +135,7 @@ class MagicOverlay {
           onClick: ev => this.onClickAdd(ev, 'before'),
         }}>
           <div class="size-[calc(1rem_+_1px)] flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
-            <div class="relative -top-px scale-50 nf nf-fa-plus"></div>
+            <div class="relative scale-50 nf nf-fa-plus" ${{ class: () => this.isHorizontal ? '-left-px' : '-top-px' }}></div>
           </div>
         </button>
         <button class="absolute flex justify-center items-center p-3 group pointer-events-auto" ${{
@@ -128,7 +143,7 @@ class MagicOverlay {
           onClick: ev => this.onClickAdd(ev, 'after'),
         }}>
           <div class="size-[calc(1rem_+_1px)] flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
-            <div class="relative -top-px scale-50 nf nf-fa-plus"></div>
+            <div class="relative scale-50 nf nf-fa-plus" ${{ class: () => this.isHorizontal ? '-left-px' : '-top-px' }}></div>
           </div>
         </button>
       `)}
