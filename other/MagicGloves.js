@@ -116,19 +116,19 @@ class MagicOverlay {
     <div class="rounded border border-blue-400 opacity-1 z-10 pointer-events-none">
       ${d.if(() => !this.isSmall, d.html`
         <button class="absolute flex justify-center items-center p-3 group pointer-events-auto" ${{
-          class: () => this.isHorizontal ? '-left-6 top-1/2 -translate-y-1/2' : 'left-1/2 -top-6 -translate-x-1/2',
+          class: () => this.isHorizontal ? '-left-5 top-1/2 -translate-y-1/2' : 'left-1/2 -top-5 -translate-x-1/2',
           onClick: ev => this.onClickAdd(ev, 'before'),
         }}>
-          <div class="size-6 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
-            <div class="scale-75 nf nf-fa-plus"></div>
+          <div class="size-4 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
+            <div class="scale-50 nf nf-fa-plus"></div>
           </div>
         </button>
         <button class="absolute flex justify-center items-center p-3 group pointer-events-auto" ${{
-          class: () => this.isHorizontal ? '-right-6 top-1/2 -translate-y-1/2' : 'left-1/2 -bottom-6 -translate-x-1/2',
+          class: () => this.isHorizontal ? '-right-5 top-1/2 -translate-y-1/2' : 'left-1/2 -bottom-5 -translate-x-1/2',
           onClick: ev => this.onClickAdd(ev, 'after'),
         }}>
-          <div class="size-6 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
-            <div class="scale-75 nf nf-fa-plus"></div>
+          <div class="size-4 flex justify-center items-center rounded-full text-sm text-white bg-blue-400/25 group-hover:bg-blue-400">
+            <div class="scale-50 nf nf-fa-plus"></div>
           </div>
         </button>
       `)}
