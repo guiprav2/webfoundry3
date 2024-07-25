@@ -65,6 +65,7 @@ class MagicGloves {
   };
 
   onKeyDown = ev => {
+    if (document.querySelector('dialog')) { return }
     if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') {
       ev.key === 'Escape' && ev.target.blur();
       return;
