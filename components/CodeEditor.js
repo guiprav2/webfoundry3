@@ -1,5 +1,4 @@
 import d from '../other/dominant.js';
-import debounce from 'https://cdn.skypack.dev/debounce';
 
 class CodeEditor {
   onAttach = () => {
@@ -21,6 +20,15 @@ class CodeEditor {
   onDetach = () => this.editor?.session?.off?.('change', this.onChange);
   onChange = debounce(() => post('editor.changeCodeEditor', this.currentSite, this.currentFile, this.editor.session.getValue()), 200);
   render = () => this.root = d.html`<div class="CodeEditor flex-1" ${{ onAttach: this.onAttach, onDetach: this.onDetach }}></div>`;
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
 }
 
 export default CodeEditor;
